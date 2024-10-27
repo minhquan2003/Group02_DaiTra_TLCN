@@ -1,10 +1,12 @@
-// backend/controllers/userController.js
-import { createUser } from '../services/userService.js';
+import { createUser, 
+    findUserByEmail,
+    findUserById,
+    updateUser,
+    deleteUser,
+    getAllUsers, } from '../services/userService.js';
 
-// Thêm người dùng mới
-export const addUser = async (req, res) => {
+const addUser = async (req, res) => {
     try {
-        // Kiểm tra các trường bắt buộc
         if (
             !req.body.user_id ||
             !req.body.email ||
@@ -31,3 +33,58 @@ export const addUser = async (req, res) => {
         res.status(500).send({ message: error.message });
     }
 };
+
+// Lấy tất cả người dùng
+const getUsers = async (req, res) => {
+    try {
+        const users = await getAllUsers();
+        return res.status(200).send(users);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+// Tìm người dùng theo ID
+const getUserById = async (req, res) => {
+    try {
+        const user = await findUserById(req.params.id);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(200).send(user);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+// Cập nhật thông tin người dùng
+const updateUserById = async (req, res) => {
+    try {
+        const user = await updateUser(req.params.id, req.body);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(200).send(user);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+// Xóa người dùng
+const deleteUserById = async (req, res) => {
+    try {
+        const user = await deleteUser(req.params.id);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(204).send();
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+export {addUser, getUsers, getUserById, updateUserById, deleteUserById}

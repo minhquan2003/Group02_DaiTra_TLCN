@@ -61,5 +61,5 @@ userChema.methods.comparePassword = function (password) {
     return bcrypt.compare(password, this.password);
 };
 
-const User = mongoose.model('Users', userChema)
-export default User;
+const Users = mongoose.model('Users', userChema)
+export default Users;

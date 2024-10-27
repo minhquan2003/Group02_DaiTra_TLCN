@@ -1,4 +1,3 @@
-import { User } from '../models/Users.js';
 import jwt from 'jsonwebtoken';
 import { findUserByEmail } from '../services/userService.js';
 import { JWT_SECRET } from '../config.js';
