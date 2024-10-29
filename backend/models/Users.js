@@ -3,10 +3,10 @@ import bcrypt from 'bcrypt';
 
 const userChema = mongoose.Schema(
     {
-        user_id:{
-            type: String,
-            require: true
-        },
+        // user_id:{
+        //     type: String,
+        //     require: true
+        // },
         email:{
             type: String,
             require: true
