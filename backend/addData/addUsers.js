@@ -59,6 +59,6 @@ const addUsers = async () => {
   }
 };
 
-// addUsers();
+//  addUsers();
 
 export default addUsers;

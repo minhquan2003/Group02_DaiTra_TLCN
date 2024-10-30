@@ -8,8 +8,10 @@ import {
   FiUser,
 } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
+import { useNavigate } from "react-router-dom"; 
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <>
       {/* Header Top */}
@@ -63,7 +65,8 @@ const Header = () => {
           <span className="cursor-pointer">
             <FiShoppingCart className="h-5 w-5" /> {/* Shopping cart icon */}
           </span>
-          <span className="cursor-pointer">
+          
+          <span className="cursor-pointer" onClick={() => navigate('/login')}> {/* Chuyển hướng tới trang login */}
             <FiUser className="h-5 w-5" /> {/* User icon */}
           </span>
         </div>

@@ -14,7 +14,7 @@ export const loginUser = async (request, response) => {
 
     try {
         // Tìm người dùng theo email
-        const user = await findUserByEmail({ email });
+        const user = await findUserByEmail(email);
 
         // Nếu không tìm thấy người dùng
         if (!user) {
@@ -35,6 +35,6 @@ export const loginUser = async (request, response) => {
         return response.status(200).send({ token });
     } catch (error) {
         console.error(error);
-        return response.status(500).send({ message: 'Đã xảy ra lỗi.' });
+        return response.status(500).send({ message: 'Đã xảy ra lỗi.' + error });
     }
 };

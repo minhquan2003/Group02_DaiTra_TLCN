@@ -5,13 +5,15 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState(null);
 
-  const login = async (credentials) => {
+  const login = async ({ email, password }) => {
     try {
-      const response = await axios.post("/api/login", credentials); // Adjust the endpoint as necessary
+      const response = await axios.post("http://localhost:5555/auth/login", { email, password });
       console.log("Login response:", response.data);
+      // localStorage.setItem('token', response.data.token); 
       setIsAuthenticated(true);
-      // Optionally, handle tokens or user data returned from the server
+      window.location.href = '/signup';
     } catch (err) {
+      alert(err)
       console.error("Login error:", err);
       setError("Invalid credentials. Please try again.");
     }

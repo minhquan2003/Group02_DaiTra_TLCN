@@ -90,10 +90,8 @@ const AuthSignUp = () => {
           </button>
 
           <div className="flex justify-start mt-4">
-            <a className="text-sm pr-5">Đã có tài khoản?</a>
-            <a href="#" className="text-red-500 text-sm underline">
-              Quên mật khẩu?
-            </a>
+            <a href="/login"  className="text-sm text-blue-600 pr-5 underline">Đã có tài khoản?</a>
+            <a href="#" className="text-red-500 text-sm underline">Quên mật khẩu?</a>
           </div>
         </form>
       </div>
