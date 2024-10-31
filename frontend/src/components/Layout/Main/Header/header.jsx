@@ -29,7 +29,7 @@ const Header = () => {
       {/* Header Main */}
       <header className="bg-white text-black justify-center flex items-center p-4 space-x-10">
         <div className="flex items-center">
-          <div className="text-lg font-bold">Logo</div>
+          <div onClick={() => navigate('/')} className="text-lg font-bold">Logo</div>
           <nav className="ml-6">
             <ul className="flex space-x-4">
               <li>
