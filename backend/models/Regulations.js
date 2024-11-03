@@ -7,7 +7,7 @@ const regulationSchema = new mongoose.Schema({
     //     required: true,
     //     unique: true,
     // },
-    user_id:{
+    user_id_create:{
         type: String,
         require: true
     },

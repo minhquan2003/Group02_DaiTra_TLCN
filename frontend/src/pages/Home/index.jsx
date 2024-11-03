@@ -1,5 +1,5 @@
 import React from "react";
-import ListProductCard from "../../components/Home/ListProductCard";
+import ListProductCard from "../../components/Home/ListProducts/ListProductCard";
 
 const HomePage = () => {
     return (

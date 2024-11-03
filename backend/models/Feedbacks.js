@@ -15,6 +15,11 @@ const feedbackSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    status: {
+        type: Boolean,
+        required: true,
+        default: true,
+    },
 }, {
     timestamps: true, // Tự động thêm createdAt và updatedAt
 });

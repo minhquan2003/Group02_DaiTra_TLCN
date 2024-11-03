@@ -6,16 +6,17 @@ const createUser = async (userData) => {
     const newUser = {
         ...userData,
         password: hashedPassword,
+        status: true,
     };
     return await Users.create(newUser);
 };
 
 const findUserByEmail = async (email) => {
-    return await Users.findOne({ email });
+    return await Users.findOne({ email, status: true });
 };
 
 const findUserById = async (userId) => {
-    return await Users.findById(userId);
+    return await Users.findOne({ _id: userId, status: true });
 };
 
 const updateUser = async (userId, updateData) => {
@@ -27,11 +28,15 @@ const updateUser = async (userId, updateData) => {
 };
 
 const deleteUser = async (userId) => {
-    return await Users.findByIdAndDelete(userId);
+    return await Users.findByIdAndUpdate(
+        userId,
+        { status: false },
+        { new: true }
+    );
 };
 
 const getAllUsers = async () => {
-    return await Users.find();
+    return await Users.find({ status: true });
 };
 
 export {

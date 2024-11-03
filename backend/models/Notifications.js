@@ -11,6 +11,10 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    user_id_receive: {
+        type: String,
+        required: true,
+    },
     message: {
         type: String,
         required: true,

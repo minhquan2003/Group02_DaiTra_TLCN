@@ -11,6 +11,10 @@ const categorySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    image_url:{
+        type: String,
+        require: true
+    },
     status: {
         type: Boolean,
         required: true,

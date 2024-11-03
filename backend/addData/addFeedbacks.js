@@ -14,11 +14,14 @@ const addFeedbacks = async () => {
                 // feedback_id: 'feedback001',
                 user_id: '671e7157dde710f9657f7c1c',
                 message: 'Great service, very satisfied!',
+                status: 'true',
             },
             {
                 // feedback_id: 'feedback002',
                 user_id: '671e7157dde710f9657f7c1c',
                 message: 'The product quality is excellent!',
+                status: 'true',
+
             },
         ];
 

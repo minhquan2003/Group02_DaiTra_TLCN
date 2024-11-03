@@ -6,12 +6,21 @@ const createProduct = async (productData) => {
   };
   
 const getProducts = async () => {
-    return await Products.find({});
+    return await Products.find({ status: true });
   };
   
 const getOneProductById = async (idProduct) => {
-    return await Products.findById(idProduct);
+  return await Products.findOne({ _id: idProduct, status: true });
   };
+
+const getProductsByCategory = async (categoryId) => {
+  try {
+    const products = await Products.find({ category_id: categoryId, status: true });
+    return products;
+  } catch (error) {
+    throw new Error(`Unable to fetch products: ${error.message}`);
+  }
+};
   
 const updateOneProduct = async (id, updateData) => {
     return await Products.findByIdAndUpdate(
@@ -22,7 +31,11 @@ const updateOneProduct = async (id, updateData) => {
   };
   
 const deleteOneProduct = async (id) => {
-    return await Products.findByIdAndDelete(id);
-  };
+  return await Products.findByIdAndUpdate(
+    id,
+    { status: false },
+    { new: true }
+  );
+};
 
-export {createProduct, getProducts, getOneProductById, updateOneProduct, deleteOneProduct}
+export {createProduct, getProducts, getOneProductById, getProductsByCategory, updateOneProduct, deleteOneProduct}

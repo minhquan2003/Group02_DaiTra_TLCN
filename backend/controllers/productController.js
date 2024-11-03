@@ -3,6 +3,7 @@ import {
     createProduct,
     getProducts,
     getOneProductById,
+    getProductsByCategory,
     updateOneProduct,
     deleteOneProduct
 } from '../services/productService.js'; // Đảm bảo đường dẫn đúng
@@ -43,6 +44,21 @@ const getProductById = async (req, res) => {
     }
 };
 
+const getProductsByIdCategory = async (req, res) => {
+    const { categoryId } = req.params;
+    try {
+        const product = await getProductsByCategory(categoryId);
+        if (!product) {
+            return res.status(404).send({ message: 'Product not found' });
+        }
+        const products = await getProductsByCategory(categoryId);
+        return res.status(200).send(product);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
 // Cập nhật sản phẩm
 const updateProduct = async (req, res) => {
     try {
@@ -64,11 +80,11 @@ const deleteProduct = async (req, res) => {
         if (!product) {
             return res.status(404).send({ message: 'Product not found' });
         }
-        return res.status(204).send();
+        return res.status(204).send({message: 'Xoá thành công'});
     } catch (error) {
         console.error(error.message);
         res.status(500).send({ message: error.message });
     }
 };
 
-export { addProduct, getAllProducts, getProductById, updateProduct, deleteProduct};
+export { addProduct, getAllProducts, getProductById, getProductsByIdCategory, updateProduct, deleteProduct};

@@ -14,11 +14,13 @@ const addCategories = async () => {
                 // category_id: 'category001',
                 category_name: 'Electronics',
                 status: true,
+                image_url: 'https://cdn-icons-png.flaticon.com/128/1261/1261143.png'
             },
             {
                 // category_id: 'category002',
                 category_name: 'Furniture',
                 status: true,
+                image_url: 'https://cdn-icons-png.flaticon.com/128/9215/9215647.png'
             },
         ];
 
