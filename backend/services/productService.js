@@ -21,6 +21,15 @@ const getProductsByCategory = async (categoryId) => {
     throw new Error(`Unable to fetch products: ${error.message}`);
   }
 };
+
+// Tìm kiếm sản phẩm theo tên
+const searchProductsByName = async (productName) => {
+  try {
+      return await Products.find({ name: { $regex: productName, $options: 'i' }, status: true });
+  } catch (error) {
+      throw new Error(`Unable to search products: ${error.message}`);
+  }
+};
   
 const updateOneProduct = async (id, updateData) => {
     return await Products.findByIdAndUpdate(
@@ -38,4 +47,4 @@ const deleteOneProduct = async (id) => {
   );
 };
 
-export {createProduct, getProducts, getOneProductById, getProductsByCategory, updateOneProduct, deleteOneProduct}
+export {createProduct, getProducts, getOneProductById, getProductsByCategory, searchProductsByName, updateOneProduct, deleteOneProduct}

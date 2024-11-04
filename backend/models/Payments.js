@@ -16,7 +16,11 @@ const paymentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    user_id: {
+    user_id_pay: {
+        type: String,
+        required: true,
+    },
+    user_id_receive: {
         type: String,
         required: true,
     },
@@ -28,6 +32,11 @@ const paymentSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['Pending', 'Completed', 'Failed'], // Các trạng thái thanh toán có thể
+    },
+    status: {
+        type: Boolean,
+        required: true,
+        default: true,
     },
 }, {
     timestamps: true, // Tự động thêm createdAt và updatedAt

@@ -7,6 +7,10 @@ import categoryRoute from './routes/categoryRoute.js';
 import feedbackRoute from './routes/feedbackRoute.js';
 import notificationRoute from './routes/notificationRoute.js';
 import regulationRoute from './routes/regulationRoute.js';
+import reviewRoute from './routes/reviewRoute.js';
+import paymentRoute from './routes/paymentRoute.js';
+import orderRoute from './routes/orderRoute.js';
+import orderDetailRoute from './routes/orderDetailRoutes.js';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
@@ -23,6 +27,10 @@ app.use('/categories', categoryRoute);
 app.use('/feedbacks', feedbackRoute);
 app.use('/notifications', notificationRoute);
 app.use('/regulations', regulationRoute);
+app.use('/reviews', reviewRoute);
+app.use('/payments', paymentRoute);
+app.use('/orders', orderRoute);
+app.use('/orderDetails', orderDetailRoute);
 
 mongoose
     .connect(mongodbconn)

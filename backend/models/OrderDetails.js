@@ -24,6 +24,11 @@ const orderDetailSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    status: {
+        type: Boolean,
+        required: true,
+        default: true,
+    },
 }, {
     timestamps: true,
 });

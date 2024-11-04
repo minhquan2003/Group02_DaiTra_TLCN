@@ -4,6 +4,7 @@ import {
     getProducts,
     getOneProductById,
     getProductsByCategory,
+    searchProductsByName,
     updateOneProduct,
     deleteOneProduct
 } from '../services/productService.js'; // Đảm bảo đường dẫn đúng
@@ -59,6 +60,20 @@ const getProductsByIdCategory = async (req, res) => {
     }
 };
 
+const searchProductsByNameController = async (req, res) => {
+    try {
+        const name = req.query.name; // Lấy tên sản phẩm từ query parameters
+        if (!name) {
+            return res.status(400).json({ success: false, message: "Product name is required." });
+        }
+
+        const products = await searchProductsByName(name);
+        res.status(200).json({ success: true, data: products });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 // Cập nhật sản phẩm
 const updateProduct = async (req, res) => {
     try {
@@ -87,4 +102,4 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-export { addProduct, getAllProducts, getProductById, getProductsByIdCategory, updateProduct, deleteProduct};
+export { addProduct, getAllProducts, getProductById, getProductsByIdCategory, searchProductsByNameController, updateProduct, deleteProduct};
