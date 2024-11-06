@@ -9,11 +9,13 @@ const orderSchema = new mongoose.Schema({
     // },
     user_id_buyer: {
         type: String,
-        required: true,
+        required: false,
+        default: '',
     },
     user_id_seller: {
         type: String,
-        required: true,
+        required: false,
+        default: '',
     },
     name: {
         type: String,

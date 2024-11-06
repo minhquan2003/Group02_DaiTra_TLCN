@@ -96,3 +96,13 @@ export default addUsers;
 //   "avatar_url": "http://example.com/avatar3.png",
 //   "role": "user"
 // }
+// {
+//   "email": "user123@example.com",
+//   "username": "user123",
+//   "password": "user123",  // Mật khẩu đã được băm
+//   "name": "Nguyễn Văn A",
+//   "address": "123 Đường ABC, Quận 1, TP.HCM",
+//   "phone": 1234567890,
+//   "avatar_url": "https://example.com/images/avatar.jpg",
+//   "role": "user"
+// }
