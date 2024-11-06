@@ -62,3 +62,37 @@ const addUsers = async () => {
 //  addUsers();
 
 export default addUsers;
+
+// Data in cloud mongo
+// {
+//   "email": "user1@example.com",
+//   "username": "user1",
+//   "password": "password123",
+//   "name": "Nguyễn Văn A",
+//   "address": "123 Đường A, Quận 1, TP.HCM",
+//   "phone": 123456789,
+//   "avatar_url": "http://example.com/avatar1.png",
+//   "role": "user"
+// }
+
+// {
+//   "email": "user2@example.com",
+//   "username": "user2",
+//   "password": "securePassword456",
+//   "name": "Trần Thị B",
+//   "address": "456 Đường B, Quận 2, TP.HCM",
+//   "phone": 987654321,
+//   "avatar_url": "http://example.com/avatar2.png",
+//   "role": "admin"
+// }
+
+// {
+//   "email": "user3@example.com",
+//   "username": "user3",
+//   "password": "myPassword789",
+//   "name": "Lê Văn C",
+//   "address": "789 Đường C, Quận 3, TP.HCM",
+//   "phone": 456789123,
+//   "avatar_url": "http://example.com/avatar3.png",
+//   "role": "user"
+// }

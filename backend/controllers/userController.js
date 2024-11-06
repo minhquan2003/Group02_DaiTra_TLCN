@@ -8,7 +8,7 @@ import { createUser,
 const addUser = async (req, res) => {
     try {
         if (
-            !req.body.user_id ||
+            // !req.body.user_id ||
             !req.body.email ||
             !req.body.username ||
             !req.body.password ||
@@ -16,13 +16,13 @@ const addUser = async (req, res) => {
             !req.body.address ||
             !req.body.phone ||
             !req.body.avatar_url ||
-            !req.body.role ||
+            !req.body.role
             // !req.body.created_at ||
             // !req.body.updated_at ||
-            !req.body.status
+            // !req.body.status
         ) {
             return res.status(400).send({
-                message: 'Send all required fields: user_id, email, username, password, name, address, phone, avatar_url, role, created_at, updated_at, status',
+                message: 'Send all required fields: email, username, password, name, address, phone, avatar_url, role, created_at, updated_at, status',
             });
         }
 

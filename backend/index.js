@@ -34,12 +34,13 @@ app.use('/orderDetails', orderDetailRoute);
 
 mongoose
     .connect(mongodbconn)
-    .then(()=>{
-        console.log('App connected to database')
+    .then((conn) => {
+        console.log('App connected to database');
+        console.log(`MongoDB Connected: ${conn.connection.host}`);
         app.listen(PORT, () => {
-            console.log(`App is listening to port ${PORT}`);
+            console.log(`Server is running on http://localhost:${PORT}`);
         });
     })
-    .catch((error)=>{
-        console.log(error)
+    .catch((error) => {
+        console.error('Database connection error:', error);
     });
