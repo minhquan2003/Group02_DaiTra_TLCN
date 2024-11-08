@@ -6,7 +6,21 @@ const createCategory = async (CategoryData) => {
   };
   
 const getCategory = async () => {
-  return await Categories.find({ status: true });
+  const limit = 'full';
+  const skip = 0;
+  const total = await Categories.countDocuments({ status: true });
+  const categories = limit === 'full'? 
+            await Categories.find({ status: true }).skip(skip): 
+            await Categories.find({ status: true }).limit(limit).skip(skip);
+
+        // Tạo và trả về đối tượng JSON
+        return {
+            success: true,
+            total,
+            limit,
+            skip,
+            data: categories,
+        };
 };
   
 const getOneCategoryById = async (idCategory) => {

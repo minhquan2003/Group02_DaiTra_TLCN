@@ -38,7 +38,8 @@ const addUser = async (req, res) => {
 const getUsers = async (req, res) => {
     try {
         const users = await getAllUsers();
-        return res.status(200).send(users);
+        return res.status(200).send({success: true,
+            data: users});
     } catch (error) {
         console.log(error.message);
         res.status(500).send({ message: error.message });
