@@ -1,5 +1,5 @@
 import React from "react";
-import AuthLogin from "../../components/AuthForm/AuthLogin'";
+import AuthLogin from "../../components/AuthForm/AuthLogin";
 import { useAuth } from "../../hooks/auth";
 
 const LoginPage = () => {

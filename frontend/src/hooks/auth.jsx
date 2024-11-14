@@ -1,16 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
 
+axios.defaults.baseURL = "http://localhost:5555";
+
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState(null);
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post("/api/login", credentials); // Adjust the endpoint as necessary
+      const response = await axios.post("/auth/login", credentials);
       console.log("Login response:", response.data);
       setIsAuthenticated(true);
-      // Optionally, handle tokens or user data returned from the server
     } catch (err) {
       console.error("Login error:", err);
       setError("Invalid credentials. Please try again.");
@@ -19,11 +20,11 @@ export const useAuth = () => {
 
   const signup = async (userData) => {
     try {
-      const response = await axios.post("/api/signup", userData);
-      console.log("Signup response: ", response.data);
+      const response = await axios.post("/auth/signup", userData);
+      console.log("Signup response:", response.data);
       setIsAuthenticated(true);
     } catch (err) {
-      console.error("Signup error: ", err);
+      console.error("Signup error:", err);
       setError("Signup failed! Please try again.");
     }
   };
