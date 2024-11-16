@@ -1,5 +1,5 @@
-import { User } from '../models/Users.js';
 import jwt from 'jsonwebtoken';
+import { findUserByEmail } from '../services/userService.js';
 import { JWT_SECRET } from '../config.js';
 
 export const loginUser = async (request, response) => {
@@ -14,7 +14,7 @@ export const loginUser = async (request, response) => {
 
     try {
         // Tìm người dùng theo email
-        const user = await User.findOne({ email });
+        const user = await findUserByEmail(email);
 
         // Nếu không tìm thấy người dùng
         if (!user) {
@@ -35,6 +35,6 @@ export const loginUser = async (request, response) => {
         return response.status(200).send({ token });
     } catch (error) {
         console.error(error);
-        return response.status(500).send({ message: 'Đã xảy ra lỗi.' });
+        return response.status(500).send({ message: 'Đã xảy ra lỗi.' + error });
     }
 };

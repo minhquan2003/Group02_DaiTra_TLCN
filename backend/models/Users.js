@@ -3,10 +3,10 @@ import bcrypt from 'bcrypt';
 
 const userChema = mongoose.Schema(
     {
-        user_id:{
-            type: String,
-            require: true
-        },
+        // user_id:{
+        //     type: String,
+        //     require: true
+        // },
         email:{
             type: String,
             require: true
@@ -39,14 +39,14 @@ const userChema = mongoose.Schema(
             type: String,
             require: true
         },
-        created_at:{
-            type: Date,
-            require: true
-        },
-        updated_at:{
-            type: Date,
-            require: true
-        },
+        // created_at:{
+        //     type: Date,
+        //     require: true
+        // },
+        // updated_at:{
+        //     type: Date,
+        //     require: true
+        // },
         status:{
             type: Boolean,
             require: true
@@ -61,4 +61,5 @@ userChema.methods.comparePassword = function (password) {
     return bcrypt.compare(password, this.password);
 };
 
-export const User = mongoose.model('Users', userChema)
+const Users = mongoose.model('Users', userChema)
+export default Users;

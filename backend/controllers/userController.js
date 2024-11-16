@@ -1,46 +1,91 @@
-import {User} from '../models/Users.js';
-import bcrypt from 'bcrypt';
+import { createUser, 
+    findUserByEmail,
+    findUserById,
+    updateUser,
+    deleteUser,
+    getAllUsers, } from '../services/userService.js';
 
-export const addUser = async (request, response)=>{
-    try{
-        if(
-            !request.body.user_id ||
-            !request.body.email ||
-            !request.body.username ||
-            !request.body.password ||
-            !request.body.name ||
-            !request.body.address ||
-            !request.body.phone ||
-            !request.body.avatar_url ||
-            !request.body.role ||
-            !request.body.created_at ||
-            !request.body.updated_at ||
-            !request.body.status
-        ){
-            return response.status(400).send({
-                message: 'Send all required fields: user_id, email, username, password, name, address, phone, avatar_url, role, created_at, updated_at, status',
+const addUser = async (req, res) => {
+    try {
+        if (
+            // !req.body.user_id ||
+            !req.body.email ||
+            !req.body.username ||
+            !req.body.password ||
+            !req.body.name ||
+            !req.body.address ||
+            !req.body.phone ||
+            !req.body.avatar_url ||
+            !req.body.role
+            // !req.body.created_at ||
+            // !req.body.updated_at ||
+            // !req.body.status
+        ) {
+            return res.status(400).send({
+                message: 'Send all required fields: email, username, password, name, address, phone, avatar_url, role, created_at, updated_at, status',
             });
         }
-        const hashedPassword = await bcrypt.hash(request.body.password, 10);
-        const newUser = {
-            user_id: request.body.user_id,
-            email: request.body.email,
-            username: request.body.username,
-            password: hashedPassword,
-            name: request.body.name,
-            address: request.body.address,
-            phone: request.body.phone,
-            avatar_url: request.body.avatar_url,
-            role: request.body.role,
-            created_at: request.body.created_at,
-            updated_at: request.body.updated_at,
-            status: request.body.status,
-        };
-        const user = await User.create(newUser);
-        return response.status(201).send(user);
-    }catch(error){
+
+        const user = await createUser(req.body);
+        return res.status(201).send(user);
+    } catch (error) {
         console.log(error.message);
-        response.status(500).send({message: error.message});
+        res.status(500).send({ message: error.message });
     }
 };
 
+// Lấy tất cả người dùng
+const getUsers = async (req, res) => {
+    try {
+        const users = await getAllUsers();
+        return res.status(200).send({success: true,
+            data: users});
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+// Tìm người dùng theo ID
+const getUserById = async (req, res) => {
+    try {
+        const user = await findUserById(req.params.id);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(200).send(user);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+// Cập nhật thông tin người dùng
+const updateUserById = async (req, res) => {
+    try {
+        const user = await updateUser(req.params.id, req.body);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(200).send(user);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+// Xóa người dùng
+const deleteUserById = async (req, res) => {
+    try {
+        const user = await deleteUser(req.params.id);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(204).send();
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+export {addUser, getUsers, getUserById, updateUserById, deleteUserById}
