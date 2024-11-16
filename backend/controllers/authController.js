@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { findUserByEmail } from '../services/userService.js';
-import { JWT_SECRET } from '../config.js';
 
 export const loginUser = async (request, response) => {
     const { email, password } = request.body;
