@@ -25,3 +25,21 @@ export const getProducts = () => {
     return { products, loading, error };
 };
 
+export const getProductById = (id) => {
+    const [product, setProduct] = useState(null);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5555/products/${id}`);
+                setProduct(response.data);
+            } catch (err) {
+                console.error("Error fetching product:", err);
+                setError("Failed to load product. Please try again later.");
+            }
+        };
+
+        fetchProduct();
+    }, [id]);
+    return {product};
+};
