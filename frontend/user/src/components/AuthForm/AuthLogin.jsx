@@ -60,9 +60,12 @@ const AuthLogin = () => {
             Đăng Nhập
           </button>
 
-          <div className="flex justify-start mt-4">
+          <div className="flex justify-around mt-4">
             <a href="#" className="text-red-500 hover:underline text-sm">
               Quên mật khẩu?
+            </a>
+            <a href="/signup" className="text-green-500 hover:underline text-sm">
+              Đăng ký tài khoản.
             </a>
           </div>
         </form>
