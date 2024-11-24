@@ -28,7 +28,7 @@ export const loginUser = async (request, response) => {
         }
 
         // Tạo JWT token với thông tin người dùng
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Trả về token cho client
         return response.status(200).send({ token });

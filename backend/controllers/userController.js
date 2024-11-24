@@ -60,6 +60,20 @@ const getUserById = async (req, res) => {
     }
 };
 
+// Tìm người dùng theo ID
+const getUserByEmail = async (req, res) => {
+    try {
+        const user = await findUserByEmail(req.body.email);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        return res.status(200).send(user);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
 // Cập nhật thông tin người dùng
 const updateUserById = async (req, res) => {
     try {
@@ -88,4 +102,4 @@ const deleteUserById = async (req, res) => {
     }
 };
 
-export {addUser, getUsers, getUserById, updateUserById, deleteUserById}
+export {addUser, getUsers, getUserById, getUserByEmail, updateUserById, deleteUserById}

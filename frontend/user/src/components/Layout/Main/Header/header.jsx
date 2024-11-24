@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import nonAvata from '../../../../assets/img/nonAvata.jpg'
 import {
   FiMenu,
   FiSearch,
@@ -11,7 +12,19 @@ import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom"; 
 
 const Header = () => {
+  const userInfoString = sessionStorage.getItem('userInfo');
+  const isLogin = sessionStorage.getItem('isLogin');
+  const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+  const avatarUrl = (isLogin && userInfo) ? userInfo.avatar_url : nonAvata;
+  const name = (isLogin && userInfo) ? userInfo.name : "Guest!";
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('userInfo');
+    sessionStorage.removeItem('userInfo');
+    navigate('/');
+  };
+
   return (
     <>
       {/* Header Top */}
@@ -62,12 +75,30 @@ const Header = () => {
           <span className="cursor-pointer">
             <FiMessageCircle className="h-5 w-5" /> {/* Message icon */}
           </span>
-          <span className="cursor-pointer">
+          <span className="cursor-pointer" onClick={() => navigate('/cart')}>
             <FiShoppingCart className="h-5 w-5" /> {/* Shopping cart icon */}
           </span>
           
           <span className="cursor-pointer" onClick={() => navigate('/login')}> {/* Chuyển hướng tới trang login */}
-            <FiUser className="h-5 w-5" /> {/* User icon */}
+            <div className="flex items-center space-x-3 p-2">
+              <img 
+                  src={avatarUrl} 
+                  alt={name} 
+                  className="w-10 h-10 object-cover rounded-full border-2 border-gray-300" 
+                  onError={(e) => {
+                      e.target.onerror = null; 
+                      e.target.src = 'https://via.placeholder.com/50'; // Placeholder nếu có lỗi
+                  }}
+              />
+              <div className="flex flex-col">
+                  <span className="font-semibold text-lg text-gray-800">{name}</span>
+              </div>
+              <div className="ml-auto cursor-pointer" onClick={handleLogout}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </div>
+          </div>
           </span>
         </div>
       </header>
