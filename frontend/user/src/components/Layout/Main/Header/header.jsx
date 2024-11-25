@@ -7,20 +7,19 @@ import {
   FiMessageCircle,
   FiShoppingCart,
   FiUser,
+  FiLogIn
 } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom"; 
 
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
-  const isLogin = sessionStorage.getItem('isLogin');
   const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
-  const avatarUrl = (isLogin && userInfo) ? userInfo.avatar_url : nonAvata;
-  const name = (isLogin && userInfo) ? userInfo.name : "Guest!";
+  const avatarUrl = userInfo ? userInfo.avatar_url : nonAvata;
+  const name = userInfo ? userInfo.name : "Guest!";
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    sessionStorage.removeItem('userInfo');
     sessionStorage.removeItem('userInfo');
     navigate('/');
   };
@@ -78,8 +77,19 @@ const Header = () => {
           <span className="cursor-pointer" onClick={() => navigate('/cart')}>
             <FiShoppingCart className="h-5 w-5" /> {/* Shopping cart icon */}
           </span>
-          
-          <span className="cursor-pointer" onClick={() => navigate('/login')}> {/* Chuyển hướng tới trang login */}
+          <span className="ml-auto cursor-pointer" onClick={() => navigate('/login')}>
+            <div className="h-10 w-10 flex items-center justify-center text-gray-500 hover:text-gray-700">
+              <FiLogIn className="h-6 w-6" /> {/* Biểu tượng đăng nhập */}
+            </div>
+          </span>
+          <span>
+            <div className="ml-auto cursor-pointer" onClick={handleLogout}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </div>
+          </span>
+          <span className="cursor-pointer" onClick={() => navigate('#')}> {/* Chuyển hướng tới trang login */}
             <div className="flex items-center space-x-3 p-2">
               <img 
                   src={avatarUrl} 
@@ -92,11 +102,6 @@ const Header = () => {
               />
               <div className="flex flex-col">
                   <span className="font-semibold text-lg text-gray-800">{name}</span>
-              </div>
-              <div className="ml-auto cursor-pointer" onClick={handleLogout}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
               </div>
           </div>
           </span>

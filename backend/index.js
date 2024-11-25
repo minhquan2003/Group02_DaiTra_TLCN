@@ -11,6 +11,7 @@ import reviewRoute from './routes/reviewRoute.js';
 import paymentRoute from './routes/paymentRoute.js';
 import orderRoute from './routes/orderRoute.js';
 import orderDetailRoute from './routes/orderDetailRoutes.js';
+import cartRoute from './routes/cartRoute.js';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
@@ -31,6 +32,7 @@ app.use('/reviews', reviewRoute);
 app.use('/payments', paymentRoute);
 app.use('/orders', orderRoute);
 app.use('/orderDetails', orderDetailRoute);
+app.use('/carts', cartRoute);
 
 mongoose
     .connect(mongodbconn)

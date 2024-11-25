@@ -13,7 +13,6 @@ export const useAuth = () => {
       const userResponse  = await axios.post("http://localhost:5555/users/email", { email });
       setIsAuthenticated(true);
       sessionStorage.setItem('userInfo', JSON.stringify(userResponse.data));
-      sessionStorage.setItem('isLogin', true);
       window.location.href = '/';
     } catch (err) {
       console.error("Login error:", err);

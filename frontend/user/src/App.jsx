@@ -6,6 +6,7 @@ import MainLayout from "./components/Layout/Main";
 import ProductDisplay from "./components/ProductDetail/ProductDetail"
 import ProductCardHome from "./pages/Home";
 import Cart from '../src/components/Cart/Cart'
+import Checkout from '../src/components/Checkout/Checkout'
 import { useState, useEffect } from "react"; 
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -52,6 +53,7 @@ const App = () => {
           <Route path="/" element={<ProductCardHome />} />
           <Route path="/product/:id" element={<ProductDisplay />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
         </Routes>

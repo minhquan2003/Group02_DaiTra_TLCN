@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate} from 'react-router-dom';
 import {useProduct} from '../../hooks/Products'; // Nhập custom hook
+import { addToCart } from '../../hooks/Carts';
 
 const ProductDisplay = () => {
     const { id } = useParams();
@@ -15,12 +16,19 @@ const ProductDisplay = () => {
     const totalPrice = product ? quantity * product.price : 0;
 
     const handleAddToCart = () => {
-        if (product && product.quantity > 0) {
-            alert(`${product.name} đã được thêm vào giỏ hàng! (Số lượng: ${quantity}, Tổng tiền: ${totalPrice.toLocaleString()} VNĐ)`);
-        } else {
-            alert('Sản phẩm đã hết hàng!');
-        }
-    };
+        const userInfoString = sessionStorage.getItem('userInfo');
+        const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+        addToCart(
+            {
+                user_buyer: userInfo._id,
+                user_seller: product.user_id,
+                product_id: product._id,
+                product_name: product.name,
+                product_quantity: quantity,
+                product_price: product.price,
+                product_imageUrl: product.image_url,
+            });
+    }
 
     if (error) {
         return <div>{error}</div>; // Xử lý lỗi
@@ -73,7 +81,7 @@ const ProductDisplay = () => {
                             onClick={handleAddToCart} 
                             className="mt-4 bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-300"
                         >
-                            Thêm vào giỏ
+                            Thêm vào giỏ hàng
                         </button>
                         <button 
                             className="mt-4 ml-40 bg-blue-500 text-white rounded p-2 hover:bg-red-600 transition duration-300"
