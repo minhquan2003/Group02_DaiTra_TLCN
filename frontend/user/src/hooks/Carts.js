@@ -21,4 +21,14 @@ const addToCart = async (product) => {
     }
 };
 
-export {getCartItemsByUserId, addToCart};
+const removeFromCart = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:5555/carts/${id}`);
+        alert("Removed product from cart success!")
+    } catch (error) {
+        console.error('Error fetching cart items:', error);
+        throw error;
+    }
+};
+
+export {getCartItemsByUserId, addToCart, removeFromCart};

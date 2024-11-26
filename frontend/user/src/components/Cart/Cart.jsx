@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getCartItemsByUserId } from '../../hooks/Carts';
+import { getCartItemsByUserId, removeFromCart} from '../../hooks/Carts';
 import {useNavigate } from 'react-router-dom';
+import { FaTrash } from 'react-icons/fa';
 
 const Cart = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -25,6 +26,10 @@ const Cart = () => {
                 item.id === id ? { ...item, selected: !item.selected } : item
             )
         );
+    };
+
+    const handleRemoveFromCart = (id) => {
+        removeFromCart(id);
     };
 
     const totalAmount = cartItems
@@ -62,6 +67,13 @@ const Cart = () => {
                                 </div>
                             </div>
                             <span className="font-bold">{(item.product_price * item.product_quantity).toLocaleString() + ' VNĐ'}</span>
+                            <button 
+                                onClick={() => handleRemoveFromCart(item._id)} 
+                                className="text-red-500 hover:text-red-700"
+                                title="Xóa khỏi giỏ hàng"
+                            >
+                                <FaTrash />
+                            </button>
                         </li>
                     ))}
                 </ul>

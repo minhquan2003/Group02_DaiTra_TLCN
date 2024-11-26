@@ -39,7 +39,7 @@ const Header = () => {
       </div>
 
       {/* Header Main */}
-      <header className="bg-white text-black justify-center flex items-center p-4 space-x-10">
+      <header className="bg-yellow-300 text-black justify-center flex items-center p-4 space-x-10">
         <div className="flex items-center">
           <div onClick={() => navigate('/')} className="text-lg font-bold">Logo</div>
           <nav className="ml-6">
@@ -74,23 +74,23 @@ const Header = () => {
           <span className="cursor-pointer">
             <FiMessageCircle className="h-5 w-5" /> {/* Message icon */}
           </span>
-          <span className="cursor-pointer" onClick={() => navigate('/cart')}>
+          <span className="cursor-pointer" onClick={() => navigate('/cart')} title="Giỏ hàng">
             <FiShoppingCart className="h-5 w-5" /> {/* Shopping cart icon */}
           </span>
-          <span className="ml-auto cursor-pointer" onClick={() => navigate('/login')}>
-            <div className="h-10 w-10 flex items-center justify-center text-gray-500 hover:text-gray-700">
+          <span className="ml-auto cursor-pointer" onClick={() => navigate('/login')} title="Đăng nhập">
+            <div className="h-10 w-10 flex items-center justify-center text-black-500 hover:text-gray-700">
               <FiLogIn className="h-6 w-6" /> {/* Biểu tượng đăng nhập */}
             </div>
           </span>
           <span>
-            <div className="ml-auto cursor-pointer" onClick={handleLogout}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="ml-auto cursor-pointer" onClick={handleLogout} title="Đăng xuất">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
             </div>
           </span>
           <span className="cursor-pointer" onClick={() => navigate('#')}> {/* Chuyển hướng tới trang login */}
-            <div className="flex items-center space-x-3 p-2">
+            <div className="flex items-center space-x-3 p-2 bg-white rounded-md" title="Trang cá nhân">
               <img 
                   src={avatarUrl} 
                   alt={name} 
