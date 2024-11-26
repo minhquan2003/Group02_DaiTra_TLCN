@@ -10,13 +10,15 @@ import {
   FiLogIn
 } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+import NotificationIcon from "../../../Notification/NotificationIcon.jsx";
 
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
   const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
   const avatarUrl = userInfo ? userInfo.avatar_url : nonAvata;
   const name = userInfo ? userInfo.name : "Guest!";
+  const id = userInfo ? userInfo._id : null;
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -69,7 +71,8 @@ const Header = () => {
 
         <div className="flex items-center space-x-6">
           <span className="cursor-pointer">
-            <FiBell className="h-5 w-5" /> {/* Notification icon */}
+              <NotificationIcon userId={id}/>
+             {/* <FiBell className="h-5 w-5" /> Notification icon */}
           </span>
           <span className="cursor-pointer">
             <FiMessageCircle className="h-5 w-5" /> {/* Message icon */}

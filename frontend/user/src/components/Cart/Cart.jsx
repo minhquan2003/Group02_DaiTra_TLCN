@@ -85,7 +85,7 @@ const Cart = () => {
                 <span>Tổng Giá:</span>
                 <span>{totalAmount.toLocaleString()} VNĐ</span>
             </div>
-            <button className="mt-5 bg-blue-500 text-white rounded p-2 hover:bg-blue-600" onClick={() => navigate('/checkout', { state: { cartItems } })}>
+            <button className="mt-5 bg-blue-500 text-white rounded p-2 hover:bg-green-500" onClick={() => navigate('/checkout', { state: { cartItems } })}>
                 Tiến Hành Thanh Toán
             </button>
         </div>
