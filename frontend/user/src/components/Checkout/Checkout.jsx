@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
+import {createOrder} from '../../hooks/Orders'
 
 const Checkout = () => {
     const location = useLocation();
@@ -20,10 +21,25 @@ const Checkout = () => {
     const [address, setAddress] = useState('');
     const [email, setEmail] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('cash'); // Mặc định là trả tiền khi nhận hàng
+    const [note, setNote] = useState(''); // State cho ghi chú
+
+    // const uniqueSellers = [...new Set(cartItems.map(item => item.user_seller))];
+
+    // alert(cartItems);
 
     const handleCheckout = () => {
-        alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod}`);
-        navigate('/'); // Chuyển hướng về trang chính
+        cartItems.map(item => (createOrder({
+            user_id_buyer: item.user_buyer,
+            user_id_seller: item.user_seller,
+            name: fullName,
+            phone: phoneNumber,
+            address: address,
+            total_amount: item.product_price * item.product_quantity,
+            note: note
+        })))
+        
+        alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
+        // navigate('/'); // Chuyển hướng về trang chính
     };
 
     return (
@@ -66,6 +82,15 @@ const Checkout = () => {
                         value={email} 
                         onChange={(e) => setEmail(e.target.value)} 
                         className="border rounded p-2 w-full mb-2"
+                    />
+                    
+                    {/* Trường ghi chú */}
+                    <textarea 
+                        placeholder="Ghi chú (nếu có)" 
+                        value={note} 
+                        onChange={(e) => setNote(e.target.value)} 
+                        className="border rounded p-2 w-full mb-2" 
+                        rows="4"
                     />
 
                     <h3 className="text-lg font-semibold mt-4">Phương Thức Thanh Toán</h3>

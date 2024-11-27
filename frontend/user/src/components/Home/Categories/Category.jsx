@@ -27,7 +27,7 @@ const CategoryItem = ({ category }) => {
 // Định nghĩa prop types
 CategoryItem.propTypes = {
   category: PropTypes.shape({
-    id: PropTypes.string.isRequired, // Đảm bảo category có id
+    _id: PropTypes.string.isRequired, // Đảm bảo category có id
     image_url: PropTypes.string.isRequired,
     category_name: PropTypes.string.isRequired,
   }).isRequired

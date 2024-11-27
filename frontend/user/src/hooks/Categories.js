@@ -10,7 +10,7 @@ export const getCategories = () => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get("http://localhost:5555/categories");
-                setCategories(response.data.data);
+                setCategories(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
                 setError("Failed to load products. Please try again later.");
