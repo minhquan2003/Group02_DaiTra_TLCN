@@ -15,10 +15,14 @@ export const useAuth = () => {
       });
       console.log("Login response:", response.data);
       // localStorage.setItem('token', response.data.token);
+      const userResponse = await axios.post(
+        "http://localhost:5555/users/email",
+        { email }
+      );
       setIsAuthenticated(true);
-      window.location.href = "/signup";
+      sessionStorage.setItem("userInfo", JSON.stringify(userResponse.data));
+      window.location.href = "/";
     } catch (err) {
-      alert(err);
       console.error("Login error:", err);
       setError("Invalid credentials. Please try again.");
     }

@@ -75,13 +75,16 @@ const AuthLogin = () => {
             Đăng Nhập
           </button>
 
-          <div className="flex justify-center mt-4">
-            <p className="text-sm text-gray-700">
-              Chưa có tài khoản?{" "}
-              <a href="#" className="text-red-500 hover:underline">
-                Đăng ký
-              </a>
-            </p>
+          <div className="flex justify-around mt-4">
+            <a href="#" className="text-red-500 hover:underline text-sm">
+              Quên mật khẩu?
+            </a>
+            <a
+              href="/signup"
+              className="text-green-500 hover:underline text-sm"
+            >
+              Đăng ký tài khoản.
+            </a>
           </div>
         </form>
       </div>

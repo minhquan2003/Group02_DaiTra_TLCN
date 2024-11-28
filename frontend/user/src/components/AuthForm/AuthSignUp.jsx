@@ -6,6 +6,8 @@ import imageLink from "../../assets/login/login.jpg";
 const AuthSignUp = () => {
   const { signup, error } = useAuth();
   const { name, setName } = useState("");
+  const { address, setAddress } = useState("");
+  const { phone, setPhone } = useState("");
   const { email, setEmail } = useState("");
   const { password, setPassword } = useState("");
   const { confirmpassword, setConfirmPassword } = useState("");
@@ -16,7 +18,7 @@ const AuthSignUp = () => {
       alert("Mật khẩu và xác nhận mật khẩu không khớp!");
       return;
     }
-    signup(name, email, password);
+    signup(name, address, phone, email, password);
   };
   return (
     <div className="flex items-center min-h-screen bg-whitel w-full">
@@ -35,12 +37,36 @@ const AuthSignUp = () => {
           {error && <div className="text-red-500 mb-6">{error}</div>}
 
           <label className="block mb-4">
-            <span className="sr-only">Tên</span>
+            <span className="sr-only">Họ tên</span>
             <input
               type="text"
-              placeholder="Tên"
+              placeholder="Họ tên"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
+              required
+            />
+          </label>
+
+          <label className="block mb-4">
+            <span className="sr-only">Địa chỉ</span>
+            <input
+              type="text"
+              placeholder="Địa chỉ"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
+              required
+            />
+          </label>
+
+          <label className="block mb-4">
+            <span className="sr-only">Số điện thoại</span>
+            <input
+              type="text"
+              placeholder="Số điện thoại"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
               required
             />
