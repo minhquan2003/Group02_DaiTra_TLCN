@@ -39,14 +39,14 @@ const Checkout = () => {
         return; // Dừng thực hiện nếu giỏ hàng trống
     }
 
-    cartItems.forEach(item => {
+    cartItems.forEach(async item => {
         // Kiểm tra thông tin sản phẩm
         if (!item.user_buyer || !item.user_seller || !item.product_price || !item.product_quantity) {
             alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
             return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
         }
 
-        const order = createOrder({
+        const order = await createOrder({
             user_id_buyer: item.user_buyer,
             user_id_seller: item.user_seller,
             name: fullName,
@@ -55,6 +55,8 @@ const Checkout = () => {
             total_amount: item.product_price * item.product_quantity,
             note: note
         });
+
+        alert(JSON.stringify(order))
 
         alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
     });

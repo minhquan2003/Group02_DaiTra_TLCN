@@ -23,7 +23,7 @@ const App = () => (
         path="/admin/notifications"
         element={<AdminLayout></AdminLayout>}
       />
-      <Route path="/admin/regulationr" element={<AdminLayout></AdminLayout>} />
+      <Route path="/admin/regulation" element={<AdminLayout></AdminLayout>} />
     </Routes>
   </Router>
 );
