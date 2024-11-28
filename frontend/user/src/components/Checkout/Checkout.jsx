@@ -28,7 +28,25 @@ const Checkout = () => {
     // alert(cartItems);
 
     const handleCheckout = () => {
-        cartItems.map(item => (createOrder({
+    // Kiểm tra các trường dữ liệu
+    if (!fullName || !phoneNumber || !address) {
+        alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
+        return; // Dừng thực hiện nếu có trường không hợp lệ
+    }
+
+    if (cartItems.length === 0) {
+        alert("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.");
+        return; // Dừng thực hiện nếu giỏ hàng trống
+    }
+
+    cartItems.forEach(item => {
+        // Kiểm tra thông tin sản phẩm
+        if (!item.user_buyer || !item.user_seller || !item.product_price || !item.product_quantity) {
+            alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
+            return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
+        }
+
+        const order = createOrder({
             user_id_buyer: item.user_buyer,
             user_id_seller: item.user_seller,
             name: fullName,
@@ -36,11 +54,11 @@ const Checkout = () => {
             address: address,
             total_amount: item.product_price * item.product_quantity,
             note: note
-        })))
-        
+        });
+
         alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
-        // navigate('/'); // Chuyển hướng về trang chính
-    };
+    });
+};
 
     return (
         <div className="p-5">
@@ -131,7 +149,7 @@ const Checkout = () => {
                     {cartItems.length > 0 ? (
                         <ul className="divide-y divide-gray-300">
                             {cartItems.map(item => (
-                                <li key={item.id} className="flex items-center justify-between py-2">
+                                <li key={item._id} className="flex items-center justify-between py-2">
                                     <div className="flex items-center">
                                         <img 
                                             src={item.product_imageUrl} 

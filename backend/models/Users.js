@@ -39,6 +39,10 @@ const userChema = mongoose.Schema(
             type: String,
             require: true
         },
+        ban:{
+            type: Boolean,
+            default: false
+        },
         // created_at:{
         //     type: Date,
         //     require: true
