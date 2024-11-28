@@ -13,6 +13,17 @@ const App = () => (
           </AdminLayout>
         }
       />
+      <Route path="/admin/users" element={<AdminLayout></AdminLayout>} />
+      <Route path="/admin/posts" element={<AdminLayout></AdminLayout>} />
+      <Route path="/admin/partner" element={<AdminLayout></AdminLayout>} />
+      <Route path="/admin/feedbacks" element={<AdminLayout></AdminLayout>} />
+      <Route path="/admin/feedbacks" element={<AdminLayout></AdminLayout>} />
+      <Route path="/admin/category" element={<AdminLayout></AdminLayout>} />
+      <Route
+        path="/admin/notifications"
+        element={<AdminLayout></AdminLayout>}
+      />
+      <Route path="/admin/regulationr" element={<AdminLayout></AdminLayout>} />
     </Routes>
   </Router>
 );

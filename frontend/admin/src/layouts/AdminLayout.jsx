@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-// src/layouts/AdminLayout.jsx
 import React from "react";
 import LeftSidebar from "../components/LeftSidebar";
 import Navbar from "../components/Navbar";
@@ -10,7 +9,7 @@ const AdminLayout = ({ children }) => {
       <LeftSidebar />
       <div className="flex-1 flex flex-col bg-gray-200">
         <Navbar />
-        {/* <main className="flex-1 p-6 overflow-y-auto">{children}</main> */}
+        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );
