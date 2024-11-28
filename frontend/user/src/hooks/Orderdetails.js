@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const createOrder = async (info) => {
+const createOrderDetail = async (info) => {
     try {
-        const response = await axios.post(`http://localhost:5555/orders`, info);
+        const response = await axios.post(`http://localhost:5555/orderdetails`, info);
         const data = response.data;
         return data;
     } catch (error) {
@@ -11,4 +11,4 @@ const createOrder = async (info) => {
     }
 };
 
-export {createOrder};
+export {createOrderDetail};

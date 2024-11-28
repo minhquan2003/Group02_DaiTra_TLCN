@@ -19,7 +19,7 @@ import adminRouter from "./Admin/routes/Adminroute.js";
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173", // Frontend URL
+  origin: ["http://localhost:5173", "http://localhost:5174"], // Frontend URL
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));

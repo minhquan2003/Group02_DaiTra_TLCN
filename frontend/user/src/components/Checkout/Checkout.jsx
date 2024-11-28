@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import {createOrder} from '../../hooks/Orders'
+import { createOrderDetail } from '../../hooks/Orderdetails';
 
 const Checkout = () => {
     const location = useLocation();
@@ -27,7 +28,7 @@ const Checkout = () => {
 
     // alert(cartItems);
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
     // Kiểm tra các trường dữ liệu
     if (!fullName || !phoneNumber || !address) {
         alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
@@ -39,13 +40,13 @@ const Checkout = () => {
         return; // Dừng thực hiện nếu giỏ hàng trống
     }
 
-    cartItems.forEach(async item => {
+    for (const item of cartItems) {
         // Kiểm tra thông tin sản phẩm
         if (!item.user_buyer || !item.user_seller || !item.product_price || !item.product_quantity) {
             alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
             return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
         }
-
+    
         const order = await createOrder({
             user_id_buyer: item.user_buyer,
             user_id_seller: item.user_seller,
@@ -55,11 +56,20 @@ const Checkout = () => {
             total_amount: item.product_price * item.product_quantity,
             note: note
         });
-
-        alert(JSON.stringify(order))
-
+        
+        for (const itemDetail of cartItems) {
+            if (item.product_id === itemDetail.product_id) {
+                await createOrderDetail({
+                    order_id: order.data._id,
+                    product_id: item.product_id,
+                    quantity: item.product_quantity,
+                    price: item.product_price
+                });
+            }
+        }
+        
         alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
-    });
+    }
 };
 
     return (
