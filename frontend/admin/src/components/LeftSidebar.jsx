@@ -1,5 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {
+  FaTachometerAlt,
+  FaUsers,
+  FaBoxOpen,
+  FaHandshake,
+  FaComments,
+  FaListAlt,
+  FaBell,
+  FaCogs,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 const LeftSidebar = () => {
   return (
@@ -12,57 +23,65 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/"
-              className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
             >
-              Dashboard
+              <FaTachometerAlt className="mr-2" /> Dashboard
             </Link>
           </li>
           <li>
             <Link
-              to="/users"
-              className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+              to="/admin/users"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
             >
-              Users Account
+              <FaUsers className="mr-2" /> Users Account
             </Link>
           </li>
           <li>
             <Link
-              to="/posts"
-              className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+              to="/admin/posts"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
             >
-              Product Posts
+              <FaBoxOpen className="mr-2" /> Product Posts
             </Link>
           </li>
           <li>
             <Link
-              to="/partner"
-              className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+              to="/admin/partner"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
             >
-              Partner
+              <FaHandshake className="mr-2" /> Partner
             </Link>
           </li>
           <li>
             <Link
-              to="/feedbacks"
-              className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+              to="/admin/feedbacks"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
             >
-              Customer Feedbacks
+              <FaComments className="mr-2" /> Customer Feedbacks
             </Link>
           </li>
           <li>
             <Link
-              to="/category"
-              className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+              to="/admin/category"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
             >
-              Category Management
+              <FaListAlt className="mr-2" /> Category Management
             </Link>
           </li>
           <li>
             <Link
-              to="/notifications"
-              className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+              to="/admin/notifications"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
             >
-              Notifications
+              <FaBell className="mr-2" /> Notifications
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/admin/regulation"
+              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+            >
+              <FaListAlt className="mr-2" /> Regulation Management
             </Link>
           </li>
         </ul>
@@ -70,15 +89,15 @@ const LeftSidebar = () => {
       <div className="p-4 bg-white">
         <Link
           to="/settings"
-          className="block text-lg hover:text-blue-500 p-2 rounded text-gray-500"
+          className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
         >
-          Settings
+          <FaCogs className="mr-2" /> Settings
         </Link>
         <Link
           to="/logout"
-          className="block text-lg hover:text-blue-500 p-2 rounded mt-2 text-gray-500"
+          className="flex items-center text-sm hover:text-blue-500 p-2 rounded mt-2 text-gray-500"
         >
-          Log Out
+          <FaSignOutAlt className="mr-2" /> Log Out
         </Link>
       </div>
     </div>
