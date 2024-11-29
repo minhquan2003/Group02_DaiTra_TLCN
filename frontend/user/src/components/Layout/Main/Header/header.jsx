@@ -122,13 +122,18 @@ const Header = () => {
                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                         <button 
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => handleLinkClick('/profile')}>
+                            onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
                             Chỉnh sửa hồ sơ
                         </button>
                         <button 
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => handleLinkClick('/order')}>
+                            onClick={() => handleLinkClick(`/order/${userInfo._id}`)}>
                             Đơn hàng
+                        </button>
+                        <button 
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            onClick={() => handleLinkClick(`/post/${userInfo._id}`)}>
+                            Đăng tin bán hàng
                         </button>
                         {/* Thêm các liên kết khác nếu cần */}
                     </div>

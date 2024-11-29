@@ -6,9 +6,9 @@ import MainLayout from "./components/Layout/Main";
 import ProductDisplay from "./components/ProductDetail/ProductDetail"
 import ProductCardHome from "./pages/Home";
 import Cart from '../src/components/Cart/Cart'
-import Checkout from '../src/components/Checkout/Checkout'
-import Profile from "./components/Profile/EditProfile";
+import Checkout from '../src/components/Checkout/Checkout';
 import ProductByCategogy from "./components/Home/ProductByCategory/ProductByCategogy";
+import EditProfile from "./components/Profile/EditProfile";
 
 const App = () => {
   return (
@@ -22,7 +22,7 @@ const App = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<EditProfile />} />
         </Routes>
       </MainLayout>
     </Router>
