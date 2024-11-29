@@ -1,13 +1,9 @@
 // src/pages/Dashboard.jsx
 import React from "react";
+import PurchaseOverview from "../components/ui/PurchaseOverview.jsx";
 
 const Dashboard = () => {
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p>Welcome to the admin panel.</p>
-    </div>
-  );
+  return <PurchaseOverview />;
 };
 
 export default Dashboard;
