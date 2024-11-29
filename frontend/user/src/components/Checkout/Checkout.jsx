@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import {createOrder} from '../../hooks/Orders'
 import { createOrderDetail } from '../../hooks/Orderdetails';
+import { updateProduct } from '../../hooks/Products';
+import {removeFromCart} from '../../hooks/Carts';
 
 const Checkout = () => {
     const location = useLocation();
@@ -57,16 +59,17 @@ const Checkout = () => {
             note: note
         });
         
-        for (const itemDetail of cartItems) {
-            if (item.product_id === itemDetail.product_id) {
-                await createOrderDetail({
-                    order_id: order.data._id,
-                    product_id: item.product_id,
-                    quantity: item.product_quantity,
-                    price: item.product_price
-                });
-            }
-        }
+        await createOrderDetail({
+            order_id: order.data._id,
+            product_id: item.product_id,
+            quantity: item.product_quantity,
+            price: item.product_price
+        });
+        const quanlity = -item.product_quantity;
+        const id = item.product_id;
+        const idCart = item._id
+        await updateProduct({id, quanlity});
+        await removeFromCart(idCart)
         
         alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
     }

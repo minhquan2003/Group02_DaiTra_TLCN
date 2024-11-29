@@ -7,6 +7,7 @@ import {
     getProductsByUserId,
     searchProductsByName,
     updateOneProduct,
+    updateQuanlityProduct,
     deleteOneProduct
 } from '../services/productService.js'; // Đảm bảo đường dẫn đúng
 
@@ -103,6 +104,19 @@ const updateProduct = async (req, res) => {
     }
 };
 
+const updateQuanlity = async (req, res) => {
+    try {
+        const product = await updateQuanlityProduct(req.body.id, req.body.quanlity);
+        if (!product) {
+            return res.status(404).send({ message: 'Product not found' });
+        }
+        return res.status(200).send(product);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
 // Xóa sản phẩm
 const deleteProduct = async (req, res) => {
     try {
@@ -122,4 +136,7 @@ export { addProduct,
     getProductById, 
     getProductsByIdCategory,
     getProductsByUserIdController,
-    searchProductsByNameController, updateProduct, deleteProduct};
+    searchProductsByNameController, 
+    updateProduct, 
+    updateQuanlity,
+    deleteProduct};

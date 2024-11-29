@@ -1,10 +1,9 @@
 import React from "react";
 import ProductCard from "./ProductCard";
-import {getProducts} from '../../../hooks/Products'
 
-const ListProductCard = () => {
-    const { products, loading, error } = getProducts();
-    
+const ListProductCard = ({ data }) => {
+    const { products, loading, error } = data;
+
     return (
         <div className="flex flex-col items-center">
             <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
@@ -19,7 +18,7 @@ const ListProductCard = () => {
                 <div className="text-red-500 font-bold">Error: {error}</div>
             ) : (
                 <div className="flex flex-wrap mt-2 mb-2">
-                    {products.map((product) => (
+                    {Array.isArray(products) && products.map((product) => (
                         <ProductCard
                             key={product._id}
                             id={product._id}

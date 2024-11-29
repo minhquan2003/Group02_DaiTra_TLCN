@@ -6,6 +6,7 @@ import {addProduct,
     getProductsByUserIdController,
     searchProductsByNameController,
     updateProduct,
+    updateQuanlity,
     deleteProduct} from '../controllers/productController.js'
 
 const productRoute = express.Router();
@@ -16,6 +17,7 @@ productRoute.get('/search', searchProductsByNameController);
 productRoute.get('/:id', getProductById);
 productRoute.get('/category/:categoryId', getProductsByIdCategory);
 productRoute.get('/user/:userId', getProductsByUserIdController);
+productRoute.put('/quanlity', updateQuanlity);
 productRoute.put('/:id', updateProduct);
 productRoute.delete('/:id', deleteProduct);
 

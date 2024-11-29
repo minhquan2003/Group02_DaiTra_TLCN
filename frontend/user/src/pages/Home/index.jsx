@@ -1,12 +1,10 @@
 import React from "react";
-import ListProductCard from "../../components/Home/ListProducts/ListProductCard";
-import ListCategories from "../../components/Home/Categories/ListCategories";
+import Home from "../../components/Home/Home";
 
 const HomePage = () => {
   return (
     <div className="w-screen h-auto flex flex-col justify-center items-center bg-main overflow-x-hidden">
-      <ListCategories />
-      <ListProductCard />
+      <Home />
     </div>
   );
 };
