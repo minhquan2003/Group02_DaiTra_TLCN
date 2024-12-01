@@ -37,7 +37,7 @@ const userChema = mongoose.Schema(
         },
         role:{
             type: String,
-            require: true
+            default: 'user',
         },
         ban:{
             type: Boolean,
@@ -53,7 +53,7 @@ const userChema = mongoose.Schema(
         // },
         status:{
             type: Boolean,
-            require: true
+            default: true
         },
     },
     {

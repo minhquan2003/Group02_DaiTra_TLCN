@@ -6,7 +6,7 @@ const createUser = async (userData) => {
     const newUser = {
         ...userData,
         password: hashedPassword,
-        status: true,
+        // status: true,
     };
     return await Users.create(newUser);
 };

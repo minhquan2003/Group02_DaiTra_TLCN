@@ -1,14 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LoginPage from "./pages/Login";
-import SignupPage from "./pages/SignUp";
+
+import LoginPage from "./pages/Login/index";
+import SignupPage from "./pages/SignUp/index";
 import MainLayout from "./components/Layout/Main";
-import ProductDisplay from "./components/ProductDetail/ProductDetail"
-import ProductCardHome from "./pages/Home";
-import Cart from '../src/components/Cart/Cart'
-import Checkout from '../src/components/Checkout/Checkout';
-import ProductByCategogy from "./components/Home/ProductByCategory/ProductByCategogy";
-import EditProfile from "./components/Profile/EditProfile";
+import ProductDetailPage from "./pages/ProductDetail/index"
+import ProductCardHome from "./pages/Home/index";
+import CartPage from './pages/Cart/index'
+import CheckoutPage from './pages/Checkout/index';
+import ProductByCategogyPage from "./pages/ProductByCategogy/index";
+import EditProfilePage from "./pages/EditProfile/index";
+import ProductUpload from '../src/components/PostProduct/PostProduct'
 
 const App = () => {
   return (
@@ -16,13 +18,14 @@ const App = () => {
       <MainLayout>
         <Routes>
           <Route path="/" element={<ProductCardHome />} />
-          <Route path="/product/:id" element={<ProductDisplay />} />
-          <Route path="/product/category/:categoryId" element={<ProductByCategogy />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/product/category/:categoryId" element={<ProductByCategogyPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/profile/:id" element={<EditProfile />} />
+          <Route path="/profile/:id" element={<EditProfilePage />} />
+          <Route path="/post" element={<ProductUpload />} />
         </Routes>
       </MainLayout>
     </Router>

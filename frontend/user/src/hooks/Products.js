@@ -61,6 +61,17 @@ const updateProduct = async ({id, quanlity}) => {
     }
 };
 
+const addProduct = async (product) => {
+    try {
+        const response = await axios.post(`http://localhost:5555/products`, product);
+        const data = response.data;
+        return data;
+    } catch (error) {
+        console.error('Error add product:', error);
+        throw error;
+    }
+};
+
 const getProductByCategory = (id) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -85,4 +96,4 @@ const getProductByCategory = (id) => {
     return { products, loading, error };
 };
 
-export {getProducts, useProduct, updateProduct, getProductByCategory};
+export {getProducts, useProduct, updateProduct, getProductByCategory, addProduct};
