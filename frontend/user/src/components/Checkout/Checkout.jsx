@@ -9,9 +9,17 @@ import {removeFromCart} from '../../hooks/Carts';
 const Checkout = () => {
     const location = useLocation();
     const navigate = useNavigate();
+
+    let cartItems = []; // Sử dụng let để có thể gán lại giá trị
+
+    if (location.state?.product) {
+        cartItems = [location.state.product]; // Nếu có sản phẩm, tạo một mảng chứa sản phẩm
+    } else {
+        cartItems = location.state?.cartItems || []; // Nếu không, sử dụng cartItems từ state hoặc mảng rỗng
+    }
+    // const product = location.state?.product || [];
+
     
-    // Lấy danh sách sản phẩm từ cart
-    const cartItems = location.state?.cartItems || [];
 
     // Tính tổng tiền
     const totalAmount = cartItems.reduce((acc, item) => 

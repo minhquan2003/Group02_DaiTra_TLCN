@@ -13,7 +13,7 @@ const userChema = mongoose.Schema(
         },
         username:{
             type: String,
-            require: true
+            require: false
         },
         password:{
             type: String,
@@ -33,7 +33,7 @@ const userChema = mongoose.Schema(
         },
         avatar_url:{
             type: String,
-            require: true
+            require: false
         },
         role:{
             type: String,

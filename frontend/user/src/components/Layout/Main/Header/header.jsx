@@ -16,7 +16,7 @@ import NotificationIcon from "../../../Notification/NotificationIcon.jsx";
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
   const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
-  const avatarUrl = userInfo ? userInfo.avatar_url : nonAvata;
+  const avatarUrl = userInfo.avatar_url ? userInfo.avatar_url : nonAvata;
   const name = userInfo ? userInfo.name : "Guest!";
   const id = userInfo ? userInfo._id : null;
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -145,7 +145,11 @@ const Header = () => {
                         </button>
                         <button 
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => navigate(`/post`)}>
+                            onClick={() => {
+                              let path;
+                              if (userInfo) {path = `/post`;} 
+                              else {path = `/`;}
+                              handleLinkClick(path)}}>
                             Đăng tin bán hàng
                         </button>
                         {/* Thêm các liên kết khác nếu cần */}

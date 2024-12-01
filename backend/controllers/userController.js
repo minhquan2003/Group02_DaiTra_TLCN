@@ -14,8 +14,8 @@ const addUser = async (req, res) => {
             !req.body.password ||
             !req.body.name ||
             !req.body.address ||
-            !req.body.phone ||
-            !req.body.avatar_url
+            !req.body.phone
+            // !req.body.avatar_url
             // !req.body.role
             // !req.body.created_at ||
             // !req.body.updated_at ||

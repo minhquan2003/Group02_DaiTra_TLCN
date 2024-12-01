@@ -39,6 +39,18 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    brand: {
+      type: String,
+      required: true, // Bắt buộc
+    },
+    condition: {
+      type: String,
+      required: false, // Mặc định là 'new'
+    },
+    origin: {
+      type: String,
+      required: false, // Không bắt buộc
+    },
   },
   {
     timestamps: true,

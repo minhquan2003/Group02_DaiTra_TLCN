@@ -10,7 +10,8 @@ import CartPage from './pages/Cart/index'
 import CheckoutPage from './pages/Checkout/index';
 import ProductByCategogyPage from "./pages/ProductByCategogy/index";
 import EditProfilePage from "./pages/EditProfile/index";
-import ProductUpload from '../src/components/PostProduct/PostProduct'
+import PostProductPage from './pages/PostProduct/index'
+import Order from "./components/Order/Order";
 
 const App = () => {
   return (
@@ -25,7 +26,8 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/profile/:id" element={<EditProfilePage />} />
-          <Route path="/post" element={<ProductUpload />} />
+          <Route path="/post" element={<PostProductPage />} />
+          <Route path="/order/:id" element={<Order />} />
         </Routes>
       </MainLayout>
     </Router>

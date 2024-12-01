@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {addProduct} from '../../hooks/Products'
+import { addProduct } from '../../hooks/Products';
+import { getCategories } from '../../hooks/Categories';
 
 const ProductUpload = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -11,31 +12,27 @@ const ProductUpload = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [quantity, setQuantity] = useState('');
-    const [categories, setCategories] = useState([]);
+    const [brand, setBrand] = useState(''); // Thêm state cho brand
+    const [condition, setCondition] = useState('new'); // Thêm state cho condition
+    const [origin, setOrigin] = useState(''); // Thêm state cho origin
+    // const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
-
+    const { categories } = getCategories();
+    
     const handleImageChange = (e) => {
         const selectedImage = e.target.files[0];
         setImage(selectedImage);
     };
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get('http://localhost:5555/categories');
-                setCategories(response.data);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
-
-        fetchCategories();
-    }, []);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!image) {
             alert("Vui lòng chọn hình ảnh.");
+            return;
+        }
+
+        if (!name || !description || !price || !quantity || !brand || !selectedCategory) {
+            alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
             return;
         }
 
@@ -60,15 +57,23 @@ const ProductUpload = () => {
                 user_id: userInfo._id,
                 category_id: selectedCategory,
                 image_url: uploadedImageUrl.secure_url, // Sử dụng URL đã tải lên
+                brand, // Thêm brand vào productData
+                condition, // Thêm condition vào productData
+                origin, // Thêm origin vào productData
             };
-            addProduct(productData);
-            alert("Bạn đã đăng sản phẩm thành công. Chờ xét duyệt! " + JSON.stringify(productData))
+            await addProduct(productData);
+            alert("Bạn đã đăng sản phẩm thành công. Chờ xét duyệt! " + JSON.stringify(productData));
+
+            // Reset các giá trị sau khi thêm sản phẩm
             setImage(null);
             setimgUrl('');
             setName('');
             setDescription('');
             setPrice('');
             setQuantity('');
+            setBrand('');
+            setCondition(''); // Reset lại về giá trị mặc định
+            setOrigin('');
             setSelectedCategory('');
         } catch (error) {
             console.error('Error uploading image:', error);
@@ -112,14 +117,14 @@ const ProductUpload = () => {
                         />
                     </div>
                     <div className="mb-4">
-                    <input 
-                        type="text" // Chuyển sang text để dễ dàng định dạng
-                        placeholder="Giá" 
-                        value={price} // Định dạng giá trị
-                        onChange={(e) => setPrice(e.target.value)} // Loại bỏ dấu phẩy
-                        className="border p-2 w-full"
-                        required
-                    />
+                        <input 
+                            type="number" 
+                            placeholder="Giá" 
+                            value={price} 
+                            onChange={(e) => setPrice(e.target.value)} 
+                            className="border p-2 w-full"
+                            required
+                        />
                     </div>
                     <div className="mb-4">
                         <input 
@@ -129,6 +134,37 @@ const ProductUpload = () => {
                             onChange={(e) => setQuantity(e.target.value)} 
                             className="border p-2 w-full"
                             required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <input 
+                            type="text" 
+                            placeholder="Hãng" 
+                            value={brand} 
+                            onChange={(e) => setBrand(e.target.value)} 
+                            className="border p-2 w-full"
+                            required
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <select 
+                            value={condition} 
+                            onChange={(e) => setCondition(e.target.value)} 
+                            className="border text-red p-2 w-full"
+                            required
+                        >
+                            <option value="new">Mới</option>
+                            <option value="used">Đã qua sử dụng</option>
+                            <option value="refurbished">Tái chế</option>
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <input 
+                            type="text" 
+                            placeholder="Xuất xứ" 
+                            value={origin} 
+                            onChange={(e) => setOrigin(e.target.value)} 
+                            className="border p-2 w-full"
                         />
                     </div>
                     <div className="mb-4">
