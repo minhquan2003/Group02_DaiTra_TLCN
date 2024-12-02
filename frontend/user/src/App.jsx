@@ -12,6 +12,8 @@ import ProductByCategogyPage from "./pages/ProductByCategogy/index";
 import EditProfilePage from "./pages/EditProfile/index";
 import PostProductPage from './pages/PostProduct/index'
 import Order from "./components/Order/Order";
+import ProductByName from '../src/components/Search/Search'
+import SellerPage from "./components/SellerPage/SellerPage";
 
 const App = () => {
   return (
@@ -28,6 +30,8 @@ const App = () => {
           <Route path="/profile/:id" element={<EditProfilePage />} />
           <Route path="/post" element={<PostProductPage />} />
           <Route path="/order/:id" element={<Order />} />
+          <Route path="/search" element={<ProductByName />} />
+          <Route path="/seller/:sellerId" element={<SellerPage />} />
         </Routes>
       </MainLayout>
     </Router>

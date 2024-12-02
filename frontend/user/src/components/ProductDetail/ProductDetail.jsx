@@ -18,7 +18,7 @@ const ProductDisplay = () => {
     };
 
     const totalPrice = product ? quantity * product.price : 0;
-
+    
     const handleAddToCart = () => {
         
         addToCart({
@@ -120,6 +120,9 @@ const ProductDisplay = () => {
                                 className="mt-4 ml-40 bg-blue-500 text-white rounded p-2 hover:bg-red-600 transition duration-300"
                             >
                                 Đặt hàng
+                            </button>
+                            <button className="bg-blue-500 mt-4 w-full text-white rounded p-2 hover:bg-blue-600 transition duration-300" onClick={() => navigate(`/seller/${product.user_id}`)}>
+                                Xem trang người bán
                             </button>
                         </div>
                     </>

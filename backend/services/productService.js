@@ -34,7 +34,11 @@ const getProductsByUserId = async (userId) => {
 // Tìm kiếm sản phẩm theo tên
 const searchProductsByName = async (productName) => {
   try {
-      return await Products.find({ name: { $regex: productName, $options: 'i' }, status: true });
+      // Tìm kiếm sản phẩm với tên không phân biệt chữ hoa chữ thường
+      return await Products.find({
+          name: { $regex: productName, $options: 'i' }, // 'i' để không phân biệt chữ hoa chữ thường
+          status: true // Chỉ tìm kiếm sản phẩm còn hoạt động
+      });
   } catch (error) {
       throw new Error(`Unable to search products: ${error.message}`);
   }
