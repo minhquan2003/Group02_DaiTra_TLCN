@@ -14,6 +14,8 @@ import PostProductPage from './pages/PostProduct/index'
 import Order from "./components/Order/Order";
 import ProductByName from '../src/components/Search/Search'
 import SellerPage from "./components/SellerPage/SellerPage";
+import PurchaseOrder from "./components/Order/PurchaseOrder";
+import SalesOder from "./components/Order/SalesOder";
 
 const App = () => {
   return (
@@ -32,6 +34,8 @@ const App = () => {
           <Route path="/order/:id" element={<Order />} />
           <Route path="/search" element={<ProductByName />} />
           <Route path="/seller/:sellerId" element={<SellerPage />} />
+          <Route path="/purchaseOrder/:orderId" element={<PurchaseOrder />} />
+          <Route path="/salesOder/:orderId" element={<SalesOder />} />
         </Routes>
       </MainLayout>
     </Router>

@@ -11,4 +11,17 @@ const createOrder = async (info) => {
     }
 };
 
-export {createOrder};
+const updateOrder = async (id, status_order) => {
+    try {
+        alert(id + "  " + status_order)
+        const response = await axios.put(`http://localhost:5555/orders/${id}`, {status_order});
+        const data = response.data;
+        alert(JSON.stringify(data))
+        return data;
+    } catch (error) {
+        console.error('Error update product:', error);
+        throw error;
+    }
+};
+
+export {createOrder, updateOrder};

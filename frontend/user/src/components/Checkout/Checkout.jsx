@@ -77,7 +77,10 @@ const Checkout = () => {
         const id = item.product_id;
         const idCart = item._id
         await updateProduct({id, quanlity});
-        await removeFromCart(idCart)
+        if(!location.state?.product){
+            await removeFromCart(idCart)
+        }
+        
         
         alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
     }

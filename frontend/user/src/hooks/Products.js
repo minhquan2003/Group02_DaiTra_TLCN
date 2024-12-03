@@ -120,6 +120,17 @@ const getProductByCategory = (id) => {
     return { products, loading, error };
 };
 
+const getProductById = async (id) => {
+    try {
+        const response = await axios.get(`http://localhost:5555/products/${id}`);
+        const product = response.data
+        return product; // Trả về sản phẩm
+    } catch (err) {
+        console.error("Error fetching product:", err);
+        throw new Error("Failed to load product. Please try again later.");
+    }
+};
+
 const getProductByName = (product) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -148,4 +159,4 @@ const getProductByName = (product) => {
     return { products, loading, error };
 };
 
-export {getProducts, useProduct, updateProduct, getProductByCategory, addProduct, getProductByName, getProductsByIdSeller};
+export {getProducts, getProductById, useProduct, updateProduct, getProductByCategory, addProduct, getProductByName, getProductsByIdSeller};

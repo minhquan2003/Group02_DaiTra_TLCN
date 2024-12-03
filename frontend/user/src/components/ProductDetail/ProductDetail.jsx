@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useProduct } from '../../hooks/Products'; // Nhập custom hook
 import { addToCart } from '../../hooks/Carts';
 import BackButton from '../../commons/BackButton';
+import {useReviews} from '../../hooks/Review'; // Import custom hook cho reviews
 
 const ProductDisplay = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
     const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
     const { id } = useParams();
     const { product, loading, error } = useProduct(id); // Sử dụng custom hook
+    const { reviews, loadingReviews, errorReviews } = useReviews(id); // Sử dụng hook cho reviews
     const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
 
@@ -20,7 +22,6 @@ const ProductDisplay = () => {
     const totalPrice = product ? quantity * product.price : 0;
     
     const handleAddToCart = () => {
-        
         addToCart({
             user_buyer: userInfo._id,
             user_seller: product.user_id,
@@ -126,6 +127,43 @@ const ProductDisplay = () => {
                             </button>
                         </div>
                     </>
+                )}
+            </div>
+
+            {/* Hiển thị các review */}
+            <div className="mt-8 p-4 bg-gray-100 rounded-lg">
+                <h2 className="text-xl font-semibold">Đánh giá</h2>
+                {loadingReviews ? (
+                    <p>Loading reviews...</p>
+                ) : errorReviews ? (
+                    <p className="text-red-500">{errorReviews}</p>
+                ) : (
+                    reviews.length > 0 ? (
+                        <ul className="mt-4">
+                            {reviews.map(review => (
+                                <li key={review._id} className="border-b py-2">
+                                    <div>
+                                        <strong>User ID: {review.user_id}</strong>
+                                    </div>
+                                    <div>
+                                        <strong>Rating: {review.rating}/5</strong>
+                                    </div>
+                                    <div>
+                                        <p>{review.comment}</p>
+                                    </div>
+                                    <div className="text-gray-500 text-sm">Ngày
+                                    {" " + new Date(review.createdAt).toLocaleDateString('vi-VN', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>Chưa có đánh giá nào.</p>
+                    )
                 )}
             </div>
         </div>
