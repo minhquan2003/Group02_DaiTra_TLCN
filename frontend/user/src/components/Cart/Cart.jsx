@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getCartItemsByUserId, removeFromCart} from '../../hooks/Carts';
 import {useNavigate } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
+import BackButton from '../../commons/BackButton';
 
 const Cart = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -42,6 +43,11 @@ const Cart = () => {
     }
 
     return (
+        <div className="p-5">
+            <div className="flex items-center mb-4">
+                <BackButton />
+                {/* <h1 className="text-2xl font-bold ml-4">Thanh Toán</h1> */}
+            </div>
         <div className="p-5 border rounded shadow-md">
             <h2 className="text-xl font-bold mb-4">Giỏ Hàng</h2>
             {cartItems && cartItems.length > 0 ? (
@@ -88,6 +94,7 @@ const Cart = () => {
             <button className="mt-5 bg-blue-500 text-white rounded p-2 hover:bg-green-500" onClick={() => navigate('/checkout', { state: { cartItems } })}>
                 Tiến Hành Thanh Toán
             </button>
+        </div>
         </div>
     );
 };

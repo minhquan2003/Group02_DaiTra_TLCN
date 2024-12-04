@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useState, useEffect } from "react";
 import nonAvata from '../../../../assets/img/nonAvata.jpg'
 import {
   FiMenu,
@@ -10,7 +10,7 @@ import {
   FiLogIn
 } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import NotificationIcon from "../../../Notification/NotificationIcon.jsx";
 
 const Header = () => {
@@ -19,11 +19,21 @@ const Header = () => {
   const avatarUrl = userInfo ? userInfo.avatar_url : nonAvata;
   const name = userInfo ? userInfo.name : "Guest!";
   const id = userInfo ? userInfo._id : null;
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('userInfo');
-    navigate('/');
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleLinkClick = (path) => {
+      navigate(path);
+      setDropdownOpen(false); // Đóng dropdown sau khi chọn link
+  };
+
+    const handleLogout = () => {
+      sessionStorage.removeItem('userInfo');
+      navigate('/');
   };
 
   return (
@@ -92,7 +102,7 @@ const Header = () => {
               </svg>
             </div>
           </span>
-          <span className="cursor-pointer" onClick={() => navigate('#')}> {/* Chuyển hướng tới trang login */}
+          <span className="cursor-pointer" onClick={toggleDropdown}> 
             <div className="flex items-center space-x-3 p-2 bg-white rounded-md" title="Trang cá nhân">
               <img 
                   src={avatarUrl} 
@@ -107,6 +117,23 @@ const Header = () => {
                   <span className="font-semibold text-lg text-gray-800">{name}</span>
               </div>
           </div>
+          {dropdownOpen && (
+                <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-white">
+                    <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                        <button 
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            onClick={() => handleLinkClick('/profile')}>
+                            Chỉnh sửa hồ sơ
+                        </button>
+                        <button 
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            onClick={() => handleLinkClick('/order')}>
+                            Đơn hàng
+                        </button>
+                        {/* Thêm các liên kết khác nếu cần */}
+                    </div>
+                </div>
+            )}
           </span>
         </div>
       </header>

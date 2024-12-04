@@ -50,4 +50,39 @@ const useProduct = (id) => {
     return { product, loading, error };
 };
 
-export {getProducts, useProduct};
+const updateProduct = async ({id, quanlity}) => {
+    try {
+        const response = await axios.put(`http://localhost:5555/products/quanlity`, {id, quanlity});
+        const data = response.data;
+        return data;
+    } catch (error) {
+        console.error('Error update product:', error);
+        throw error;
+    }
+};
+
+const getProductByCategory = (id) => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5555/products/category/${id}`);
+                setProducts(response.data);
+            } catch (err) {
+                console.error("Error fetching products:", err);
+                setError("Failed to load products. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    return { products, loading, error };
+};
+
+export {getProducts, useProduct, updateProduct, getProductByCategory};

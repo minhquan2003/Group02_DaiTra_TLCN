@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
+import {createOrder} from '../../hooks/Orders'
+import { createOrderDetail } from '../../hooks/Orderdetails';
+import { updateProduct } from '../../hooks/Products';
+import {removeFromCart} from '../../hooks/Carts';
 
 const Checkout = () => {
     const location = useLocation();
@@ -20,11 +24,56 @@ const Checkout = () => {
     const [address, setAddress] = useState('');
     const [email, setEmail] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('cash'); // Mặc định là trả tiền khi nhận hàng
+    const [note, setNote] = useState(''); // State cho ghi chú
 
-    const handleCheckout = () => {
-        alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod}`);
-        navigate('/'); // Chuyển hướng về trang chính
-    };
+    // const uniqueSellers = [...new Set(cartItems.map(item => item.user_seller))];
+
+    // alert(cartItems);
+
+    const handleCheckout = async () => {
+    // Kiểm tra các trường dữ liệu
+    if (!fullName || !phoneNumber || !address) {
+        alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
+        return; // Dừng thực hiện nếu có trường không hợp lệ
+    }
+
+    if (cartItems.length === 0) {
+        alert("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.");
+        return; // Dừng thực hiện nếu giỏ hàng trống
+    }
+
+    for (const item of cartItems) {
+        // Kiểm tra thông tin sản phẩm
+        if (!item.user_buyer || !item.user_seller || !item.product_price || !item.product_quantity) {
+            alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
+            return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
+        }
+    
+        const order = await createOrder({
+            user_id_buyer: item.user_buyer,
+            user_id_seller: item.user_seller,
+            name: fullName,
+            phone: phoneNumber,
+            address: address,
+            total_amount: item.product_price * item.product_quantity,
+            note: note
+        });
+        
+        await createOrderDetail({
+            order_id: order.data._id,
+            product_id: item.product_id,
+            quantity: item.product_quantity,
+            price: item.product_price
+        });
+        const quanlity = -item.product_quantity;
+        const id = item.product_id;
+        const idCart = item._id
+        await updateProduct({id, quanlity});
+        await removeFromCart(idCart)
+        
+        alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
+    }
+};
 
     return (
         <div className="p-5">
@@ -67,6 +116,15 @@ const Checkout = () => {
                         onChange={(e) => setEmail(e.target.value)} 
                         className="border rounded p-2 w-full mb-2"
                     />
+                    
+                    {/* Trường ghi chú */}
+                    <textarea 
+                        placeholder="Ghi chú (nếu có)" 
+                        value={note} 
+                        onChange={(e) => setNote(e.target.value)} 
+                        className="border rounded p-2 w-full mb-2" 
+                        rows="4"
+                    />
 
                     <h3 className="text-lg font-semibold mt-4">Phương Thức Thanh Toán</h3>
                     <div className="mt-2">
@@ -106,7 +164,7 @@ const Checkout = () => {
                     {cartItems.length > 0 ? (
                         <ul className="divide-y divide-gray-300">
                             {cartItems.map(item => (
-                                <li key={item.id} className="flex items-center justify-between py-2">
+                                <li key={item._id} className="flex items-center justify-between py-2">
                                     <div className="flex items-center">
                                         <img 
                                             src={item.product_imageUrl} 

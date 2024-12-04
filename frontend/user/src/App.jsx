@@ -7,6 +7,8 @@ import ProductDisplay from "./components/ProductDetail/ProductDetail"
 import ProductCardHome from "./pages/Home";
 import Cart from '../src/components/Cart/Cart'
 import Checkout from '../src/components/Checkout/Checkout'
+import Profile from "./components/Profile/EditProfile";
+import ProductByCategogy from "./components/Home/ProductByCategory/ProductByCategogy";
 
 const App = () => {
   return (
@@ -15,10 +17,12 @@ const App = () => {
         <Routes>
           <Route path="/" element={<ProductCardHome />} />
           <Route path="/product/:id" element={<ProductDisplay />} />
+          <Route path="/product/category/:categoryId" element={<ProductByCategogy />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </MainLayout>
     </Router>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 import {useProduct} from '../../hooks/Products'; // Nhập custom hook
 import { addToCart } from '../../hooks/Carts';
+import BackButton from '../../commons/BackButton';
 
 const ProductDisplay = () => {
     const { id } = useParams();
@@ -39,6 +40,11 @@ const ProductDisplay = () => {
     }
 
     return (
+        <div className="p-5">
+            <div className="flex items-center mb-4">
+                <BackButton />
+                {/* <h1 className="text-2xl font-bold ml-4">Thanh Toán</h1> */}
+            </div>
         <div className="flex max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
             {product && (
                 <>
@@ -91,6 +97,7 @@ const ProductDisplay = () => {
                     </div>
                 </>
             )}
+        </div>
         </div>
     );
 };

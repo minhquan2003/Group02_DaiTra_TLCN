@@ -47,6 +47,14 @@ const updateOneProduct = async (id, updateData) => {
       { new: true }
     );
   };
+
+const updateQuanlityProduct = async (id, quanlity) => {
+  return await Products.findByIdAndUpdate(
+    id,
+    { $inc: { quantity: quanlity } },
+    { new: true }
+  );
+};
   
 const deleteOneProduct = async (id) => {
   return await Products.findByIdAndUpdate(
@@ -63,4 +71,5 @@ export {createProduct,
   getProductsByUserId,
   searchProductsByName, 
   updateOneProduct, 
+  updateQuanlityProduct,
   deleteOneProduct}
