@@ -57,7 +57,7 @@ const Order = () => {
                 <div>
                     <h2 className="text-xl font-bold">Danh Sách Đơn Bán</h2>
                     <div className="flex mb-4">
-                        {['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'].map(status => (
+                        {['Pending', 'Confirmed', 'Packaged', 'Shipping', 'Success', 'Cancelled'].map(status => (
                             <button
                                 key={status}
                                 className={`px-4 py-2 ${activeSellTab === status ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}

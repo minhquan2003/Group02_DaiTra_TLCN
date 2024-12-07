@@ -39,6 +39,10 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    approve: {
+      type: Boolean,
+      default: false,
+    },
     brand: {
       type: String,
       required: true, // Bắt buộc

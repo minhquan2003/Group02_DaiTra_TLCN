@@ -1,7 +1,8 @@
 import {createNotification, 
     getActiveNotifications, 
     getActiveNotificationsByUserId, 
-    deleteNotification} from '../services/notificationService.js';
+    deleteNotification,
+    updateNotification } from '../services/notificationService.js';
 
 const addNotification = async (req, res) => {
     try {
@@ -43,4 +44,22 @@ const removeNotification = async (req, res) => {
     }
 };
 
-export {addNotification, getNotifications, getNotificationsUserId, removeNotification}
+const updateNotificationController = async (req, res) => {
+  const { notificationId, readed } = req.body;
+
+  try {
+      const updateData = { readed };
+
+      const updatedNotification = await updateNotification(notificationId, updateData);
+      
+      if (!updatedNotification) {
+          return res.status(404).json({ message: 'Notification not found' });
+      }
+
+      return res.status(200).json(updatedNotification);
+  } catch (error) {
+      return res.status(500).json({ message: error.message });
+  }
+};
+
+export {addNotification, getNotifications, getNotificationsUserId, removeNotification, updateNotificationController}

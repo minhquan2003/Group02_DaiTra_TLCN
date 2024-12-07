@@ -3,10 +3,13 @@ import axios from 'axios';
 import { json, useParams } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import { getProductById } from '../../hooks/Products';
-import { updateOrder } from '../../hooks/Orders';
+import { updateStatusOrder } from '../../hooks/Orders';
+import { createNotification } from '../../hooks/Notifications';
 
 const SalesOder = () => {
     const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
+    const userInfoString = sessionStorage.getItem('userInfo');
+    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
     
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState(null);
@@ -54,19 +57,33 @@ const SalesOder = () => {
         });
     };
 
-    const handleChangeStatus = (e) => {
+    const handleChangeStatus = async (e) => {
         e.preventDefault();
         let status_order = "";
         if(order.status_order == 'Pending'){
+            if(order.user_id_buyer){
+                const aa = await createNotification({
+                    user_id_created: userInfo._id,
+                    user_id_receive: order.user_id_buyer,
+                    message: `Đơn hàng ${product.name} của bạn đã được xác nhận thành công.`
+                })
+            }
             status_order = 'Confirmed';
         }else if(order.status_order == 'Confirmed'){
-            status_order = 'Shipped';
-        }else if(order.status_order == 'Shipped'){
-            status_order = 'Delivered';
-        }else if(order.status_order == 'Delivered'){
+            status_order = 'Packaged';
+        }else if(order.status_order == 'Packaged'){
+            status_order = 'Shipping';
+        }else if(order.status_order == 'Shipping'){
+            if(order.user_id_buyer){
+                const aa = await createNotification({
+                    user_id_created: userInfo._id,
+                    user_id_receive: order.user_id_buyer,
+                    message: `Đơn hàng ${product.name} của bạn đã được giao thành công.`
+                })
+            }
             status_order = 'Success';
         }
-        const aa = updateOrder(orderId, status_order)
+        const aa = updateStatusOrder(orderId, status_order)
     };
 
     if (loading) {
@@ -108,25 +125,48 @@ const SalesOder = () => {
                     </div>
                 </div>
                 <div className="bg-white w-1/2 rounded-lg p-6">
-                    <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
+                    <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2>
                     {order.status_order === 'Pending' ? (
                         <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
                             Xác nhận đơn hàng
                         </button>
                     ) : order.status_order === 'Confirmed' ? (
+                        
+                        <div className="bg-red-400 rounded-lg shadow-md">
+                            <div>
+                                <button 
+                                    onClick={handleChangeStatus} 
+                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Xác nhận đơn hàng
+                                </button>
+                            </div>                            
+                            <div>
+                                <button 
+                                    onClick={handleChangeStatus} 
+                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Xác nhận đơn hàng
+                                </button>
+                            </div>
+                        </div>
+                        
+                    ) : order.status_order === 'Packaged' ? (
                         <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
                             Xác nhận đơn hàng
                         </button>
-                    ) : order.status_order === 'Shipped' ? (
+                    ) : order.status_order === 'Shipping' ? (
                         <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
                             Xác nhận đơn hàng
                         </button>
-                    ) : order.status_order === 'Delivered' ? (
-                        <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                            Xác nhận đơn hàng
+                    ) : order.status_order === 'Success' ? (
+                        <button  className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
+                            Thông báo giao hàng thành công
                         </button>
-                    ) : order.status_order === 'Cancelled' ? (
-                        <p>Đơn hàng đã bị hủy. Không thể đánh giá sản phẩm.</p>
+                    ) : order.status_order === 'Cancelled' ?(
+                        <button  className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
+                            Thông báo nguyên nhân huỷ đơn hàng
+                        </button>
                     ) : null}
                 </div>
             </div>

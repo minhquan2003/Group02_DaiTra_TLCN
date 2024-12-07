@@ -6,37 +6,45 @@ import NotificationPopup from './NotificationPopup.jsx'; // Đường dẫn đ�
 const NotificationIcon = ({ userId }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const togglePopup = () => {
         setIsOpen(!isOpen);
     };
 
     useEffect(() => {
-        if (isOpen) {
-            if (userId) {
-                fetchNotifications(userId);
-            } else {
-                // Nếu userId là null, cập nhật notifications thành mảng rỗng
-                setNotifications([]);
-            }
+        if (userId) {
+            fetchNotifications(userId);
+        } else {
+            setNotifications([]);
+            setUnreadCount(0);
         }
-    }, [isOpen, userId]);
+    }, [userId, unreadCount]);
 
     const fetchNotifications = async (userId) => {
         try {
             const response = await axios.get(`http://localhost:5555/notifications/user/${userId}`);
             const data = response.data;
             setNotifications(data);
+
+            const unread = data.filter(notification => !notification.readed).length;
+            setUnreadCount(unread);
         } catch (error) {
             console.error("Error fetching notifications:", error);
-            setNotifications([]); // Nếu có lỗi, có thể đặt notifications thành mảng rỗng
+            setNotifications([]);
+            setUnreadCount(0);
         }
     };
 
     return (
         <div className="relative">
             <span className="cursor-pointer" onClick={togglePopup}>
-                <FiBell className="h-5 w-5" /> {/* Notification icon */}
+                <FiBell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1">
+                        {unreadCount}
+                    </span>
+                )}
             </span>
 
             {isOpen && (

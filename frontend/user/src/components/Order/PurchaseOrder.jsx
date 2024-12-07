@@ -36,6 +36,8 @@ const PurchaseOrder = () => {
                 const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
 
+                
+
                 // Lấy thông tin chi tiết đơn hàng
                 const detailsResponse = await axios.get(`http://localhost:5555/orderDetails/order/${orderId}`);
                 const detailsData = detailsResponse.data.data;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import {createOrder} from '../../hooks/Orders'
@@ -10,15 +11,13 @@ const Checkout = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    let cartItems = []; // Sử dụng let để có thể gán lại giá trị
+    let cartItems = [];
 
     if (location.state?.product) {
-        cartItems = [location.state.product]; // Nếu có sản phẩm, tạo một mảng chứa sản phẩm
+        cartItems = [location.state.product];
     } else {
-        cartItems = location.state?.cartItems || []; // Nếu không, sử dụng cartItems từ state hoặc mảng rỗng
+        cartItems = location.state?.cartItems || [];
     }
-    // const product = location.state?.product || [];
-
     
 
     // Tính tổng tiền
@@ -34,57 +33,75 @@ const Checkout = () => {
     const [paymentMethod, setPaymentMethod] = useState('cash'); // Mặc định là trả tiền khi nhận hàng
     const [note, setNote] = useState(''); // State cho ghi chú
 
-    // const uniqueSellers = [...new Set(cartItems.map(item => item.user_seller))];
-
-    // alert(cartItems);
-
     const handleCheckout = async () => {
-    // Kiểm tra các trường dữ liệu
-    if (!fullName || !phoneNumber || !address) {
-        alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
-        return; // Dừng thực hiện nếu có trường không hợp lệ
-    }
-
-    if (cartItems.length === 0) {
-        alert("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.");
-        return; // Dừng thực hiện nếu giỏ hàng trống
-    }
-
-    for (const item of cartItems) {
-        // Kiểm tra thông tin sản phẩm
-        if (!item.user_buyer || !item.user_seller || !item.product_price || !item.product_quantity) {
-            alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
-            return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
+        // Kiểm tra các trường dữ liệu
+        if (!fullName || !phoneNumber || !address) {
+            alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
+            return; // Dừng thực hiện nếu có trường không hợp lệ
         }
     
+        if (cartItems.length === 0) {
+            alert("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.");
+            return; // Dừng thực hiện nếu giỏ hàng trống
+        }
+    
+        // Tạo đơn hàng
         const order = await createOrder({
-            user_id_buyer: item.user_buyer,
-            user_id_seller: item.user_seller,
+            user_id_buyer: cartItems[0].user_buyer,
+            user_id_seller: cartItems[0].user_seller,
             name: fullName,
             phone: phoneNumber,
             address: address,
-            total_amount: item.product_price * item.product_quantity,
-            note: note
+            total_amount: totalAmount, // Tổng tiền
+            note: note,
         });
-        
-        await createOrderDetail({
-            order_id: order.data._id,
-            product_id: item.product_id,
-            quantity: item.product_quantity,
-            price: item.product_price
-        });
-        const quanlity = -item.product_quantity;
-        const id = item.product_id;
-        const idCart = item._id
-        await updateProduct({id, quanlity});
-        if(!location.state?.product){
-            await removeFromCart(idCart)
+    
+        if (paymentMethod === 'momo') {
+            // Gọi API thanh toán Momo
+            try {
+                const paymentResponse = await axios.post('http://localhost:5555/payment/momo', {
+                    amount: totalAmount,
+                    orderInfo: `Đơn hàng từ ${fullName}`,
+                    orderId: order.data._id, // ID đơn hàng
+                });
+    
+                // Chuyển hướng đến trang thanh toán Momo
+                if (paymentResponse.data.payUrl) {
+                    window.location.href = paymentResponse.data.payUrl; // Chuyển hướng đến Momo để thanh toán
+                }
+            } catch (error) {
+                console.error('Error creating payment:', error);
+                alert('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.' + error);
+            }
+        } else {
+            // Nếu phương thức thanh toán là trả tiền khi nhận hàng
+            for (const item of cartItems) {
+                // Kiểm tra thông tin sản phẩm
+                if (!item.user_seller || !item.product_price || !item.product_quantity) {
+                    alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
+                    return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
+                }
+    
+                await createOrderDetail({
+                    order_id: order.data._id,
+                    product_id: item.product_id,
+                    quantity: item.product_quantity,
+                    price: item.product_price,
+                });
+    
+                const quanlity = -item.product_quantity;
+                const id = item.product_id;
+                const idCart = item._id;
+                await updateProduct({ id, quanlity });
+                if (!location.state?.product) {
+                    await removeFromCart(idCart);
+                }
+            }
+    
+            alert(`Đơn hàng đã được tạo thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
+            navigate('/');
         }
-        
-        
-        alert(`Thanh toán thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
-    }
-};
+    };
 
     return (
         <div className="p-5">
@@ -139,7 +156,7 @@ const Checkout = () => {
 
                     <h3 className="text-lg font-semibold mt-4">Phương Thức Thanh Toán</h3>
                     <div className="mt-2">
-                        <label>
+                        {/* <label>
                             <input 
                                 type="radio" 
                                 value="qr" 
@@ -147,15 +164,15 @@ const Checkout = () => {
                                 onChange={() => setPaymentMethod('qr')} 
                             />
                             Quét Mã QR
-                        </label>
+                        </label> */}
                         <label className="ml-4">
                             <input 
                                 type="radio" 
-                                value="transfer" 
-                                checked={paymentMethod === 'transfer'} 
-                                onChange={() => setPaymentMethod('transfer')} 
+                                value="momo" 
+                                checked={paymentMethod === 'momo'} 
+                                onChange={() => setPaymentMethod('momo')} 
                             />
-                            Chuyển Khoản
+                            Thanh toán MoMo
                         </label>
                         <label className="ml-4">
                             <input 

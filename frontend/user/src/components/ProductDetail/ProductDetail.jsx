@@ -9,6 +9,7 @@ const ProductDisplay = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
     const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
     const { id } = useParams();
+    const user_buyer_id = userInfo ? userInfo._id : '';
     const { product, loading, error } = useProduct(id); // Sử dụng custom hook
     const { reviews, loadingReviews, errorReviews } = useReviews(id); // Sử dụng hook cho reviews
     const [quantity, setQuantity] = useState(1);
@@ -22,7 +23,7 @@ const ProductDisplay = () => {
     const totalPrice = product ? quantity * product.price : 0;
     
     const handleAddToCart = () => {
-        addToCart({
+        {userInfo ? addToCart({
             user_buyer: userInfo._id,
             user_seller: product.user_id,
             product_id: product._id,
@@ -30,7 +31,9 @@ const ProductDisplay = () => {
             product_quantity: quantity,
             product_price: product.price,
             product_imageUrl: product.image_url,
-        });
+        }) : 
+        alert("Bạn chưa đăng nhập!")}
+        
     }
 
     if (error) {
@@ -109,7 +112,7 @@ const ProductDisplay = () => {
                             <button 
                                 onClick={() => navigate('/checkout', { state: { 
                                     product: {
-                                        user_buyer: userInfo._id,
+                                        user_buyer: user_buyer_id,
                                         user_seller: product.user_id,
                                         product_id: product._id,
                                         product_name: product.name,

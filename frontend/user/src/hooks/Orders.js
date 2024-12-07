@@ -11,12 +11,10 @@ const createOrder = async (info) => {
     }
 };
 
-const updateOrder = async (id, status_order) => {
+const updateStatusOrder = async (id, status_order) => {
     try {
-        alert(id + "  " + status_order)
         const response = await axios.put(`http://localhost:5555/orders/${id}`, {status_order});
         const data = response.data;
-        alert(JSON.stringify(data))
         return data;
     } catch (error) {
         console.error('Error update product:', error);
@@ -24,4 +22,15 @@ const updateOrder = async (id, status_order) => {
     }
 };
 
-export {createOrder, updateOrder};
+const updateOrder = async (id, order) => {
+    try {
+        const response = await axios.put(`http://localhost:5555/orders/${id}`, order);
+        const data = response.data;
+        return data;
+    } catch (error) {
+        console.error('Error update product:', error);
+        throw error;
+    }
+};
+
+export {createOrder, updateStatusOrder, updateOrder};
