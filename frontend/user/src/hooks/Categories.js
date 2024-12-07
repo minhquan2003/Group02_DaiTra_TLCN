@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export const getCategories = () => {
+const getCategories = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -21,7 +21,8 @@ export const getCategories = () => {
 
         fetchCategories();
     }, []);
-
+    // alert(JSON.stringify(categories))
     return { categories, loading, error };
 };
 
+export {getCategories};

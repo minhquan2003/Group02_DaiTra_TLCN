@@ -1,7 +1,7 @@
 import {
-  updateProductStatusToTrue,
+  updateProductApproveToTrue,
   getProducts,
-  updateProductStatusToFalse,
+  updateProductApproveToFalse,
   deleteProduct,
   getRequestProducts,
 } from "../../services/product/adminProductService.js";
@@ -11,7 +11,7 @@ const approveProduct = async (req, res) => {
   const { productId } = req.params;
 
   try {
-    const updatedProduct = await updateProductStatusToTrue(productId);
+    const updatedProduct = await updateProductApproveToTrue(productId);
 
     res.status(200).json({
       message: "Product status updated successfully",
@@ -29,7 +29,7 @@ const approveProduct = async (req, res) => {
 const hideProduct = async (req, res) => {
   const { productId } = req.params;
   try {
-    const updatedProduct = await updateProductStatusToFalse(productId);
+    const updatedProduct = await updateProductApproveToFalse(productId);
     res.status(200).json({
       message: "Product hidden successfully",
       product: updatedProduct,

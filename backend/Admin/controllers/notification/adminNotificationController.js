@@ -1,84 +1,68 @@
 import {
-  createNotification,
+  getAllActiveNotifications,
   deleteNotification,
   updateNotification,
-  getAllNotifications,
+  createNotificationToAll,
+  createNotificationByRole,
 } from "../../services/notification/adminNotificationService.js";
 
-// Thêm mới thông báo
-const addNotification = async (req, res) => {
+// Lấy tất cả thông báo có status là true
+export const getNotifications = async (req, res) => {
   try {
-    const notification = await createNotification(req.body);
-    res.status(201).json({
-      message: "Notification created successfully",
-      data: notification,
-    });
+    const notifications = await getAllActiveNotifications();
+    res.status(200).json(notifications);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to create notification",
-      error: error.message,
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Xóa thông báo
-const removeNotification = async (req, res) => {
-  const { id } = req.params;
+// Xóa thông báo (đổi status thành false)
+export const deleteNotificationbyId = async (req, res) => {
   try {
-    await deleteNotification(id);
-    res.status(200).json({
-      message: "Notification deleted successfully",
-    });
+    const { id } = req.params;
+    const notification = await deleteNotification(id);
+    res.status(200).json(notification);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to delete notification",
-      error: error.message,
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Sửa thông báo
-const editNotification = async (req, res) => {
-  const { id } = req.params;
+// Chỉnh sửa thông báo
+export const updateNotificationbyId = async (req, res) => {
   try {
-    const updatedNotification = await updateNotification(id, req.body);
-    res.status(200).json({
-      message: "Notification updated successfully",
-      data: updatedNotification,
-    });
+    const { id } = req.params;
+    const updates = req.body;
+    const updatedNotification = await updateNotification(id, updates);
+    res.status(200).json(updatedNotification);
   } catch (error) {
-    res.status(500).json({
-      message: "Failed to update notification",
-      error: error.message,
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Lấy tất cả thông báo có phân trang
-const getNotifications = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
+// Tạo thông báo đến mọi người
+export const createNotificationAll = async (req, res) => {
   try {
-    const result = await getAllNotifications(parseInt(page), parseInt(limit));
-
-    res.status(200).json({
-      success: true,
-      total: result.total,
-      totalPages: result.totalPages,
-      currentPage: result.currentPage,
-      data: result.notifications,
-    });
+    const { message } = req.body;
+    const userIdCreated = req.user._id; // Lấy user từ middleware auth
+    const notification = await createNotificationToAll(message, userIdCreated);
+    res.status(201).json(notification);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch notifications",
-      error: error.message,
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 
-export {
-  addNotification,
-  removeNotification,
-  editNotification,
-  getNotifications,
+// Tạo thông báo đến những người có role khác nhau
+export const createNotificationRole = async (req, res) => {
+  try {
+    const { message, role } = req.body;
+    const userIdCreated = req.user._id; // Lấy user từ middleware auth
+    const notifications = await createNotificationByRole(
+      message,
+      userIdCreated,
+      role
+    );
+    res.status(201).json(notifications);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

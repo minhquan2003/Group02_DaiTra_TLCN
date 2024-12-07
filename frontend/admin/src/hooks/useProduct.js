@@ -8,7 +8,7 @@ const useProducts = (type) => {
   useEffect(() => {
     const fetchProducts = async () => {
       let url = "";
-      if (type === "pending") {
+      if (type === "request") {
         url = "http://localhost:5555/admin/pending-products"; // Fetch pending products
       } else if (type === "approved") {
         url = "http://localhost:5555/admin/products"; // Fetch approved products
@@ -19,8 +19,11 @@ const useProducts = (type) => {
         const data = await response.json();
         if (data.success) {
           const filteredProducts = data.data.filter(
-            (product) => product.status === (type === "approved" ? true : false)
+            (product) =>
+              product.status === true &&
+              product.approve === (type === "approved" ? true : false)
           );
+
           setProducts(filteredProducts);
         } else {
           setError("Failed to load products.");

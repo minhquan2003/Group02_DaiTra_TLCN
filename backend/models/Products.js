@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      default: "",
     },
     price: {
       type: Number,
@@ -33,12 +33,27 @@ const productSchema = new mongoose.Schema(
     },
     user_id: {
       type: String,
-      required: true,
+      required: false,
     },
     status: {
       type: Boolean,
+      default: true,
+    },
+    approve: {
+      type: Boolean,
       default: false,
-      required: true,
+    },
+    brand: {
+      type: String,
+      required: true, // Bắt buộc
+    },
+    condition: {
+      type: String,
+      required: false, // Mặc định là 'new'
+    },
+    origin: {
+      type: String,
+      required: false, // Không bắt buộc
     },
   },
   {

@@ -3,6 +3,10 @@ import AdminLayout from "./layouts/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import AccountManage from "./pages/AccountManage";
 import ProductManage from "./pages/ProductManage";
+import FeedbackManage from "./pages/FeedbackManage";
+import CategoryManage from "./pages/CategoryManage";
+import NotificationManage from "./pages/NotificationManage";
+import RegulationManage from "./pages/RegulationManage";
 
 const App = () => (
   <Router>
@@ -32,14 +36,39 @@ const App = () => (
         }
       />
       <Route path="/admin/partner" element={<AdminLayout></AdminLayout>} />
+      <Route
+        path="/admin/feedbacks"
+        element={
+          <AdminLayout>
+            <FeedbackManage />
+          </AdminLayout>
+        }
+      />
       <Route path="/admin/feedbacks" element={<AdminLayout></AdminLayout>} />
-      <Route path="/admin/feedbacks" element={<AdminLayout></AdminLayout>} />
-      <Route path="/admin/category" element={<AdminLayout></AdminLayout>} />
+      <Route
+        path="/admin/category"
+        element={
+          <AdminLayout>
+            <CategoryManage />
+          </AdminLayout>
+        }
+      />
       <Route
         path="/admin/notifications"
-        element={<AdminLayout></AdminLayout>}
+        element={
+          <AdminLayout>
+            <NotificationManage />
+          </AdminLayout>
+        }
       />
-      <Route path="/admin/regulation" element={<AdminLayout></AdminLayout>} />
+      <Route
+        path="/admin/regulation"
+        element={
+          <AdminLayout>
+            <RegulationManage />
+          </AdminLayout>
+        }
+      />
     </Routes>
   </Router>
 );

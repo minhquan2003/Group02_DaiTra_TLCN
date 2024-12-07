@@ -1,16 +1,16 @@
 import Regulations from "../../../models/Regulations.js";
 
-// Lấy tất cả quy định với phân trang
+// Lấy tất cả quy định với phân trang, chỉ lấy quy định có status là true
 const getAllRegulations = async (page = 1, limit = 10) => {
   try {
     const skip = (page - 1) * limit;
 
-    const regulations = await Regulations.find()
+    const regulations = await Regulations.find({ status: true }) // Lọc theo status
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 }); // Sắp xếp theo thời gian mới nhất
 
-    const totalRegulations = await Regulations.countDocuments();
+    const totalRegulations = await Regulations.countDocuments({ status: true }); // Đếm chỉ các quy định có status = true
 
     return {
       regulations,
@@ -50,14 +50,18 @@ const updateRegulation = async (id, data) => {
   }
 };
 
-// Xóa quy định theo ID
+// Xóa (cập nhật trạng thái) quy định theo ID
 const deleteRegulation = async (id) => {
   try {
-    const regulation = await Regulations.findByIdAndDelete(id);
+    const regulation = await Regulations.findById(id);
 
     if (!regulation) {
       throw new Error("Regulation not found");
     }
+
+    // Cập nhật trạng thái thành false thay vì xóa
+    regulation.status = false;
+    await regulation.save();
 
     return regulation;
   } catch (error) {

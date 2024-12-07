@@ -14,15 +14,15 @@ const addUser = async (req, res) => {
             !req.body.password ||
             !req.body.name ||
             !req.body.address ||
-            !req.body.phone ||
-            !req.body.avatar_url ||
-            !req.body.role
+            !req.body.phone
+            // !req.body.avatar_url
+            // !req.body.role
             // !req.body.created_at ||
             // !req.body.updated_at ||
             // !req.body.status
         ) {
             return res.status(400).send({
-                message: 'Send all required fields: email, username, password, name, address, phone, avatar_url, role, created_at, updated_at, status',
+                message: 'Send all required fields: email, username, password, name, address, phone, avatar_url',
             });
         }
 

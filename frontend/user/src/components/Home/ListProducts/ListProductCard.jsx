@@ -3,6 +3,7 @@ import ProductCard from "./ProductCard";
 
 const ListProductCard = ({ data }) => {
     const { products, loading, error } = data;
+    // alert("ba " + JSON.stringify(products))
 
     return (
         <div className="flex flex-col items-center">

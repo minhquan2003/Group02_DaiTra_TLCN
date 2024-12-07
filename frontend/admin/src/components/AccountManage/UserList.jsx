@@ -57,7 +57,7 @@ const UserList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-white rounded-md">
+    <div className="container mx-auto p-4 bg-white rounded-md mt-4">
       <h1 className="text-lg font-bold">Total Accounts: {accounts}</h1>
       <h2 className="text-lg font-bold">Banned Accounts: {bans}</h2>
       <input

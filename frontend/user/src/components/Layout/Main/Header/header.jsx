@@ -16,9 +16,10 @@ import NotificationIcon from "../../../Notification/NotificationIcon.jsx";
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
   const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
-  const avatarUrl = userInfo ? userInfo.avatar_url : nonAvata;
+  const avatarUrl = (userInfo && userInfo.avatar_url) ? userInfo.avatar_url : nonAvata;
   const name = userInfo ? userInfo.name : "Guest!";
   const id = userInfo ? userInfo._id : null;
+  const [nameProduct, setNamProduct] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -27,13 +28,26 @@ const Header = () => {
   };
 
   const handleLinkClick = (path) => {
+    if(userInfo){
       navigate(path);
-      setDropdownOpen(false); // Đóng dropdown sau khi chọn link
+    }else{
+      alert("Bạn chưa đăng nhập!")
+    }
+    setDropdownOpen(false);
+       // Đóng dropdown sau khi chọn link
   };
 
     const handleLogout = () => {
       sessionStorage.removeItem('userInfo');
       navigate('/');
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); // Ngăn chặn việc làm mới trang
+    if (nameProduct.trim()) {
+      setNamProduct('')
+      navigate(`/search?name=${nameProduct}`); // Điều hướng đến trang tìm kiếm
+    }
   };
 
   return (
@@ -69,15 +83,18 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center bg-gray-100 rounded-md overflow-hidden w-[40vw]">
-          <input
-            type="text"
-            placeholder="Từ khóa"
-            className="bg-gray-100 p-2 w-full text-gray-700 focus:outline-none"
-          />
-          <button className="bg-gray-100 p-2 text-black">
-            <FiSearch className="h-5 w-5" />
-          </button>
+            <input
+                type="text"
+                placeholder="Từ khóa"
+                value={nameProduct}
+                onChange={(e) => setNamProduct(e.target.value)}
+                className="bg-gray-100 p-2 w-full text-gray-700 focus:outline-none"
+            />
+            <button className="bg-gray-100 p-2 text-black" onClick={handleSearchSubmit}>
+                <FiSearch className="h-5 w-5" />
+            </button>
         </div>
+
 
         <div className="flex items-center space-x-6">
           <span className="cursor-pointer">
@@ -122,13 +139,30 @@ const Header = () => {
                     <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                         <button 
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => handleLinkClick('/profile')}>
+                            onClick={() => {
+                              let path;
+                              if (userInfo) {path = `/profile/${userInfo._id}`;} 
+                              else {path = `/`;}
+                              handleLinkClick(path)}}>
                             Chỉnh sửa hồ sơ
                         </button>
                         <button 
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => handleLinkClick('/order')}>
+                            onClick={() => {
+                              let path;
+                              if (userInfo) {path = `/order/${userInfo._id}`;} 
+                              else {path = `/`;}
+                              handleLinkClick(path)}}>
                             Đơn hàng
+                        </button>
+                        <button 
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            onClick={() => {
+                              let path;
+                              if (userInfo) {path = `/post`;} 
+                              else {path = `/`;}
+                              handleLinkClick(path)}}>
+                            Đăng tin bán hàng
                         </button>
                         {/* Thêm các liên kết khác nếu cần */}
                     </div>

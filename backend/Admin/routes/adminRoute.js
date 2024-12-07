@@ -27,10 +27,11 @@ import {
 } from "../controllers/category/adminCategoryController.js";
 
 import {
-  addNotification,
-  removeNotification,
-  editNotification,
   getNotifications,
+  deleteNotificationbyId,
+  updateNotificationbyId,
+  createNotificationAll,
+  createNotificationRole,
 } from "../controllers/notification/adminNotificationController.js";
 
 import {
@@ -39,6 +40,8 @@ import {
   editRegulation,
   removeRegulation,
 } from "../controllers/regulation/adminRegulationController.js";
+
+import { getStatisticsByTimeController } from "../controllers/chart/adminChartController.js";
 
 const adminRouter = express.Router();
 
@@ -62,14 +65,17 @@ adminRouter.post("/category/", createCategory);
 adminRouter.put("/category/:id", editCategory);
 adminRouter.delete("/category/:id", removeCategory);
 
-adminRouter.post("/notification/", addNotification);
-adminRouter.delete("/notification/:id", removeNotification);
-adminRouter.put("/notification/:id", editNotification);
+adminRouter.post("/notification-role/", createNotificationRole);
+adminRouter.post("/notification-all/", createNotificationAll);
+adminRouter.delete("/notification/:id", deleteNotificationbyId);
+adminRouter.put("/notification/:id", updateNotificationbyId);
 adminRouter.get("/notifications/", getNotifications);
 
 adminRouter.get("/regulations/", getRegulations);
 adminRouter.post("/regulation/", addRegulation);
 adminRouter.put("/regulation/:id", editRegulation);
 adminRouter.delete("/regulation/:id", removeRegulation);
+
+adminRouter.get("/statistics-by-time", getStatisticsByTimeController);
 
 export default adminRouter;

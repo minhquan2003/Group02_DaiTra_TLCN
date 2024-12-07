@@ -1,24 +1,35 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import {useNavigate} from 'react-router-dom';
 import { useAuth } from "../../hooks/auth";
 import imageLink from "../../assets/login/login.jpg";
 
 const AuthSignUp = () => {
+  const navigate = useNavigate();
   const { signup, error } = useAuth();
-  const { name, setName } = useState("");
-  const { address, setAddress } = useState("");
-  const { phone, setPhone } = useState("");
-  const { email, setEmail } = useState("");
-  const { password, setPassword } = useState("");
-  const { confirmpassword, setConfirmPassword } = useState("");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password != confirmpassword) {
+    if (password !== confirmpassword) {
       alert("Mật khẩu và xác nhận mật khẩu không khớp!");
       return;
-    }
-    signup(name, address, phone, email, password);
+  }
+    signup({name, username, address, phone, email, password});
+    setName('');
+    setUsername('');
+    setAddress('');
+    setPhone('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    navigate('/login')
   };
   return (
     <div className="flex items-center min-h-screen bg-whitel w-full">
@@ -49,6 +60,18 @@ const AuthSignUp = () => {
           </label>
 
           <label className="block mb-4">
+            <span className="sr-only">Username</span>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
+              required
+            />
+          </label>
+
+          <label className="block mb-4">
             <span className="sr-only">Địa chỉ</span>
             <input
               type="text"
@@ -73,10 +96,10 @@ const AuthSignUp = () => {
           </label>
 
           <label className="block mb-4">
-            <span className="sr-only">Email hoặc Số điện thoại</span>
+            <span className="sr-only">Email</span>
             <input
               type="email"
-              placeholder="Email hoặc Số điện thoại"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
@@ -126,7 +149,7 @@ const AuthSignUp = () => {
 };
 
 AuthSignUp.propTypes = {
-  onSubmit: PropTypes.func.isRequired, // Remove if not needed
+  // onSubmit: PropTypes.func.isRequired, // Remove if not needed
 };
 
 export default AuthSignUp;

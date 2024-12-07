@@ -3,8 +3,7 @@ import ProductRequest from "../components/ProductManage/ProductRequest.jsx";
 import ProductList from "../components/ProductManage/ProductList.jsx";
 
 const ProductManage = () => {
-  // State to toggle between ProductRequest and ProductList
-  const [view, setView] = useState("request"); // default view is 'request' for pending products
+  const [view, setView] = useState("request"); // Default view is 'request' for pending products
 
   return (
     <div className="container mx-auto p-4 bg-white rounded-md mt-4">
@@ -12,7 +11,6 @@ const ProductManage = () => {
         Product Management
       </h2>
 
-      {/* Buttons to toggle views */}
       <div className="mb-4 flex justify-center gap-4">
         <button
           onClick={() => setView("request")}
@@ -36,7 +34,6 @@ const ProductManage = () => {
         </button>
       </div>
 
-      {/* Conditional rendering of the components */}
       {view === "request" ? <ProductRequest /> : <ProductList />}
     </div>
   );

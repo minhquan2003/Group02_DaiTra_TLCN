@@ -1,24 +1,32 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-const useFeedback = () => {
-  const [feedbacks, setFeedbacks] = useState(0);
+function useFeedback() {
+  const [feedbackList, setFeedbackList] = useState([]);
+  const [feedbackTotal, setFeedbackTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFeedback = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5555/admin/all-feedback"
         );
-        setFeedbacks(response.data.totalFeedbacks || 0);
+        if (response.data.success) {
+          setFeedbackTotal(response.data.totalFeedbacks); // Tổng số feedback
+          setFeedbackList(response.data.data); // Danh sách feedback
+        }
       } catch (error) {
-        console.error("Error fetching feedback data:", error);
+        console.error("Error fetching feedback:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchData();
+
+    fetchFeedback();
   }, []);
 
-  return { feedbacks };
-};
+  return { feedbackList, feedbackTotal, loading }; // Trả về feedbackTotal
+}
 
 export default useFeedback;
