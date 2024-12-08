@@ -9,12 +9,12 @@ function CategoryList() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto p-4 bg-white rounded-md">
+    <div className="container mx-auto p-4 bg-gray-100 rounded-md">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map((category) => (
           <div
             key={category._id}
-            className="flex items-center border p-4 rounded-md"
+            className="flex items-center border p-4 rounded-md bg-white"
           >
             <img
               src={category.image_url}

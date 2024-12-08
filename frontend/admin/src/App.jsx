@@ -7,6 +7,7 @@ import FeedbackManage from "./pages/FeedbackManage";
 import CategoryManage from "./pages/CategoryManage";
 import NotificationManage from "./pages/NotificationManage";
 import RegulationManage from "./pages/RegulationManage";
+import PartnerManage from "./pages/PartnerManage";
 
 const App = () => (
   <Router>
@@ -35,7 +36,14 @@ const App = () => (
           </AdminLayout>
         }
       />
-      <Route path="/admin/partner" element={<AdminLayout></AdminLayout>} />
+      <Route
+        path="/admin/partner"
+        element={
+          <AdminLayout>
+            <PartnerManage />
+          </AdminLayout>
+        }
+      />
       <Route
         path="/admin/feedbacks"
         element={
@@ -44,7 +52,14 @@ const App = () => (
           </AdminLayout>
         }
       />
-      <Route path="/admin/feedbacks" element={<AdminLayout></AdminLayout>} />
+      <Route
+        path="/admin/feedbacks"
+        element={
+          <AdminLayout>
+            <FeedbackManage />
+          </AdminLayout>
+        }
+      />
       <Route
         path="/admin/category"
         element={

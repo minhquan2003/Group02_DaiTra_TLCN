@@ -5,7 +5,7 @@ import StatisticsChart from "../components/ui/StatisticsChart.jsx";
 
 const Dashboard = () => {
   return (
-    <div>
+    <div className="">
       <PurchaseOverview />
       <StatisticsChart />
     </div>

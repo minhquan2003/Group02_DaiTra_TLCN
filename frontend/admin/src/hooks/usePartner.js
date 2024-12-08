@@ -1,24 +1,35 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 
-const usePartner = () => {
-  const [partners, setPartners] = useState(0);
+const usePartners = () => {
+  const [partners, setPartners] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPartners = async () => {
       try {
-        const response = await axios.get(
+        const response = await fetch(
           "http://localhost:5555/admin/all-partners"
         );
-        setPartners(response.data.length || 0);
-      } catch (error) {
-        console.error("Error fetching partner data:", error);
+        const data = await response.json();
+
+        // Filter users with the role of 'partner'
+        const partnerUsers = data.users.filter(
+          (user) => user.role === "partner"
+        );
+
+        setPartners(partnerUsers);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchData();
+
+    fetchPartners();
   }, []);
 
-  return { partners };
+  return { partners, loading, error };
 };
 
-export default usePartner;
+export default usePartners;

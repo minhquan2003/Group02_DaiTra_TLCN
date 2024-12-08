@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaTachometerAlt,
@@ -13,17 +13,28 @@ import {
 } from "react-icons/fa";
 
 const LeftSidebar = () => {
+  const [activeLink, setActiveLink] = useState("/"); // default active link
+
+  // Function to handle active link
+  const handleLinkClick = (link) => {
+    setActiveLink(link);
+  };
+
   return (
-    <div className="w-64 bg-white text-blue-500 h-full flex flex-col">
-      <div className="flex items-center justify-center p-4 bg-white">
-        <div className="text-xl font-bold text-customText">LOGO</div>
+    <div className="w-64 bg-gray-100 text-blue-500 h-full flex flex-col">
+      <div className="flex items-center justify-center p-4 bg-gray-100">
+        <img src="../../public/images/logo.png" alt="Logo" className="h-22" />
       </div>
+
       <div className="flex-1 px-4 py-6">
         <ul className="space-y-4">
           <li>
             <Link
               to="/"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/" ? "bg-blue-500 text-white" : "text-gray-500"
+              }`}
             >
               <FaTachometerAlt className="mr-2" /> Dashboard
             </Link>
@@ -31,7 +42,12 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/admin/users"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/admin/users")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/users"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
             >
               <FaUsers className="mr-2" /> Users Account
             </Link>
@@ -39,7 +55,12 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/admin/posts"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/admin/posts")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/posts"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
             >
               <FaBoxOpen className="mr-2" /> Product Posts
             </Link>
@@ -47,7 +68,12 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/admin/partner"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/admin/partner")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/partner"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
             >
               <FaHandshake className="mr-2" /> Partner
             </Link>
@@ -55,7 +81,12 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/admin/feedbacks"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/admin/feedbacks")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/feedbacks"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
             >
               <FaComments className="mr-2" /> Customer Feedbacks
             </Link>
@@ -63,7 +94,12 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/admin/category"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/admin/category")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/category"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
             >
               <FaListAlt className="mr-2" /> Category Management
             </Link>
@@ -71,7 +107,12 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/admin/notifications"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/admin/notifications")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/notifications"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
             >
               <FaBell className="mr-2" /> Notifications
             </Link>
@@ -79,26 +120,17 @@ const LeftSidebar = () => {
           <li>
             <Link
               to="/admin/regulation"
-              className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
+              onClick={() => handleLinkClick("/admin/regulation")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/regulation"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
             >
               <FaListAlt className="mr-2" /> Regulation Management
             </Link>
           </li>
         </ul>
-      </div>
-      <div className="p-4 bg-white">
-        <Link
-          to="/settings"
-          className="flex items-center text-sm hover:text-blue-500 p-2 rounded text-gray-500"
-        >
-          <FaCogs className="mr-2" /> Settings
-        </Link>
-        <Link
-          to="/logout"
-          className="flex items-center text-sm hover:text-blue-500 p-2 rounded mt-2 text-gray-500"
-        >
-          <FaSignOutAlt className="mr-2" /> Log Out
-        </Link>
       </div>
     </div>
   );

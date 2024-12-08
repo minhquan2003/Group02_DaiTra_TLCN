@@ -40,7 +40,7 @@ const NotificationList = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 bg-white rounded-md mt-4">
+    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
       <h2 className="text-xl font-bold mb-4">Notification List</h2>
       <ul className="space-y-4">
         {/* Sử dụng notifications.data để lấy mảng thông báo */}

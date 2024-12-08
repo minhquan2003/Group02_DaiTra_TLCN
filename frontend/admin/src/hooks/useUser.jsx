@@ -75,6 +75,18 @@ const useUser = () => {
     }
   };
 
+  const searchUsers = async (keyword) => {
+    try {
+      const response = await axios.get(`http://localhost:5555/admin/search`, {
+        params: { keyword },
+      });
+      return response.data.users || [];
+    } catch (error) {
+      console.error("Error searching users:", error);
+      return [];
+    }
+  };
+
   return {
     accounts,
     bans,
@@ -82,6 +94,7 @@ const useUser = () => {
     loading,
     toggleBan,
     deleteAccount,
+    searchUsers,
   };
 };
 

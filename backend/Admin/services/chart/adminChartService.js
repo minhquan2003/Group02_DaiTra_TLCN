@@ -6,27 +6,27 @@ export const getStatisticsByTime = async (timeframe) => {
     let dateGroup;
     let format;
 
-    // Phân loại theo thời gian
+    // Set grouping logic based on timeframe
     if (timeframe === "week") {
       dateGroup = {
-        $isoWeek: "$updatedAt", // Tuần trong năm
+        $isoWeek: "$updatedAt", // Group by ISO week
       };
       format = "Week";
     } else if (timeframe === "month") {
       dateGroup = {
-        $month: "$updatedAt", // Tháng
+        $month: "$updatedAt", // Group by month
       };
       format = "Month";
     } else if (timeframe === "year") {
       dateGroup = {
-        $year: "$updatedAt", // Năm
+        $year: "$updatedAt", // Group by year
       };
       format = "Year";
     } else {
       throw new Error("Invalid timeframe. Use 'week', 'month', or 'year'.");
     }
 
-    // Thống kê người dùng
+    // Statistics for users
     const userStats = await Users.aggregate([
       {
         $group: {
@@ -35,11 +35,11 @@ export const getStatisticsByTime = async (timeframe) => {
         },
       },
       {
-        $sort: { _id: 1 },
+        $sort: { _id: 1 }, // Sort by the grouped value (week, month, or year)
       },
     ]);
 
-    // Thống kê sản phẩm
+    // Statistics for products
     const productStats = await Products.aggregate([
       {
         $group: {
@@ -48,7 +48,7 @@ export const getStatisticsByTime = async (timeframe) => {
         },
       },
       {
-        $sort: { _id: 1 },
+        $sort: { _id: 1 }, // Sort by the grouped value (week, month, or year)
       },
     ]);
 

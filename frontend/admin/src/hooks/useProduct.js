@@ -72,9 +72,7 @@ const useProducts = (type) => {
         method: "PUT",
       });
       setProducts((prev) =>
-        prev.map((product) =>
-          product._id === productId ? { ...product, status: false } : product
-        )
+        prev.filter((product) => product._id !== productId)
       );
       alert("Product hidden!");
     } catch {

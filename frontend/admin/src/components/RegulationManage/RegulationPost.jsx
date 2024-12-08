@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import useRegulation from "../../hooks/useRegulation";
 
 const RegulationPost = () => {
   const [newRegulation, setNewRegulation] = useState({
@@ -7,9 +7,7 @@ const RegulationPost = () => {
     description: "",
     status: true, // Default to active
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const { postRegulation, loading, success, error } = useRegulation();
 
   // Handle input change
   const handleChange = (e) => {
@@ -21,24 +19,18 @@ const RegulationPost = () => {
   };
 
   // Post regulation to the server
-  const postRegulation = async () => {
-    setLoading(true);
+  const handlePostRegulation = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:5555/admin/regulation/",
-        newRegulation
-      );
-      setSuccess(true);
+      await postRegulation(newRegulation); // Call the postRegulation function from useRegulation
       setNewRegulation({ title: "", description: "", status: true }); // Reset form
     } catch (err) {
-      setError("Error posting regulation");
-    } finally {
-      setLoading(false);
+      console.error(err);
     }
   };
 
   return (
-    <div className="container mx-auto p-4 bg-white rounded-md mt-4">
+    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
       <h1 className="text-2xl text-center font-semibold mb-6">
         Post New Regulation
       </h1>
@@ -49,13 +41,7 @@ const RegulationPost = () => {
         </p>
       )}
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          postRegulation();
-        }}
-        className="space-y-4 mx-10"
-      >
+      <form onSubmit={handlePostRegulation} className="space-y-4 mx-10">
         <div>
           <label htmlFor="title" className="block text-sm text-gray-700 mb-2">
             Title

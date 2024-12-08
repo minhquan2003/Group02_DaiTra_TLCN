@@ -17,29 +17,43 @@ const StatisticsChart = () => {
   const [timeframe, setTimeframe] = useState("month");
   const { data, loading, error } = useChart(timeframe);
 
-  // Dữ liệu biểu đồ
+  // Chart Data
   const chartData = {
     labels: data
-      ? data.users.map((item) => `Tháng ${item._id}`) // Hiển thị label theo tháng
+      ? data.users.map((item) => {
+          switch (timeframe) {
+            case "week":
+              return `Week ${item._id}`;
+            case "month":
+              return `${new Date(0, item._id - 1).toLocaleString("default", {
+                month: "long",
+              })} ${new Date().getFullYear()}`;
+            case "year":
+              return `${item._id}`;
+            default:
+              return item._id;
+          }
+        })
       : [],
     datasets: [
       {
         label: "Users",
         data: data ? data.users.map((item) => item.count) : [],
-        backgroundColor: "rgba(54, 162, 235, 0.5)", // Xanh
+        backgroundColor: "rgba(54, 162, 235, 0.5)", // Blue
         borderColor: "rgba(54, 162, 235, 1)",
         borderWidth: 1,
       },
       {
         label: "Products",
         data: data ? data.products.map((item) => item.count) : [],
-        backgroundColor: "rgba(75, 192, 192, 0.5)", // Xanh lá
+        backgroundColor: "rgba(75, 192, 192, 0.5)", // Green
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
       },
     ],
   };
 
+  // Chart Options
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -51,17 +65,17 @@ const StatisticsChart = () => {
       y: {
         beginAtZero: true,
         ticks: {
-          stepSize: 10, // Tùy chỉnh bậc
+          stepSize: 10,
         },
       },
     },
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg mt-4">
+    <div className="max-w-4xl w-full p-6 bg-gray-100 rounded-lg mt-4">
       <h2 className="text-xl font-bold text-gray-700 mb-4">Statistics</h2>
 
-      {/* Chọn thời gian */}
+      {/* Timeframe Selection */}
       <div className="flex gap-4 mb-4">
         <button
           onClick={() => setTimeframe("week")}
@@ -93,8 +107,14 @@ const StatisticsChart = () => {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {/* Biểu đồ */}
-      {!loading && data && <Bar data={chartData} options={chartOptions} />}
+      {/* Chart */}
+      {!loading && data && (
+        <div className="relative w-full" style={{ height: "400px" }}>
+          {" "}
+          {/* Set a fixed height */}
+          <Bar data={chartData} options={chartOptions} />
+        </div>
+      )}
     </div>
   );
 };

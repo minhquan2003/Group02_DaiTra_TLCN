@@ -81,8 +81,8 @@ const getProducts = async (page = 1, limit = 10) => {
       const user = await Users.findById(product.user_id);
 
       // Add category name and username to the product
-      product.category_name = category?.name || "Unknown";
-      product.username = user?.username || "Unknown User";
+      product.category_name = category?.category_name || "Unknown";
+      product.username = user?.name || "Unknown User";
     }
 
     // Count the total number of matching products
@@ -108,8 +108,8 @@ const getRequestProducts = async (page = 1, limit = 10) => {
     for (const product of products) {
       const category = await Categories.findById(product.category_id);
       const user = await Users.findById(product.user_id);
-      product.category_name = category?.name || "Unknown";
-      product.username = user?.username || "Unknown User";
+      product.category_name = category?.category_name || "Unknown";
+      product.username = user?.name || "Unknown User";
     }
     const totalProducts = await Products.countDocuments(query);
 

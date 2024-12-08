@@ -6,7 +6,7 @@ const ProductManage = () => {
   const [view, setView] = useState("request"); // Default view is 'request' for pending products
 
   return (
-    <div className="container mx-auto p-4 bg-white rounded-md mt-4">
+    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
         Product Management
       </h2>

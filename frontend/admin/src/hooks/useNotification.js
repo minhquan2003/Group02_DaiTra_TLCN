@@ -20,46 +20,22 @@ const useNotification = () => {
       setLoading(false);
     }
   };
-
-  // Add a new notification
-  const addNotification = async (notification) => {
+  // Post a new notification
+  const postNotification = async (payload) => {
+    setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5555/admin/notification/",
-        notification
+        "http://localhost:5555/admin/notifications/",
+        payload
       );
-      setNotifications((prev) => [...prev, response.data]);
+      // Refresh notifications after successful post
+      fetchNotifications();
+      return response.data;
     } catch (err) {
       setError(err.message);
-    }
-  };
-
-  // Edit an existing notification
-  const editNotification = async (id, updatedData) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:5555/admin/notification/${id}`,
-        updatedData
-      );
-      setNotifications((prev) =>
-        prev.map((notification) =>
-          notification.id === id ? response.data : notification
-        )
-      );
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  // Remove a notification
-  const removeNotification = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5555/admin/notification/${id}`);
-      setNotifications((prev) =>
-        prev.filter((notification) => notification.id !== id)
-      );
-    } catch (err) {
-      setError(err.message);
+      throw err; // Rethrow to handle in component
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,10 +47,8 @@ const useNotification = () => {
     notifications,
     loading,
     error,
-    addNotification,
-    editNotification,
-    removeNotification,
     fetchNotifications,
+    postNotification,
   };
 };
 

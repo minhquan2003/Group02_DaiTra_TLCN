@@ -7,6 +7,7 @@ import {
   deleteUserAccount,
   banUserAccount,
   unbanUserAccount,
+  searchUsersByKeyword,
 } from "../controllers/user/adminUserController.js";
 
 import {
@@ -27,11 +28,8 @@ import {
 } from "../controllers/category/adminCategoryController.js";
 
 import {
-  getNotifications,
-  deleteNotificationbyId,
-  updateNotificationbyId,
-  createNotificationAll,
-  createNotificationRole,
+  fetchAllNotifications,
+  postNotification,
 } from "../controllers/notification/adminNotificationController.js";
 
 import {
@@ -43,6 +41,11 @@ import {
 
 import { getStatisticsByTimeController } from "../controllers/chart/adminChartController.js";
 
+import {
+  fetchTopSellingProducts,
+  fetchOrderStats,
+} from "../controllers/order/adminOrderController.js";
+
 const adminRouter = express.Router();
 
 adminRouter.get("/all-users", getAllUsers);
@@ -51,6 +54,7 @@ adminRouter.get("/all-banner", getAllBannedUsers);
 adminRouter.put("/ban-user/:userId", banUserAccount);
 adminRouter.put("/unban-user/:userId", unbanUserAccount);
 adminRouter.delete("/delete-account/:id", deleteUserAccount);
+adminRouter.get("/search", searchUsersByKeyword);
 
 adminRouter.put("/approve-product/:productId", approveProduct);
 adminRouter.delete("/delete-product/:productId", removeProduct);
@@ -65,11 +69,8 @@ adminRouter.post("/category/", createCategory);
 adminRouter.put("/category/:id", editCategory);
 adminRouter.delete("/category/:id", removeCategory);
 
-adminRouter.post("/notification-role/", createNotificationRole);
-adminRouter.post("/notification-all/", createNotificationAll);
-adminRouter.delete("/notification/:id", deleteNotificationbyId);
-adminRouter.put("/notification/:id", updateNotificationbyId);
-adminRouter.get("/notifications/", getNotifications);
+adminRouter.get("/notifications/", fetchAllNotifications);
+adminRouter.post("/notifications/", postNotification);
 
 adminRouter.get("/regulations/", getRegulations);
 adminRouter.post("/regulation/", addRegulation);
@@ -77,5 +78,8 @@ adminRouter.put("/regulation/:id", editRegulation);
 adminRouter.delete("/regulation/:id", removeRegulation);
 
 adminRouter.get("/statistics-by-time", getStatisticsByTimeController);
+
+adminRouter.get("/top-selling-products", fetchTopSellingProducts);
+adminRouter.get("/order-stats", fetchOrderStats);
 
 export default adminRouter;

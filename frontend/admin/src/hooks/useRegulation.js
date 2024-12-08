@@ -5,6 +5,7 @@ const useRegulation = () => {
   const [regulations, setRegulations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   // Hàm fetch regulations
   const fetchRegulations = async () => {
@@ -23,11 +24,34 @@ const useRegulation = () => {
     }
   };
 
+  // Hàm post regulation
+  const postRegulation = async (newRegulation) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:5555/admin/regulation/",
+        newRegulation
+      );
+      const addedRegulation = response.data.data;
+      setSuccess(true);
+      // Add the new regulation to the list without refetching
+      setRegulations((prevRegulations) => [
+        ...prevRegulations,
+        addedRegulation,
+      ]);
+    } catch (err) {
+      setError("Error posting regulation");
+      setSuccess(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Hàm xóa regulation
   const deleteRegulation = async (id) => {
     try {
       await axios.delete(`http://localhost:5555/admin/regulation/${id}`);
-      // Sau khi xóa, gọi lại fetchRegulations để cập nhật lại danh sách regulations
+      // After deleting, fetch regulations again to refresh the list
       await fetchRegulations();
     } catch (err) {
       setError("Error deleting regulation");
@@ -41,19 +65,27 @@ const useRegulation = () => {
         `http://localhost:5555/admin/regulation/${id}`,
         updatedData
       );
-      // Sau khi tùy chỉnh, gọi lại fetchRegulations để cập nhật lại danh sách regulations
+      // After updating, fetch regulations again to refresh the list
       await fetchRegulations();
     } catch (err) {
       setError("Error updating regulation");
     }
   };
 
-  // Gọi fetchRegulations khi component được load lần đầu
+  // Fetch regulations when the component is loaded
   useEffect(() => {
     fetchRegulations();
   }, []);
 
-  return { regulations, loading, error, deleteRegulation, customRegulation };
+  return {
+    regulations,
+    loading,
+    error,
+    deleteRegulation,
+    customRegulation,
+    postRegulation,
+    success,
+  };
 };
 
 export default useRegulation;

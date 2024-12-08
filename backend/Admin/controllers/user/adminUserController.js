@@ -8,6 +8,7 @@ import {
   getBannedUsers,
   banUser,
   unbanUser,
+  searchUsers,
 } from "../../services/user/adminUserService.js";
 
 //--------Lấy tất cả người dùng trừ admin
@@ -128,6 +129,25 @@ const getUsersWithPartnerRole = async (req, res) => {
   }
 };
 
+//-------- Tìm kiếm người dùng theo từ khóa
+const searchUsersByKeyword = async (req, res) => {
+  try {
+    const { keyword } = req.query; // Lấy từ khóa từ query
+    if (!keyword) {
+      return res.status(400).json({ message: "Keyword is required" });
+    }
+
+    const users = await searchUsers(keyword);
+
+    res.status(200).json({
+      totalResults: users.length,
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   getAllUsers,
   getUsersWithPartnerRole,
@@ -136,4 +156,5 @@ export {
   deleteUserAccount,
   banUserAccount,
   unbanUserAccount,
+  searchUsersByKeyword,
 };

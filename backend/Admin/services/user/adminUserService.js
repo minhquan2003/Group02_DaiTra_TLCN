@@ -156,6 +156,27 @@ const fetchUserById = async (userId) => {
   }
 };
 
+//-------- Tìm kiếm người dùng theo từ khóa
+const searchUsers = async (keyword) => {
+  try {
+    const regex = new RegExp(keyword, "i"); // Tạo regex để tìm kiếm không phân biệt hoa thường
+    const query = {
+      $or: [
+        { name: regex },
+        { email: regex },
+        // Nếu từ khóa là số hợp lệ, tìm trên trường phone
+        ...(isNaN(Number(keyword)) ? [] : [{ phone: keyword }]),
+      ],
+      status: true, // Chỉ lấy người dùng đang hoạt động
+    };
+
+    const users = await Users.find(query).select("name email phone address"); // Chỉ lấy các trường cần thiết
+    return users;
+  } catch (error) {
+    throw new Error("Error searching users: " + error.message);
+  }
+};
+
 export {
   getCountExcludingRole,
   getCountByRole,
@@ -168,4 +189,5 @@ export {
   banUser,
   toggleUserRole,
   fetchUserById,
+  searchUsers,
 };
