@@ -22,10 +22,11 @@ const productSchema = new mongoose.Schema(
     quantity: {
       type: Number,
       required: true,
+      min: 0
     },
     category_id: {
       type: String,
-      required: true,
+      required: false,
     },
     image_url: {
       type: String,
@@ -54,6 +55,10 @@ const productSchema = new mongoose.Schema(
     origin: {
       type: String,
       required: false, // Không bắt buộc
+    },
+    partner: {
+      type: String,
+      default: false, // Không bắt buộc
     },
   },
   {

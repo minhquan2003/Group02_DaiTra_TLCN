@@ -6,7 +6,7 @@ import { getProducts } from '../../hooks/Products';
 const Home = () => {
     const { products, loading, error } = getProducts();
     return (
-        <div className="w-screen h-auto flex flex-col justify-center items-center bg-main overflow-x-hidden">
+        <div className="w-screen h-auto flex flex-col justify-center items-center bg-gray-100 overflow-x-hidden">
             <ListCategories />
             <ListProductCard data={{ products, loading, error }} />
         </div>

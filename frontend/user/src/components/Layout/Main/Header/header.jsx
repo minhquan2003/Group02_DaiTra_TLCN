@@ -86,7 +86,13 @@ const Header = () => {
       {/* Header Main */}
       <header className="bg-yellow-300 text-black justify-center flex items-center p-4 space-x-10">
         <div className="flex items-center">
-          <div onClick={() => navigate('/')} className="text-lg font-bold">Logo</div>
+        <div onClick={() => navigate('/')} className="cursor-pointer">
+            <img
+                src="https://png.pngtree.com/template/20190830/ourmid/pngtree-online-shop-store-shopping-logo-for-your-needs-image_299362.jpg"
+                alt="Logo"
+                className="w-16 h-16 rounded-full" // Kích thước 16 và bo tròn
+            />
+        </div>
           <nav className="ml-6">
             <ul className="flex space-x-4">
               <li>
@@ -102,7 +108,7 @@ const Header = () => {
         <div className="flex items-center bg-gray-100 rounded-md overflow-hidden w-[40vw]">
           <input
             type="text"
-            placeholder="Từ khóa"
+            placeholder="Sản phẩm cần tìm"
             value={nameProduct}
             onChange={(e) => setNamProduct(e.target.value)}
             className="bg-gray-100 p-2 w-full text-gray-700 focus:outline-none"
@@ -157,17 +163,24 @@ const Header = () => {
                       onClick={() => handleLinkClick(`/order/${userInfo._id}`)}>
                       Đơn hàng
                     </button>
-                    {userInfo.role == 'user' ? 
-                      <button 
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                        onClick={() => alert("Thành công")}>
-                        Đăng ký đối tác
-                      </button> : null}
+                    
                     <button 
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                       onClick={() => handleLinkClick(`/post`)}>
                       Đăng tin bán hàng
                     </button>
+
+                    <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => navigate(`/seller/${userInfo._id}`)}>
+                      Trang bán hàng
+                    </button>
+                    {userInfo.role == 'user' ? 
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
+                        Đăng ký đối tác
+                      </button> : null}
                     <button 
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                       onClick={handleLogout}>

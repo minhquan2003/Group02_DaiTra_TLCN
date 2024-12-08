@@ -34,19 +34,19 @@ const Order = () => {
     const filteredSellOrders = sellOrders.filter(order => order.status_order === activeSellTab);
 
     return (
-        <div className="p-5">
+        <div className="min-h-screen p-5 bg-gray-100">
             <div className="flex items-center mb-4">
                 <BackButton />
             </div>
-            <div className="flex mb-4">
+            <div className="flex mb-4 w-full">
                 <button 
-                    className={`px-4 py-2 ${activeTab === 'sell' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`} 
+                    className={`flex-1 px-4 py-2 rounded-md ${activeTab === 'sell' ? 'text-blue-500 font-bold underline bg-blue-200' : 'bg-white text-black'}`} 
                     onClick={() => setActiveTab('sell')}
                 >
                     Đơn Bán
                 </button>
                 <button 
-                    className={`px-4 py-2 ${activeTab === 'buy' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`} 
+                    className={`flex-1 px-4 py-2 rounded-md ${activeTab === 'buy' ? 'text-blue-500 font-bold underline bg-blue-200' : 'bg-white text-black'}`} 
                     onClick={() => setActiveTab('buy')}
                 >
                     Đơn Mua
@@ -56,11 +56,11 @@ const Order = () => {
             {activeTab === 'sell' && (
                 <div>
                     <h2 className="text-xl font-bold">Danh Sách Đơn Bán</h2>
-                    <div className="flex mb-4">
-                        {['Pending', 'Confirmed', 'Packaged', 'Shipping', 'Success', 'Cancelled'].map(status => (
+                    <div className="flex mb-4 w-full">
+                        {['Pending', 'Confirmed', 'Packaged', 'Shipping', 'Success', 'Request Cancel', 'Cancelled'].map(status => (
                             <button
                                 key={status}
-                                className={`px-4 py-2 ${activeSellTab === status ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                className={`flex-1 px-4 py-2 text-black rounded-md ${activeSellTab === status ? 'text-blue-500 font-bold underline bg-blue-100' : 'bg-white text-black'}`}
                                 onClick={() => setActiveSellTab(status)}
                             >
                                 {status}
@@ -70,14 +70,20 @@ const Order = () => {
                     {filteredSellOrders.length === 0 ? (
                         <p>Không có đơn bán nào cho trạng thái này.</p>
                     ) : (
-                        <ul>
+                        <ul className="flex flex-wrap bg-white"> {/* Sử dụng flexbox cho danh sách */}
                             {filteredSellOrders.map(order => (
                                 <Link to={`/salesOder/${order._id}`} key={order._id}>
-                                    <li className="border p-2 mb-2">
-                                        <strong>ID người mua:</strong> {order.user_id_buyer} - 
-                                        <strong>Họ tên:</strong> {order.name} - 
-                                        <strong>Tổng giá:</strong> {order.total_amount.toLocaleString()} VNĐ - 
-                                        <strong>Trạng thái đơn hàng:</strong> {order.status_order}
+                                    <li className="border rounded-md p-4 m-2 shadow-md transition-transform transform hover:scale-105 max-w-md"> {/* Thay đổi chiều rộng ở đây */}
+                                        <div className="font-semibold text-lg mb-2">Họ tên: <span className="font-normal">{order.name}</span></div>
+                                        <div className="text-gray-700">
+                                            <strong>Tổng giá:</strong> <span className="font-bold">{order.total_amount.toLocaleString()} VNĐ</span>
+                                        </div>
+                                        <div className="text-gray-700">
+                                            <strong>Ngày tạo đơn hàng:</strong> <span className="font-normal">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="text-gray-700">
+                                            <strong>Trạng thái đơn hàng:</strong> <span className="font-normal text-red-500">{order.status_order}</span>
+                                        </div>
                                     </li>
                                 </Link>
                             ))}
@@ -92,13 +98,19 @@ const Order = () => {
                     {buyOrders.length === 0 ? (
                         <p>Không có đơn mua nào.</p>
                     ) : (
-                        <ul>
+                        <ul className="flex flex-wrap bg-white"> {/* Sử dụng flexbox cho danh sách */}
                             {buyOrders.map(order => (
                                 <Link to={`/purchaseOrder/${order._id}`} key={order._id}>
-                                    <li className="border p-2 mb-2">
-                                        <strong>ID người bán:</strong> {order.user_id_seller} - 
-                                        <strong>Tổng giá:</strong> {order.total_amount.toLocaleString()} VNĐ - 
-                                        <strong>Trạng thái đơn hàng:</strong> {order.status_order}
+                                    <li className="border rounded-md p-4 m-2 shadow-md transition-transform transform hover:scale-105 max-w-md"> {/* Thay đổi chiều rộng ở đây */}
+                                        <div className="font-semibold mb-2">
+                                            <strong>Tổng giá:</strong> <span className="font-bold">{order.total_amount.toLocaleString()} VNĐ</span>
+                                        </div>
+                                        <div className="text-gray-700">
+                                            <strong>Ngày mua hàng:</strong> <span className="font-normal">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="text-gray-700">
+                                            <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.status_order}</span>
+                                        </div>
                                     </li>
                                 </Link>
                             ))}

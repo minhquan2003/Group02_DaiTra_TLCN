@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
@@ -8,6 +8,9 @@ import { updateProduct } from '../../hooks/Products';
 import {removeFromCart} from '../../hooks/Carts';
 
 const Checkout = () => {
+    const userInfoString = sessionStorage.getItem('userInfo');
+    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -33,7 +36,19 @@ const Checkout = () => {
     const [paymentMethod, setPaymentMethod] = useState('cash'); // Mặc định là trả tiền khi nhận hàng
     const [note, setNote] = useState(''); // State cho ghi chú
 
+    useEffect(() => {
+        if(userInfo){
+            setFullName(userInfo.name)
+            setPhoneNumber(userInfo.phone)
+            setAddress(userInfo.address)
+            setEmail(userInfo.email)
+        }
+        
+    }, [userInfo]);
+
     const handleCheckout = async () => {
+        const userInfoString = sessionStorage.getItem('userInfo');
+        const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
         // Kiểm tra các trường dữ liệu
         if (!fullName || !phoneNumber || !address) {
             alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
@@ -43,18 +58,54 @@ const Checkout = () => {
         if (cartItems.length === 0) {
             alert("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.");
             return; // Dừng thực hiện nếu giỏ hàng trống
+        }      
+
+        let order;
+
+        for (const item of cartItems) {
+            // Kiểm tra thông tin sản phẩm
+            if (!item.user_seller || !item.product_price || !item.product_quantity) {
+                alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
+                return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
+            }
+
+            const quanlity = -item.product_quantity;
+            const id = item.product_id;
+            const quanli = await updateProduct({ id, quanlity });
+
+            if(quanli.quantity < 0){
+                alert("Sản phẩm của bạn đã không còn hàng. Vui lòng tìm sản phẩm khác.")
+                const quanlity = item.product_quantity;
+                const quanli = await updateProduct({ id, quanlity });
+                navigate('/')
+                return
+            }
+            
+            // Tạo đơn hàng
+            order = await createOrder({
+                user_id_buyer: cartItems[0].user_buyer,
+                user_id_seller: cartItems[0].user_seller,
+                name: fullName,
+                phone: phoneNumber,
+                address: address,
+                total_amount: totalAmount, // Tổng tiền
+                note: note,
+            });
+
+            alert(JSON.stringify(order))
+
+            await createOrderDetail({
+                order_id: order.data._id,
+                product_id: item.product_id,
+                quantity: item.product_quantity,
+                price: item.product_price,
+            });
+
+            const idCart = item._id;
+            if (!location.state?.product) {
+                await removeFromCart(idCart);
+            }
         }
-    
-        // Tạo đơn hàng
-        const order = await createOrder({
-            user_id_buyer: cartItems[0].user_buyer,
-            user_id_seller: cartItems[0].user_seller,
-            name: fullName,
-            phone: phoneNumber,
-            address: address,
-            total_amount: totalAmount, // Tổng tiền
-            note: note,
-        });
     
         if (paymentMethod === 'momo') {
             // Gọi API thanh toán Momo
@@ -73,34 +124,9 @@ const Checkout = () => {
                 console.error('Error creating payment:', error);
                 alert('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.' + error);
             }
-        } else {
-            // Nếu phương thức thanh toán là trả tiền khi nhận hàng
-            for (const item of cartItems) {
-                // Kiểm tra thông tin sản phẩm
-                if (!item.user_seller || !item.product_price || !item.product_quantity) {
-                    alert("Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.");
-                    return; // Dừng thực hiện nếu thông tin sản phẩm không hợp lệ
-                }
-    
-                await createOrderDetail({
-                    order_id: order.data._id,
-                    product_id: item.product_id,
-                    quantity: item.product_quantity,
-                    price: item.product_price,
-                });
-    
-                const quanlity = -item.product_quantity;
-                const id = item.product_id;
-                const idCart = item._id;
-                await updateProduct({ id, quanlity });
-                if (!location.state?.product) {
-                    await removeFromCart(idCart);
-                }
-            }
-    
-            alert(`Đơn hàng đã được tạo thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
-            navigate('/');
         }
+        alert(`Đơn hàng đã được tạo thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
+            navigate('/');
     };
 
     return (
@@ -122,7 +148,7 @@ const Checkout = () => {
                         required
                     />
                     <input 
-                        type="text" 
+                        type="number" 
                         placeholder="Số Điện Thoại (bắt buộc)" 
                         value={phoneNumber} 
                         onChange={(e) => setPhoneNumber(e.target.value)} 

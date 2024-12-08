@@ -6,7 +6,7 @@ const ListProductCard = ({ data }) => {
     // alert("ba " + JSON.stringify(products))
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col bg-white items-center">
             <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
             {loading ? (
                 <div className="flex items-center justify-center h-64">
@@ -28,6 +28,7 @@ const ListProductCard = ({ data }) => {
                             price={product.price}
                             quantity={product.quantity}
                             image_url={product.image_url}
+                            partner={product.partner}
                         />
                     ))}
                 </div>
