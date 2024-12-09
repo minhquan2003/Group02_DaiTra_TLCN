@@ -13,6 +13,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import NotificationIcon from "../../../Notification/NotificationIcon.jsx";
 import { getCartItemsByUserId } from "../../../../hooks/Carts.js";
+import logo from '../../../../assets/img/logo.png'
 
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
@@ -88,7 +89,7 @@ const Header = () => {
         <div className="flex items-center">
         <div onClick={() => navigate('/')} className="cursor-pointer">
             <img
-                src="https://png.pngtree.com/template/20190830/ourmid/pngtree-online-shop-store-shopping-logo-for-your-needs-image_299362.jpg"
+                src={logo}
                 alt="Logo"
                 className="w-16 h-16 rounded-full" // Kích thước 16 và bo tròn
             />
