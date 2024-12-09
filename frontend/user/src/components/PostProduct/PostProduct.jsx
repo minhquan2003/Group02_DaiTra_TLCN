@@ -82,7 +82,7 @@ const ProductUpload = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <div className="max-w-4xl mx-auto mt-6 mb-6 p-6 bg-white shadow-lg rounded-lg">
             <h2 className="text-2xl font-bold mb-6 text-center">Đăng Sản Phẩm Mới</h2>
             <div className="flex flex-col md:flex-row md:space-x-8">
                 <div className="md:w-1/2 p-4 border border-gray-300 rounded-lg">

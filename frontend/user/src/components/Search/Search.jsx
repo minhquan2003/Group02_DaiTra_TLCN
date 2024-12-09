@@ -27,36 +27,26 @@ const ProductByName = () => {
             const isInPriceRange =
                 (minPrice === '' || product.price >= Number(minPrice)) &&
                 (maxPrice === '' || product.price <= Number(maxPrice));
-            const isInCategory = selectedCategory ? product.categoryId === selectedCategory : true; // Nếu chọn "Tất cả", giá trị sẽ là true
             const isInBrand = brand ? product.brand.toLowerCase().includes(brand.toLowerCase()) : true;
 
-            return isInPriceRange && isInCategory && isInBrand;
+            return isInPriceRange && isInBrand;
         });
         setFilteredProducts(newFilteredProducts); // Cập nhật danh sách sản phẩm đã lọc
+    };
+
+    // Hàm hủy lọc
+    const handleResetFilters = () => {
+        setBrand('');
+        setMinPrice('');
+        setMaxPrice('');
+        setFilteredProducts(data); // Đặt lại danh sách sản phẩm về mặc định
     };
 
     return (
         <div className="p-4">
             <div className="mb-6 bg-white shadow rounded-lg p-4 flex flex-col">
-                <h2 className="text-lg font-semibold mb-3 text-center">Lọc sản phẩm</h2>
+                {/* <h2 className="text-lg font-semibold mb-3 text-center">Lọc sản phẩm</h2> */}
                 <div className="flex flex-wrap gap-2">
-                    <div className="flex-1">
-                        <label className="block mb-1 text-sm font-medium" htmlFor="categorySelect">Danh mục:</label>
-                        <select
-                            id="categorySelect"
-                            value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required
-                        >
-                            <option value="">Tất cả</option> {/* Tùy chọn "Tất cả" */}
-                            {categories.map(category => (
-                                <option key={category._id} value={category._id}>
-                                    {category.category_name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
                     <div className="flex-1">
                         <label className="block mb-1 text-sm font-medium" htmlFor="brandInput">Thương hiệu:</label>
                         <input
@@ -93,9 +83,15 @@ const ProductByName = () => {
                     <div className="flex items-end">
                         <button
                             onClick={handleFilter}
-                            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200"
+                            className="mt-4 border border-gray-300  bg-gray-100 text-black py-2 px-4 rounded-md hover:bg-gray-400 transition duration-200"
                         >
-                            Lọc
+                            Tìm Kiếm
+                        </button>
+                        <button
+                            onClick={handleResetFilters}
+                            className="mt-4 border border-gray-300  bg-gray-100 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-200 ml-2"
+                        >
+                            Bỏ Tìm
                         </button>
                     </div>
                 </div>

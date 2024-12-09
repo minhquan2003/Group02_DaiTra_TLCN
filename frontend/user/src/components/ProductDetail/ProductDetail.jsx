@@ -100,10 +100,10 @@ const ProductDisplay = () => {
                             <p className="mt-4 text-lg font-bold text-red-500">
                                 Tổng tiền: {totalPrice.toLocaleString()} VNĐ
                             </p>
-                            <div className="flex flex-col md:flex-row md:space-x-4 mt-6">
+                            <div className="flex flex-col md:flex-row md:space-x-4 mb-4 mt-6">
                                 <button 
                                     onClick={handleAddToCart} 
-                                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-300"
+                                    className="bg-gray-100 text-green-600 font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
                                 >
                                     Thêm vào giỏ hàng
                                 </button>
@@ -119,7 +119,7 @@ const ProductDisplay = () => {
                                             product_imageUrl: product.image_url
                                         } 
                                     } })} 
-                                    className="bg-green-500 text-white rounded p-2 hover:bg-green-600 transition duration-300"
+                                    className="bg-gray-100 text-red-600 rounded font-bold p-2 hover:bg-gray-300 transition duration-300"
                                 >
                                     Đặt hàng
                                 </button>
@@ -150,7 +150,7 @@ const ProductDisplay = () => {
                     <strong>Ngày cập nhật:</strong> {new Date(product.updatedAt).toLocaleDateString()}
                 </p>
                 <button 
-                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 transition duration-300 w-full md:w-auto mt-4 md:mt-0"
+                    className="bg-gray-100 mt-6 text-blue-600 rounded p-2 hover:bg-gray-300 transition duration-300 w-full md:w-auto mt-4 md:mt-0"
                     onClick={() => navigate(`/seller/${product.user_id}`)}
                 >
                     Xem trang người bán

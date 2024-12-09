@@ -16,6 +16,7 @@ import ProductByName from '../src/components/Search/Search'
 import SellerPage from "./components/SellerPage/SellerPage";
 import PurchaseOrder from "./components/Order/PurchaseOrder";
 import SalesOder from "./components/Order/SalesOder";
+import EditSalePage from "./components/EditPageSale/EditPageSale";
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
           <Route path="/seller/:sellerId" element={<SellerPage />} />
           <Route path="/purchaseOrder/:orderId" element={<PurchaseOrder />} />
           <Route path="/salesOder/:orderId" element={<SalesOder />} />
+          <Route path="/editSale/:sellerId" element={<EditSalePage />} />
         </Routes>
       </MainLayout>
     </Router>

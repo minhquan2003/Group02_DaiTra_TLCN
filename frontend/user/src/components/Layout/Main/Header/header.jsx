@@ -84,7 +84,7 @@ const Header = () => {
       </div>
 
       {/* Header Main */}
-      <header className="bg-yellow-300 text-black justify-center flex items-center p-4 space-x-10">
+      <header className="bg-yellow-400 text-black justify-center flex items-center p-4 space-x-10">
         <div className="flex items-center">
         <div onClick={() => navigate('/')} className="cursor-pointer">
             <img
@@ -133,8 +133,8 @@ const Header = () => {
               </span>
             )}
           </span>
-          <span className="cursor-pointer" onClick={toggleDropdown}> 
-            <div className="flex items-center space-x-3 p-2 bg-white rounded-md" title="Trang cá nhân">
+          <span className="relative inline-block cursor-pointer" onClick={toggleDropdown}>
+            <div className="flex items-center space-x-1 rounded-md hover:bg-gray-100 transition duration-200" title="Trang cá nhân">
               <img 
                 src={avatarUrl} 
                 alt={name} 
@@ -144,56 +144,63 @@ const Header = () => {
                   e.target.src = 'https://via.placeholder.com/50'; // Placeholder nếu có lỗi
                 }}
               />
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg text-gray-800">{name}</span>
-              </div>
+              <span className="font-semibold text-lg text-gray-800">{name}</span>
+              <svg 
+                className={`w-4 h-4 transform transition-transform ${dropdownOpen ? "rotate-180" : ""}`} 
+                xmlns="http://www.w3.org/2000/svg" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
+            
             {dropdownOpen && (
-              <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-white">
+              <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-white z-10">
                 <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                {userInfo ? (
-                  <>
-                    <button 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                      onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
-                      Chỉnh sửa hồ sơ
-                    </button>
-                    <button 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                      onClick={() => handleLinkClick(`/order/${userInfo._id}`)}>
-                      Đơn hàng
-                    </button>
-                    
-                    <button 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                      onClick={() => handleLinkClick(`/post`)}>
-                      Đăng tin bán hàng
-                    </button>
-
-                    <button 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                      onClick={() => navigate(`/seller/${userInfo._id}`)}>
-                      Trang bán hàng
-                    </button>
-                    {userInfo.role == 'user' ? 
+                  {userInfo ? (
+                    <>
                       <button 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                         onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
-                        Đăng ký đối tác
-                      </button> : null}
+                        Chỉnh sửa hồ sơ
+                      </button>
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleLinkClick(`/order/${userInfo._id}`)}>
+                        Đơn hàng
+                      </button>
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleLinkClick(`/post`)}>
+                        Đăng tin bán hàng
+                      </button>
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => navigate(`/editSale/${userInfo._id}`)}>
+                        Trang bán hàng
+                      </button>
+                      {userInfo.role === 'user' && (
+                        <button 
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
+                          Đăng ký đối tác
+                        </button>
+                      )}
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={handleLogout}>
+                        Đăng xuất
+                      </button>
+                    </>
+                  ) : (
                     <button 
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                      onClick={handleLogout}>
-                      Đăng xuất
+                      onClick={() => navigate('/login')}>
+                      Đăng nhập
                     </button>
-                  </>
-                ) : (
-                  <button 
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                    onClick={() => navigate('/login')}>
-                    Đăng nhập
-                  </button>
-                )}
+                  )}
                 </div>
               </div>
             )}

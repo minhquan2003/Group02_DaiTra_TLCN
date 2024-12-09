@@ -150,11 +150,11 @@ const SalesOder = () => {
                 <div className="bg-white w-1/2 rounded-lg p-6">
                     <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2>
                     {order.status_order === 'Pending' ? (
-                        <div className="bg-white rounded-lg shadow-md">
+                        <div className="bg-white rounded-lg mt-6">
                             <div>
                                 <button 
                                     onClick={handleChangeStatus} 
-                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                    className="bg-gray-100 text-green-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
                                 >
                                     Xác nhận đơn hàng
                                 </button>
@@ -172,7 +172,7 @@ const SalesOder = () => {
                             <div>
                                 <button 
                                     onClick={handleCancel} 
-                                    className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                    className="bg-gray-100 text-red-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
                                 >
                                     Huỷ đơn hàng
                                 </button>

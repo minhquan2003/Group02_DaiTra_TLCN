@@ -5,21 +5,17 @@ import { Link } from "react-router-dom"; // Import Link từ react-router-dom
 const CategoryItem = ({ category }) => {
   return (
     <Link 
-    to={`/product/category/${category._id}`} // Thay đổi đường dẫn theo tham số category.id
-      className="category-item m-2 bg-white border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 inline-flex flex-col items-center p-2"
-      style={{ width: '100px', height: '100px' }}
+      to={`/product/category/${category._id}`} // Thay đổi đường dẫn theo tham số category.id
+      className="category-item m-2 rounded-lg hover:shadow-lg transition-shadow duration-300 inline-flex flex-col items-center justify-center p-4"
+      style={{ width: '120px', height: '100px' }} // Tăng kích thước khối danh mục
     >
-      <div className="category-image overflow-hidden">
-        <img 
-          src={category.image_url} 
-          alt={category.category_name} 
-          className="object-cover" 
-          style={{ width: '50px', height: '50px' }}
-        />
-      </div>
-      <div className="category-info mt-1 text-center">
-        <h3 className="text-xs font-semibold text-gray-800">{category.category_name}</h3>
-      </div>
+      <img 
+        src={category.image_url} 
+        alt={category.category_name} 
+        className="object-cover mb-2" // Thêm khoảng cách dưới hình
+        style={{ width: '60px', height: '60px', borderRadius: '10px' }} // Giữ kích thước hình ảnh và thêm border-radius
+      />
+      <text className="text-sm text-gray-800 text-center">{category.category_name}</text>
     </Link>
   );
 };
