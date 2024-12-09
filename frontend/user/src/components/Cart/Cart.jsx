@@ -55,12 +55,12 @@ const Cart = () => {
                     {cartItems.map(item => (
                         <li key={item.id} className="flex items-center justify-between py-2">
                             <div className="flex items-center">
-                                <input 
+                                {/* <input 
                                     type="checkbox" 
                                     checked={item.selected} 
                                     onChange={() => handleCheckboxChange(item.id)} 
                                     className="mr-4"
-                                />
+                                /> */}
                                 <img 
                                     src={item.product_imageUrl} 
                                     alt={item.product_name} 

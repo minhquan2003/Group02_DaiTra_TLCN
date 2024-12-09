@@ -6,6 +6,7 @@ import {
     getProductsByCategory,
     getProductsByUserId,
     searchProductsByName,
+    searchProducts ,
     updateOneProduct,
     updateQuanlityProduct,
     deleteOneProduct
@@ -90,6 +91,18 @@ const searchProductsByNameController = async (req, res) => {
     }
 };
 
+const searchProductsController = async (req, res) => {
+    try {
+        const brand = req.body.brand; // Lấy brand từ query parameters
+        const categoryId = req.body.category_id; // Lấy category_id từ query parameters
+
+        const products = await searchProducts(brand, categoryId);
+        res.status(200).json({ success: true, data: products });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 // Cập nhật sản phẩm
 const updateProduct = async (req, res) => {
     try {
@@ -136,7 +149,8 @@ export { addProduct,
     getProductById, 
     getProductsByIdCategory,
     getProductsByUserIdController,
-    searchProductsByNameController, 
+    searchProductsByNameController,
+    searchProductsController,
     updateProduct, 
     updateQuanlity,
     deleteProduct};

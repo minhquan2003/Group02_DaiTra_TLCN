@@ -15,6 +15,7 @@ import cartRoute from "./routes/cartRoute.js";
 import mongoose from "mongoose";
 import cors from "cors";
 import adminRouter from "./Admin/routes/Adminroute.js";
+import paymentRoutes from "./routes/payment.js";
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use("/payments", paymentRoute);
 app.use("/orders", orderRoute);
 app.use("/orderDetails", orderDetailRoute);
 app.use("/carts", cartRoute);
+app.use("/payment", paymentRoutes);
 
 //Admin
 app.use("/admin", adminRouter);

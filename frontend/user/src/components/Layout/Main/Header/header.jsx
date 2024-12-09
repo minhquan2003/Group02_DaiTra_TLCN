@@ -1,5 +1,5 @@
-import React, {useState, useEffect } from "react";
-import nonAvata from '../../../../assets/img/nonAvata.jpg'
+import React, { useState, useEffect } from "react";
+import nonAvata from '../../../../assets/img/nonAvata.jpg';
 import {
   FiMenu,
   FiSearch,
@@ -12,6 +12,7 @@ import {
 import { IoIosArrowForward } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import NotificationIcon from "../../../Notification/NotificationIcon.jsx";
+import { getCartItemsByUserId } from "../../../../hooks/Carts.js";
 
 const Header = () => {
   const userInfoString = sessionStorage.getItem('userInfo');
@@ -23,30 +24,48 @@ const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
+  const [cartItemCount, setCartItemCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0); // State để lưu số lượng thông báo chưa đọc
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      if (userInfo) {
+        try {
+          const response = await getCartItemsByUserId(userInfo._id);
+          setCartItemCount(response.length);
+        } catch (error) {
+          console.error("Error fetching cart items:", error);
+        }
+      }
+    };
+
+    fetchCartItems();
+  }, [userInfo]);
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
   const handleLinkClick = (path) => {
-    if(userInfo){
+    if (userInfo) {
       navigate(path);
-    }else{
-      alert("Bạn chưa đăng nhập!")
+    } else {
+      alert("Bạn chưa đăng nhập!");
     }
     setDropdownOpen(false);
-       // Đóng dropdown sau khi chọn link
   };
 
-    const handleLogout = () => {
-      sessionStorage.removeItem('userInfo');
-      navigate('/');
+  const handleLogout = () => {
+    sessionStorage.removeItem('userInfo');
+    setUnreadCount(0); // Đặt lại số lượng thông báo chưa đọc về 0 khi đăng xuất
+    navigate('/');
   };
 
   const handleSearchSubmit = (e) => {
-    e.preventDefault(); // Ngăn chặn việc làm mới trang
+    e.preventDefault();
     if (nameProduct.trim()) {
-      setNamProduct('')
-      navigate(`/search?name=${nameProduct}`); // Điều hướng đến trang tìm kiếm
+      setNamProduct('');
+      navigate(`/search?name=${nameProduct}`);
     }
   };
 
@@ -58,8 +77,8 @@ const Header = () => {
           Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!
         </div>
         <div className="tex-sm">
-          <a href="'#" className="hover: underline">
-            ShopNow
+          <a href="'#" className="hover:underline">
+            Shop Now
           </a>
         </div>
       </div>
@@ -67,15 +86,19 @@ const Header = () => {
       {/* Header Main */}
       <header className="bg-yellow-300 text-black justify-center flex items-center p-4 space-x-10">
         <div className="flex items-center">
-          <div onClick={() => navigate('/')} className="text-lg font-bold">Logo</div>
+        <div onClick={() => navigate('/')} className="cursor-pointer">
+            <img
+                src="https://png.pngtree.com/template/20190830/ourmid/pngtree-online-shop-store-shopping-logo-for-your-needs-image_299362.jpg"
+                alt="Logo"
+                className="w-16 h-16 rounded-full" // Kích thước 16 và bo tròn
+            />
+        </div>
           <nav className="ml-6">
             <ul className="flex space-x-4">
               <li>
                 <a href="#" className="flex items-center">
-                  {/* Hamburger icon before "Danh mục" */}
                   <FiMenu className="mr-2" />
                   Danh mục
-                  {/* Arrow icon after "Danh mục" */}
                   <IoIosArrowForward className="ml-2" />
                 </a>
               </li>
@@ -83,90 +106,96 @@ const Header = () => {
           </nav>
         </div>
         <div className="flex items-center bg-gray-100 rounded-md overflow-hidden w-[40vw]">
-            <input
-                type="text"
-                placeholder="Từ khóa"
-                value={nameProduct}
-                onChange={(e) => setNamProduct(e.target.value)}
-                className="bg-gray-100 p-2 w-full text-gray-700 focus:outline-none"
-            />
-            <button className="bg-gray-100 p-2 text-black" onClick={handleSearchSubmit}>
-                <FiSearch className="h-5 w-5" />
-            </button>
+          <input
+            type="text"
+            placeholder="Sản phẩm cần tìm"
+            value={nameProduct}
+            onChange={(e) => setNamProduct(e.target.value)}
+            className="bg-gray-100 p-2 w-full text-gray-700 focus:outline-none"
+          />
+          <button className="bg-gray-100 p-2 text-black" onClick={handleSearchSubmit}>
+            <FiSearch className="h-5 w-5" />
+          </button>
         </div>
-
 
         <div className="flex items-center space-x-6">
           <span className="cursor-pointer">
-              <NotificationIcon userId={id}/>
-             {/* <FiBell className="h-5 w-5" /> Notification icon */}
+            <NotificationIcon userId={id} />
           </span>
           <span className="cursor-pointer">
             <FiMessageCircle className="h-5 w-5" /> {/* Message icon */}
           </span>
-          <span className="cursor-pointer" onClick={() => navigate('/cart')} title="Giỏ hàng">
-            <FiShoppingCart className="h-5 w-5" /> {/* Shopping cart icon */}
-          </span>
-          <span className="ml-auto cursor-pointer" onClick={() => navigate('/login')} title="Đăng nhập">
-            <div className="h-10 w-10 flex items-center justify-center text-black-500 hover:text-gray-700">
-              <FiLogIn className="h-6 w-6" /> {/* Biểu tượng đăng nhập */}
-            </div>
-          </span>
-          <span>
-            <div className="ml-auto cursor-pointer" onClick={handleLogout} title="Đăng xuất">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-500 hover:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </div>
+          <span className="relative cursor-pointer" onClick={() => navigate('/cart')} title="Giỏ hàng">
+            <FiShoppingCart className="h-5 w-5" />
+            {userInfo && cartItemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1">
+                {cartItemCount}
+              </span>
+            )}
           </span>
           <span className="cursor-pointer" onClick={toggleDropdown}> 
             <div className="flex items-center space-x-3 p-2 bg-white rounded-md" title="Trang cá nhân">
               <img 
-                  src={avatarUrl} 
-                  alt={name} 
-                  className="w-10 h-10 object-cover rounded-full border-2 border-gray-300" 
-                  onError={(e) => {
-                      e.target.onerror = null; 
-                      e.target.src = 'https://via.placeholder.com/50'; // Placeholder nếu có lỗi
-                  }}
+                src={avatarUrl} 
+                alt={name} 
+                className="w-10 h-10 object-cover rounded-full border-2 border-gray-300" 
+                onError={(e) => {
+                  e.target.onerror = null; 
+                  e.target.src = 'https://via.placeholder.com/50'; // Placeholder nếu có lỗi
+                }}
               />
               <div className="flex flex-col">
-                  <span className="font-semibold text-lg text-gray-800">{name}</span>
+                <span className="font-semibold text-lg text-gray-800">{name}</span>
               </div>
-          </div>
-          {dropdownOpen && (
-                <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-white">
-                    <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                        <button 
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => {
-                              let path;
-                              if (userInfo) {path = `/profile/${userInfo._id}`;} 
-                              else {path = `/`;}
-                              handleLinkClick(path)}}>
-                            Chỉnh sửa hồ sơ
-                        </button>
-                        <button 
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => {
-                              let path;
-                              if (userInfo) {path = `/order/${userInfo._id}`;} 
-                              else {path = `/`;}
-                              handleLinkClick(path)}}>
-                            Đơn hàng
-                        </button>
-                        <button 
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => {
-                              let path;
-                              if (userInfo) {path = `/post`;} 
-                              else {path = `/`;}
-                              handleLinkClick(path)}}>
-                            Đăng tin bán hàng
-                        </button>
-                        {/* Thêm các liên kết khác nếu cần */}
-                    </div>
+            </div>
+            {dropdownOpen && (
+              <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-white">
+                <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                {userInfo ? (
+                  <>
+                    <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
+                      Chỉnh sửa hồ sơ
+                    </button>
+                    <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => handleLinkClick(`/order/${userInfo._id}`)}>
+                      Đơn hàng
+                    </button>
+                    
+                    <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => handleLinkClick(`/post`)}>
+                      Đăng tin bán hàng
+                    </button>
+
+                    <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => navigate(`/seller/${userInfo._id}`)}>
+                      Trang bán hàng
+                    </button>
+                    {userInfo.role == 'user' ? 
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
+                        Đăng ký đối tác
+                      </button> : null}
+                    <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={handleLogout}>
+                      Đăng xuất
+                    </button>
+                  </>
+                ) : (
+                  <button 
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    onClick={() => navigate('/login')}>
+                    Đăng nhập
+                  </button>
+                )}
                 </div>
+              </div>
             )}
           </span>
         </div>

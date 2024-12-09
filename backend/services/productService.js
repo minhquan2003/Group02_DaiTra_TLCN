@@ -6,7 +6,7 @@ const createProduct = async (productData) => {
   };
   
 const getProducts = async () => {
-    return await Products.find({ status: true });
+    return await Products.find({ status: true, quantity: { $gt: 0 } });
   };
   
 const getOneProductById = async (idProduct) => {
@@ -43,6 +43,26 @@ const searchProductsByName = async (productName) => {
       throw new Error(`Unable to search products: ${error.message}`);
   }
 };
+
+const searchProducts = async (brand, categoryId) => {
+  try {
+      const query = { status: true }; // Chỉ tìm sản phẩm còn hoạt động
+
+      // Thêm điều kiện tìm kiếm theo brand nếu có
+      if (brand) {
+          query.brand = { $regex: brand, $options: 'i' }; // Không phân biệt chữ hoa chữ thường
+      }
+
+      // Thêm điều kiện tìm kiếm theo category_id nếu có
+      if (categoryId) {
+          query.category_id = categoryId;
+      }
+
+      return await Products.find(query);
+  } catch (error) {
+      throw new Error(`Unable to search products: ${error.message}`);
+  }
+};
   
 const updateOneProduct = async (id, updateData) => {
     return await Products.findByIdAndUpdate(
@@ -73,7 +93,8 @@ export {createProduct,
   getOneProductById, 
   getProductsByCategory,
   getProductsByUserId,
-  searchProductsByName, 
+  searchProductsByName,
+  searchProducts, 
   updateOneProduct, 
   updateQuanlityProduct,
   deleteOneProduct}

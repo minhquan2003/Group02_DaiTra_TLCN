@@ -13,12 +13,16 @@ const notificationSchema = new mongoose.Schema(
       required: true,
     },
     user_id_receive: {
-      type: String,
-      required: true,
+        type: String,
+        required: false,
     },
     message: {
       type: String,
       required: true,
+    },
+    readed: {
+        type: Boolean,
+        default: false,
     },
     status: {
       type: Boolean,

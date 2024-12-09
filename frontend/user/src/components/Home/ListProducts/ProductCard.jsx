@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from 'react-router-dom';
+import { FaCheckCircle } from 'react-icons/fa'; // Import biểu tượng check từ react-icons
 
-const ProductCard = ({ id, name, description, price, quantity, image_url }) => {
+const ProductCard = ({ id, name, description, price, quantity, image_url, partner }) => {
     return (
-        <Link to={`/product/${id}`} className="flex mt-2 mb-2 justify-center items-center" style={{ width: '270px', height: '350px', textDecoration: 'none' }}>
-            <div className="bg-white h-full border rounded-lg shadow-md p-2 m-2 hover:shadow-lg transition-shadow duration-300">
-                <div className="w-full h-[60%] overflow-hidden rounded-t-lg">
+        <Link to={`/product/${id}`} className="flex mt-2 mb-2 justify-center items-center hover:bg-gray-200" style={{ width: '270px', height: '350px', textDecoration: 'none' }}>
+            <div className="bg-white h-full border rounded-lg shadow-md p-2 m-2 transition-shadow duration-300">
+                <div className="w-full h-[55%] overflow-hidden rounded-t-lg">
                     <img 
                         src={image_url} 
                         alt={name} 
@@ -14,9 +15,14 @@ const ProductCard = ({ id, name, description, price, quantity, image_url }) => {
                         style={{ width: '250px', height: '200px' }} // Thiết lập kích thước cố định cho ảnh
                     />
                 </div>
-                <div className="w-full h-[40%] p-4">
+                <div className="w-full h-[45%] p-4">
                     <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
-                    {/* <p className="text-gray-600 mt-2">{description}</p> */}
+                    {String(partner) === "true" ? (  // So sánh partner với chuỗi "true"
+                        <p className="text-sm text-green-600 mt-1 flex items-center">
+                            <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
+                            Đảm bảo
+                        </p>
+                    ) : null}
                     <p className="text-lg font-bold text-gray-800 mt-2">{price.toLocaleString('vi-VN')} VNĐ</p>
                     <p className="text-gray-500">Số lượng: {quantity}</p>
                 </div>
@@ -32,6 +38,7 @@ ProductCard.propTypes = {
     price: PropTypes.number.isRequired,
     quantity: PropTypes.number.isRequired,
     image_url: PropTypes.string.isRequired,
+    partner: PropTypes.bool.isRequired, // Thêm propType cho partner
 };
 
 export default ProductCard;

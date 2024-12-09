@@ -24,7 +24,6 @@ const SellerPage = () => {
                 <p className="mt-2">Email: {sellerInfo.email}</p>
             </div>
                 <div className="w-2/3 p-4">
-                    <h2 className="text-2xl font-semibold mb-4">Sản phẩm của {sellerInfo.name}</h2>
                     <div className="w-full h-auto flex flex-col justify-center items-center bg-main overflow-x-hidden">
                 <ListProductCard data={{ products, loading, error }} />
             </div>

@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { json, useParams } from 'react-router-dom';
+import { json, useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import { getProductById } from '../../hooks/Products';
-import { updateOrder } from '../../hooks/Orders';
+import { updateStatusOrder } from '../../hooks/Orders';
+import { createNotification } from '../../hooks/Notifications';
 
 const SalesOder = () => {
     const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
+    const userInfoString = sessionStorage.getItem('userInfo');
+    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
     
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState(null);
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [cancelText, setCancelText] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrderData = async () => {
@@ -54,19 +60,53 @@ const SalesOder = () => {
         });
     };
 
-    const handleChangeStatus = (e) => {
+    const handleCancel = async (e) => {
+        e.preventDefault();
+        let status_order = "Cancelled";
+        alert(`Đơn hàng đã được chuyển sang ${status_order}.`)
+        const aa = updateStatusOrder(orderId, status_order)
+        if(order.user_id_buyer){
+            const aa = await createNotification({
+                user_id_created: userInfo._id,
+                user_id_receive: order.user_id_buyer,
+                message: `Đơn hàng ${product.name} của bạn đã bị huỷ do: ${cancelText}.`
+            })
+        }
+        navigate(`/order/${orderId}`)
+    };
+
+    const handleChangeStatus = async (e) => {
         e.preventDefault();
         let status_order = "";
         if(order.status_order == 'Pending'){
+            if(order.user_id_buyer){
+                const aa = await createNotification({
+                    user_id_created: userInfo._id,
+                    user_id_receive: order.user_id_buyer,
+                    message: `Đơn hàng ${product.name} của bạn đã được xác nhận thành công.`
+                })
+            }
             status_order = 'Confirmed';
         }else if(order.status_order == 'Confirmed'){
-            status_order = 'Shipped';
-        }else if(order.status_order == 'Shipped'){
-            status_order = 'Delivered';
-        }else if(order.status_order == 'Delivered'){
+            status_order = 'Packaged';
+        }else if(order.status_order == 'Packaged'){
+            status_order = 'Shipping';
+        }
+        else if(order.status_order == 'Request Cancel'){
+            status_order = 'Cancelled';
+        }else if(order.status_order == 'Shipping'){
+            if(order.user_id_buyer){
+                const aa = await createNotification({
+                    user_id_created: userInfo._id,
+                    user_id_receive: order.user_id_buyer,
+                    message: `Đơn hàng ${product.name} của bạn đã được giao thành công.`
+                })
+            }
             status_order = 'Success';
         }
-        const aa = updateOrder(orderId, status_order)
+        alert(`Đơn hàng đã được chuyển sang ${status_order}.`)
+        const aa = updateStatusOrder(orderId, status_order)
+        navigate(`/order/${orderId}`)
     };
 
     if (loading) {
@@ -108,25 +148,134 @@ const SalesOder = () => {
                     </div>
                 </div>
                 <div className="bg-white w-1/2 rounded-lg p-6">
-                    <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
+                    <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2>
                     {order.status_order === 'Pending' ? (
-                        <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                            Xác nhận đơn hàng
-                        </button>
+                        <div className="bg-white rounded-lg shadow-md">
+                            <div>
+                                <button 
+                                    onClick={handleChangeStatus} 
+                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Xác nhận đơn hàng
+                                </button>
+                            </div>
+                            <div className="mb-4 w-1/2 mt-10">
+                                <textarea 
+                                    type="text" 
+                                    placeholder="Nguyên nhân huỷ đơn hàng" 
+                                    value={cancelText} 
+                                    onChange={(e) => setCancelText(e.target.value)} 
+                                    className="border border-gray-300 p-2 w-full rounded"
+                                    required
+                                />
+                            </div>                      
+                            <div>
+                                <button 
+                                    onClick={handleCancel} 
+                                    className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Huỷ đơn hàng
+                                </button>
+                            </div>
+                        </div>
+                        
                     ) : order.status_order === 'Confirmed' ? (
+                        
+                        <div className="bg-white rounded-lg shadow-md">
+                            <div>
+                                <button 
+                                    onClick={handleChangeStatus} 
+                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Xác nhận đơn hàng
+                                </button>
+                            </div>
+                            <div className="mb-4 w-1/2 mt-10">
+                                <textarea 
+                                    type="text" 
+                                    placeholder="Nguyên nhân huỷ đơn hàng" 
+                                    value={cancelText} 
+                                    onChange={(e) => setCancelText(e.target.value)} 
+                                    className="border border-gray-300 p-2 w-full rounded"
+                                    required
+                                />
+                            </div>                      
+                            <div>
+                                <button 
+                                    onClick={handleCancel} 
+                                    className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Huỷ đơn hàng
+                                </button>
+                            </div>
+                        </div>
+                        
+                    ) : order.status_order === 'Packaged' ? (
+                        <div className="bg-white rounded-lg shadow-md">
+                            <div>
+                                <button 
+                                    onClick={handleChangeStatus} 
+                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Xác nhận đơn hàng
+                                </button>
+                            </div>
+                            <div className="mb-4 w-1/2 mt-10">
+                                <textarea 
+                                    type="text" 
+                                    placeholder="Nguyên nhân huỷ đơn hàng" 
+                                    value={cancelText} 
+                                    onChange={(e) => setCancelText(e.target.value)} 
+                                    className="border border-gray-300 p-2 w-full rounded"
+                                    required
+                                />
+                            </div>                      
+                            <div>
+                                <button 
+                                    onClick={handleCancel} 
+                                    className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Huỷ đơn hàng
+                                </button>
+                            </div>
+                        </div>
+                    ) : order.status_order === 'Shipping' ? (
+                        <div className="bg-white rounded-lg shadow-md">
+                            <div>
+                                <button 
+                                    onClick={handleChangeStatus} 
+                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Xác nhận đơn hàng
+                                </button>
+                            </div>
+                            <div className="mb-4 w-1/2 mt-10">
+                                <textarea 
+                                    type="text" 
+                                    placeholder="Nguyên nhân huỷ đơn hàng" 
+                                    value={cancelText} 
+                                    onChange={(e) => setCancelText(e.target.value)} 
+                                    className="border border-gray-300 p-2 w-full rounded"
+                                    required
+                                />
+                            </div>                      
+                            <div>
+                                <button 
+                                    onClick={handleCancel} 
+                                    className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Huỷ đơn hàng
+                                </button>
+                            </div>
+                        </div>
+                    ) : order.status_order === 'Success' ? (
+                        null
+                    ) : order.status_order === 'Request Cancel' ? (
                         <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                            Xác nhận đơn hàng
+                            Xác nhận huỷ
                         </button>
-                    ) : order.status_order === 'Shipped' ? (
-                        <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                            Xác nhận đơn hàng
-                        </button>
-                    ) : order.status_order === 'Delivered' ? (
-                        <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                            Xác nhận đơn hàng
-                        </button>
-                    ) : order.status_order === 'Cancelled' ? (
-                        <p>Đơn hàng đã bị hủy. Không thể đánh giá sản phẩm.</p>
+                    ) : order.status_order === 'Cancelled' ?(
+                        null
                     ) : null}
                 </div>
             </div>

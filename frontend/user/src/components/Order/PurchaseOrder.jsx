@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import { getProductById } from '../../hooks/Products';
 import { addReview } from '../../hooks/Review';
+import { updateStatusOrder } from '../../hooks/Orders';
 
 const PurchaseOrder = () => {
     const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
@@ -15,6 +16,7 @@ const PurchaseOrder = () => {
     const [error, setError] = useState(null);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -29,12 +31,21 @@ const PurchaseOrder = () => {
         setComment('');
     };
 
+    const handleCancel = () => {
+        const status_order = 'Request Cancel';
+        updateStatusOrder(orderId, status_order)
+        alert("Bạn đã xác nhận huỷ đơn hàng")
+        navigate(`/order/${orderId}`)
+    };
+
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
                 // Lấy thông tin đơn hàng
                 const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
+
+                
 
                 // Lấy thông tin chi tiết đơn hàng
                 const detailsResponse = await axios.get(`http://localhost:5555/orderDetails/order/${orderId}`);
@@ -107,10 +118,18 @@ const PurchaseOrder = () => {
                     </div>
                 </div>
                 <div className="bg-white w-1/3 rounded-lg p-6">
-                    <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
+                {order && (order.status_order == 'Pending' || order.status_order == 'Confirmed') ?
+                    (<div>
+                        <button onClick={() => handleCancel()} className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
+                            Huỷ đơn hàng
+                        </button>
+                    </div>)
+                 : order.status_order == 'Success' ?
+                    (<div>
+                        <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
                     <form onSubmit={handleSubmit} className="py-4">
                         <div className="mb-4">
-                            <label className="block mb-1">Đánh giá:</label>
+                            {/* <label className="block mb-1">Đánh giá:</label> */}
                             <div className="flex">
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <span
@@ -137,6 +156,9 @@ const PurchaseOrder = () => {
                             Gửi đánh giá
                         </button>
                     </form>
+                    </div>) : null
+                }
+                    
                 </div>
             </div>
         </div>

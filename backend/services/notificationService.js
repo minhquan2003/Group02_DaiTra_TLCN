@@ -25,9 +25,18 @@ const deleteNotification = async (notificationId) => {
   );
 };
 
-export {
-  createNotification,
-  getActiveNotifications,
-  getActiveNotificationsByUserId,
-  deleteNotification,
+const updateNotification = async (notificationId, updateData) => {
+  try {
+      const updatedNotification = await Notifications.findByIdAndUpdate(
+          notificationId,
+          updateData,
+          { new: true} // Trả về bản ghi mới và chạy các bộ kiểm tra
+      );
+      return updatedNotification;
+  } catch (error) {
+      throw new Error(`Unable to update notification: ${error.message}`);
+  }
 };
+
+export {createNotification, getActiveNotifications, getActiveNotificationsByUserId, deleteNotification, updateNotification}
+

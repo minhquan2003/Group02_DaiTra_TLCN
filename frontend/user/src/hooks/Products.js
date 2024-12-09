@@ -159,4 +159,41 @@ const getProductByName = (product) => {
     return { products, loading, error };
 };
 
-export {getProducts, getProductById, useProduct, updateProduct, getProductByCategory, addProduct, getProductByName, getProductsByIdSeller};
+const useSearchProducts = (brand, categoryId) => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                // Tạo URL tìm kiếm với query parameters
+                const response = await axios.get('http://localhost:5555/products/product/search', {
+                    params: {
+                        brand,
+                        category_id: categoryId
+                    }
+                });
+                setProducts(response.data.data); // Lưu trữ danh sách sản phẩm
+            } catch (err) {
+                setError(err.response.data.message || 'Something went wrong'); // Xử lý lỗi
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        // Gọi hàm tìm kiếm nếu có ít nhất một tham số
+        if (brand || categoryId) {
+            fetchProducts();
+        } else {
+            setProducts([]); // Nếu không có tham số, xóa danh sách sản phẩm
+        }
+    }, [brand, categoryId]); // Chạy lại khi brand hoặc categoryId thay đổi
+
+    return { products, loading, error };
+};
+
+export {useSearchProducts, getProducts, getProductById, useProduct, updateProduct, getProductByCategory, addProduct, getProductByName, getProductsByIdSeller};
