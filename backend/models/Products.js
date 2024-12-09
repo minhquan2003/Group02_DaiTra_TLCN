@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      default: '',
+      default: "",
     },
     price: {
       type: Number,
@@ -66,6 +66,6 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Products = mongoose.model('Products', productSchema);
+const Products = mongoose.model("Products", productSchema);
 
 export default Products;

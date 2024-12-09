@@ -4,9 +4,14 @@ import {
   getCountExcludingRole,
   getUsersByRole,
   deleteUser,
+  getCountBannedUsers,
+  getBannedUsers,
+  banUser,
+  unbanUser,
+  searchUsers,
 } from "../../services/user/adminUserService.js";
 
-//--------Lấy tất cả người dùng
+//--------Lấy tất cả người dùng trừ admin
 const getAllUsers = async (req, res) => {
   try {
     const { page = 1 } = req.query; // Lấy trang từ query, mặc định là trang 1
@@ -26,6 +31,71 @@ const getAllUsers = async (req, res) => {
       totalPages: Math.ceil(totalUsers / limit),
       users,
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//--------Lấy tất cả người dùng bị ban
+const getAllBannedUsers = async (req, res) => {
+  try {
+    const { page = 1 } = req.query;
+    const limit = 8;
+    const skip = (page - 1) * limit;
+
+    const totalBannedUsers = await getCountBannedUsers();
+    const users = await getBannedUsers(skip, limit);
+
+    res.status(200).json({
+      totalBannedUsers,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalBannedUsers / limit),
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//-------- Ban người dùng
+const banUserAccount = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updatedUser = await banUser(userId);
+    res.status(200).json({
+      message: "User has been banned successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//-------- Unban người dùng
+const unbanUserAccount = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updatedUser = await unbanUser(userId);
+    res.status(200).json({
+      message: "User has been unbanned successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//---------Xóa tạm người dùng
+const deleteUserAccount = async (req, res) => {
+  try {
+    const { id } = req.params; // Lấy `id` từ params
+    const user = await deleteUser(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "User deactivated successfully", user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -59,20 +129,32 @@ const getUsersWithPartnerRole = async (req, res) => {
   }
 };
 
-//---------Xóa tạm người dùng
-const deleteUserAccount = async (req, res) => {
+//-------- Tìm kiếm người dùng theo từ khóa
+const searchUsersByKeyword = async (req, res) => {
   try {
-    const { id } = req.params; // Lấy `id` từ params
-    const user = await deleteUser(id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    const { keyword } = req.query; // Lấy từ khóa từ query
+    if (!keyword) {
+      return res.status(400).json({ message: "Keyword is required" });
     }
 
-    res.status(200).json({ message: "User deactivated successfully", user });
+    const users = await searchUsers(keyword);
+
+    res.status(200).json({
+      totalResults: users.length,
+      users,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export { getAllUsers, getUsersWithPartnerRole, deleteUserAccount };
+export {
+  getAllUsers,
+  getUsersWithPartnerRole,
+  getBannedUsers,
+  getAllBannedUsers,
+  deleteUserAccount,
+  banUserAccount,
+  unbanUserAccount,
+  searchUsersByKeyword,
+};
