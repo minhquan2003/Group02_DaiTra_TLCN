@@ -1,11 +1,13 @@
 // src/pages/Dashboard.jsx
 import React from "react";
+import PurchaseOverview from "../components/ui/PurchaseOverview.jsx";
+import StatisticsChart from "../components/ui/StatisticsChart.jsx";
 
 const Dashboard = () => {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p>Welcome to the admin panel.</p>
+    <div className="">
+      <PurchaseOverview />
+      <StatisticsChart />
     </div>
   );
 };
