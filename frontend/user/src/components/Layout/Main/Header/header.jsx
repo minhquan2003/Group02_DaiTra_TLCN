@@ -196,12 +196,24 @@ const Header = () => {
                       </button>
                     </>
                   ) : (
+                    <>
                     <button 
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                       onClick={() => navigate('/login')}>
                       Đăng nhập
                     </button>
+                    <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => navigate('/signup')}>
+                      Đăng ký tài khoản
+                    </button>
+                    </>
                   )}
+                  <button 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => navigate('/feedback')}>
+                      Đóng góp ý kiến
+                    </button>
                 </div>
               </div>
             )}

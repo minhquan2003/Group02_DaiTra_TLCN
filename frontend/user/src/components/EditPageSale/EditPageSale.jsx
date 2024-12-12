@@ -4,6 +4,8 @@ import { getProductsByIdSeller } from '../../hooks/Products'; // Giả sử bạ
 import BackButton from '../../commons/BackButton';
 import { useUserById } from '../../hooks/Users';
 import { Link } from 'react-router-dom';
+import { FaCheckCircle } from 'react-icons/fa';
+import { deleteProductById } from '../../hooks/Products';
 
 const EditSalePage = () => {
     const { sellerId } = useParams();
@@ -11,54 +13,78 @@ const EditSalePage = () => {
     const sellerInfo = useUserById(sellerId);
     const navigate = useNavigate();
 
+    const handleDeleteProduct = async (idPro) => {
+        const confirmed = window.confirm("Bạn có muốn xóa sản phẩm ra khỏi danh sách sản phẩm của bạn không?");
+        
+        if (confirmed) {
+            try {
+                await deleteProductById(idPro);
+                // Load lại trang sau khi xóa thành công
+                navigate(0); // Điều hướng lại trang hiện tại
+            } catch (error) {
+                console.error("Error deleting product:", error);
+            }
+        }
+    };
+
     const ProductCard = ({ id, name, description, price, quantity, image_url, partner }) => {
         return (
-            <Link to={`/product/${id}`} className="flex mt-2 mb-2 justify-center items-center hover:bg-gray-200" style={{ width: '270px', height: '350px', textDecoration: 'none' }}>
+            <div className="flex mt-2 mb-2 justify-center items-center" style={{ width: '300px', height: '450px' }}>
                 <div className="bg-white h-full border rounded-lg shadow-md p-2 m-2 transition-shadow duration-300">
                     <div className="w-full h-[55%] overflow-hidden rounded-t-lg">
                         <img 
                             src={image_url} 
                             alt={name} 
                             className="object-cover" 
-                            style={{ width: '250px', height: '200px' }} // Thiết lập kích thước cố định cho ảnh
+                            style={{ width: '250px', height: '200px' }} 
                         />
                     </div>
                     <div className="w-full h-[45%] p-4">
                         <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
-                        {String(partner) === "true" ? (  // So sánh partner với chuỗi "true"
+                        {String(partner) === "true" ? (
                             <p className="text-sm text-green-600 mt-1 flex items-center">
-                                <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
+                                <FaCheckCircle className="mr-1" />
                                 Đảm bảo
                             </p>
                         ) : null}
                         <p className="text-lg font-bold text-gray-800 mt-2">{price.toLocaleString('vi-VN')} VNĐ</p>
                         <p className="text-gray-500">Số lượng: {quantity}</p>
+                        <div className="flex justify-between mt-4">
+                            <Link to={`/edit/product/${id}`} className="bg-gray-100 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300">
+                                Chỉnh sửa
+                            </Link>
+                            <button 
+                            onClick={()=>handleDeleteProduct(id)}
+                            className="bg-gray-100 border border-red-600 text-red-600 underline rounded p-2 hover:bg-red-300 transition duration-300">
+                                Xoá
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </Link>
+            </div>
         );
     };
 
     return (
-        <div className="p-5">
+        <div className="p-5 bg-gray-100">
             <div className="flex items-center mb-4">
                 <BackButton />
             </div>
             <div className="flex">
-                <div className="w-1/3 p-4 border-r">
+                <div className="w-1/4 p-4 border-r">
                     <img src={sellerInfo.avatar_url} alt="Avatar" className="w-32 h-32 rounded-full mx-auto" />
                     <h2 className="text-xl font-semibold mt-4">{sellerInfo.name}</h2>
                     <p className="mt-2">Số điện thoại: {sellerInfo.phone}</p>
                     <p className="mt-2">Địa chỉ: {sellerInfo.address}</p>
                     <p className="mt-2">Email: {sellerInfo.email}</p>
                     <button 
-                        onClick={()=> navigate(`/profile/${sellerId}`)}
-                        className="bg-gray-100 text-green-600 font-bold rounded p-2 hover:bg-gray-300 transition duration-300"
+                        onClick={() => navigate(`/profile/${sellerId}`)}
+                        className="bg-gray-100 mt-6 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300"
                     >
-                        Thêm vào giỏ hàng
+                        Cập nhật thông tin cá nhân
                     </button>
                 </div>
-                <div className="w-2/3 p-4">
+                <div className="w-3/4 p-4">
                     <div className="w-full h-auto flex flex-col justify-center items-center bg-main overflow-x-hidden">
                         <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
                         {loading ? (

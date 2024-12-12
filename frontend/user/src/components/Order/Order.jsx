@@ -8,7 +8,7 @@ const Order = () => {
     const [sellOrders, setSellOrders] = useState([]);
     const [buyOrders, setBuyOrders] = useState([]);
     const [activeSellTab, setActiveSellTab] = useState('Pending');
-    const [activeBuyStatus, setActiveBuyStatus] = useState('All'); // Trạng thái mặc định cho đơn mua
+    const [activeBuyStatus, setActiveBuyStatus] = useState('All');
     const [sortOrder, setSortOrder] = useState('none');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -46,12 +46,7 @@ const Order = () => {
     });
 
     const sortOrders = (orders) => {
-        if (sortOrder === 'newest') {
-            return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        } else if (sortOrder === 'oldest') {
-            return orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        }
-        return orders; // Không sắp xếp
+        return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sắp xếp theo thời gian mới nhất
     };
 
     const filterByDateRange = (orders) => {
@@ -63,6 +58,17 @@ const Order = () => {
         });
     };
 
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString('vi-VN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+    };
+
     const filteredAndSortedSellOrders = sortOrders(filterByDateRange(filteredSellOrders));
     const filteredAndSortedBuyOrders = sortOrders(filteredBuyOrders);
 
@@ -71,7 +77,7 @@ const Order = () => {
         setEndDate('');
         setSortOrder('none');
         setSearchTerm('');
-        setActiveBuyStatus('All'); // Reset trạng thái đơn mua
+        setActiveBuyStatus('All');
     };
 
     return (
@@ -147,16 +153,19 @@ const Order = () => {
                     {filteredAndSortedSellOrders.length === 0 ? (
                         <p>Không có đơn bán nào cho trạng thái này.</p>
                     ) : (
-                        <ul className="flex flex-wrap bg-white">
+                        <ul className="bg-white">
                             {filteredAndSortedSellOrders.map(order => (
                                 <Link to={`/salesOder/${order._id}`} key={order._id}>
-                                    <li className="border rounded-md p-4 m-2 shadow-md transition-transform transform hover:scale-105 max-w-md">
-                                        <div className="font-semibold text-lg mb-2">Họ tên: <span className="font-normal">{order.name}</span></div>
+                                    <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
+                                        <div className="font-semibold text-lg">Họ tên: <span className="font-normal">{order.name}</span></div>
                                         <div className="text-gray-700">
                                             <strong>Tổng giá:</strong> <span className="font-bold">{order.total_amount.toLocaleString()} VNĐ</span>
                                         </div>
                                         <div className="text-gray-700">
-                                            <strong>Ngày tạo đơn hàng:</strong> <span className="font-normal">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                            <strong>Ngày tạo đơn hàng:</strong> <span className="font-normal">{formatDate(order.createdAt)}</span>
+                                        </div>
+                                        <div className="text-gray-700">
+                                            <strong>Số điện thoại người mua:</strong> <span className="font-normal">{order.phone}</span>
                                         </div>
                                         <div className="text-gray-700">
                                             <strong>Trạng thái đơn hàng:</strong> <span className="font-normal text-red-500">{order.status_order}</span>
@@ -197,15 +206,15 @@ const Order = () => {
                     {filteredAndSortedBuyOrders.length === 0 ? (
                         <p>Không có đơn mua nào.</p>
                     ) : (
-                        <ul className="flex flex-wrap bg-white">
+                        <ul className="bg-white">
                             {filteredAndSortedBuyOrders.map(order => (
                                 <Link to={`/purchaseOrder/${order._id}`} key={order._id}>
-                                    <li className="border rounded-md p-4 m-2 shadow-md transition-transform transform hover:scale-105 max-w-md">
+                                    <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
                                         <div className="font-semibold mb-2">
                                             <strong>Tổng giá:</strong> <span className="font-bold">{order.total_amount.toLocaleString()} VNĐ</span>
                                         </div>
                                         <div className="text-gray-700">
-                                            <strong>Ngày mua hàng:</strong> <span className="font-normal">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                            <strong>Ngày mua hàng:</strong> <span className="font-normal">{formatDate(order.createdAt)}</span>
                                         </div>
                                         <div className="text-gray-700">
                                             <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.status_order}</span>

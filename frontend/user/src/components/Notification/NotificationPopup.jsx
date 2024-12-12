@@ -5,22 +5,27 @@ const NotificationPopup = ({ notifications, onClose }) => {
 
     const handleRead = async (id) => { 
         const readed = true;
-        const aa = await updateNotification(id, readed);
+        await updateNotification(id, readed);
+    };
+
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleDateString('vi-VN', options);
     };
 
     return (
         <div className="absolute right-0 mt-2 w-80 bg-white rounded shadow-lg p-4 z-50">
             <h3 className="font-bold mb-2">Thông Báo</h3>
             {notifications.length > 0 ? (
-                <ul>
+                <ul className="max-h-60 overflow-y-auto">
                     {notifications.map((notification) => (
                         <li
                             onClick={() => handleRead(notification._id)}
                             key={notification._id}
-                            className={`border-b-2 border-yellow-300 py-1 cursor-pointer ${!notification.readed ? 'font-bold' : 'font-normal'}`} // Thay đổi kiểu chữ
+                            className={`border-b-2 border-yellow-300 py-1 cursor-pointer ${!notification.readed ? 'font-bold' : 'font-normal'}`} 
                         >
-                            #{notification._id}<br/>
-                            {notification.message}
+                            {notification.message}<br/>
+                            <span className="text-gray-500 text-sm">{formatDate(notification.createdAt)}</span>
                         </li>
                     ))}
                 </ul>

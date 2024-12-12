@@ -76,14 +76,11 @@ const AuthLogin = () => {
           </button>
 
           <div className="flex justify-around mt-4">
-            <a href="#" className="text-red-500 hover:underline text-sm">
-              Quên mật khẩu?
-            </a>
             <a
               href="/signup"
-              className="text-green-500 hover:underline text-sm"
+              className="rounded text-green-500 hover:underline text-sm"
             >
-              Đăng ký tài khoản.
+              Đăng ký tài khoản
             </a>
           </div>
         </form>

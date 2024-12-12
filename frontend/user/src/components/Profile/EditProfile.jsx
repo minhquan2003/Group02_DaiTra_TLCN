@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProfile } from '../../hooks/Users';
+import BackButton from '../../commons/BackButton';
 
 const EditProfile = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -11,8 +12,9 @@ const EditProfile = () => {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
-    const [avatar_url, setAvatar_url] = useState('');
-
+    const [avatarFile, setAvatarFile] = useState(null);
+    const [qrImage, setQrImage] = useState(null);
+    const [qrUrl, setQrUrl] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [isPartnerRegistration, setIsPartnerRegistration] = useState(false);
     const navigate = useNavigate();
@@ -24,9 +26,9 @@ const EditProfile = () => {
             setName(userInfo.name || '');
             setAddress(userInfo.address || '');
             setPhone(userInfo.phone || '');
-            setAvatar_url(userInfo.avatar_url || '');
+            setQrUrl(userInfo.qrPayment || '');
         }
-    }, []);
+    }, [userInfo]);
 
     const handleEdit = () => {
         if (userInfo) {
@@ -36,14 +38,66 @@ const EditProfile = () => {
         }
     };
 
-    const handleSave = (e) => {
+    const handleImageChange = (e) => {
+        const selectedImage = e.target.files[0];
+        setAvatarFile(selectedImage);
+    };
+
+    const handleQrChange = (e) => {
+        const selectedQrImage = e.target.files[0];
+        setQrImage(selectedQrImage);
+    };
+
+    const uploadImage = async (image) => {
+        const formData = new FormData();
+        formData.append("file", image);
+        formData.append("upload_preset", "images_preset");
+        formData.append("cloud_name", "dd6pnq2is");
+
+        const response = await fetch('https://api.cloudinary.com/v1_1/dd6pnq2is/image/upload', {
+            method: "POST",
+            body: formData
+        });
+        const data = await response.json();
+        return data.secure_url; // Trả về URL của ảnh đã upload
+    };
+
+    const handleSave = async (e) => {
         e.preventDefault();
-        const updatedUserInfo = { email, username, name, address, phone, avatar_url };
-        const aa = updateProfile(userInfo._id, updatedUserInfo);
-        // sessionStorage.setItem("userInfo", JSON.stringify(aa.data));
-        alert('Thông tin cá nhân đã được cập nhật!');
-        setIsEditing(false);
-        navigate(`/profile/${userInfo._id}`);
+        const updatedUserInfo = { email, username, name, address, phone, qrPayment: qrUrl };
+
+        try {
+            // Upload mã QR nếu có
+            if (qrImage) {
+                const uploadedQrUrl = await uploadImage(qrImage);
+                updatedUserInfo.qrPayment = uploadedQrUrl; // Lưu URL mã QR
+            }
+
+            // Cập nhật thông tin cá nhân
+            await updateProfile(userInfo._id, updatedUserInfo);
+            alert('Thông tin cá nhân đã được cập nhật!');
+            setIsEditing(false);
+            navigate(`/profile/${userInfo._id}`);
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            alert('Đã có lỗi xảy ra, vui lòng thử lại.');
+        }
+    };
+
+    const handleAvatarSave = async () => {
+        if (avatarFile) {
+            try {
+                const uploadedAvatarUrl = await uploadImage(avatarFile);
+                await updateProfile(userInfo._id, { avatar_url: uploadedAvatarUrl });
+                alert('Hình đại diện đã được cập nhật!');
+                setAvatarFile(null); // Đặt lại trạng thái sau khi lưu
+            } catch (error) {
+                console.error('Error updating avatar:', error);
+                alert('Đã có lỗi xảy ra khi cập nhật hình đại diện, vui lòng thử lại.');
+            }
+        } else {
+            alert('Vui lòng chọn hình đại diện mới!');
+        }
     };
 
     const handleCancel = () => {
@@ -55,7 +109,7 @@ const EditProfile = () => {
             setName(userInfo.name || '');
             setAddress(userInfo.address || '');
             setPhone(userInfo.phone || '');
-            setAvatar_url(userInfo.avatar_url || '');
+            setQrUrl(userInfo.qrPayment || '');
         }
     };
 
@@ -63,13 +117,11 @@ const EditProfile = () => {
         setIsPartnerRegistration(true);
     };
 
-    const handleConfirmPartnerRegistration = () => {
+    const handleConfirmPartnerRegistration = async () => {
         alert('Đăng ký đối tác đang chờ xác nhận!');
-        const role = 'regisPartner'
-        const updatedUserInfo = { email, username, name, address, phone, avatar_url, role };
-        updateProfile(userInfo._id, updatedUserInfo);
+        const updatedUserInfo = { email, username, name, address, phone, avatarFile, role: 'regisPartner' };
+        await updateProfile(userInfo._id, updatedUserInfo);
         setIsPartnerRegistration(false);
-        // You may want to update the user state or perform additional actions here
     };
 
     const handleCancelPartnerRegistration = () => {
@@ -78,16 +130,28 @@ const EditProfile = () => {
 
     return (
         <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
+            <div className="flex items-center mb-4">
+                <BackButton />
+            </div>
             <h2 className="text-2xl font-bold mb-4 text-center">Chỉnh Sửa Thông Tin Cá Nhân</h2>
             <div className="flex mb-6">
-                <div className="w-1/3 flex justify-center items-center">
+                <div className="w-1/3 justify-center items-center">
                     <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                        {avatar_url ? (
-                            <img src={avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                        {userInfo.avatar_url ? (
+                            <img src={userInfo.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
                             <span className="text-gray-500">No Image</span>
                         )}
                     </div>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="mt-2 block w-full border rounded-md p-2"
+                    />
+                    <button onClick={handleAvatarSave} className="mt-2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
+                        Thay đổi hình đại diện
+                    </button>
                 </div>
                 <div className="w-2/3 ml-4">
                     <form onSubmit={handleSave}>
@@ -145,6 +209,16 @@ const EditProfile = () => {
                                 rows="3"
                             />
                         </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium">Mã QR</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleQrChange}
+                                className={`mt-1 block w-full border rounded-md p-2 ${isEditing ? 'border-blue-500' : 'bg-gray-200'}`}
+                                disabled={!isEditing}
+                            />
+                        </div>
                         <div className="flex justify-end space-x-2">
                             {!isEditing && (
                                 <>
@@ -173,14 +247,11 @@ const EditProfile = () => {
                         <li>Đảm bảo tuân thủ các quy định của nền tảng.</li>
                     </ul>
                     {userInfo.role === 'user' ? 
-                    
                         <div className="flex justify-end mt-4 space-x-2">
                             <button type="button" onClick={handleConfirmPartnerRegistration} className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Xác nhận đăng ký</button>
                             <button type="button" onClick={handleCancelPartnerRegistration} className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600">Huỷ đăng ký</button>
                         </div>
-                        
-                    :<button type="button" className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Yêu cầu đăng ký của bạn đang chờ xác nhận</button> }
-                    
+                    : <button type="button" className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Yêu cầu đăng ký của bạn đang chờ xác nhận</button>}
                 </div>
             )}
         </div>

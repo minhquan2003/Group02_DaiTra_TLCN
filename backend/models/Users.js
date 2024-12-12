@@ -43,6 +43,10 @@ const userChema = mongoose.Schema(
             type: Boolean,
             default: false
         },
+        qrPayment:{
+            type: String,
+            default: ''
+        },
         // created_at:{
         //     type: Date,
         //     require: true

@@ -10,7 +10,7 @@ const paymentSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['Credit Card', 'PayPal', 'Bank Transfer', 'Cash'], // Các loại thanh toán có thể
+        enum: ['Pay Online', 'Cash'], // Các loại thanh toán có thể
     },
     order_id: {
         type: String,
@@ -18,7 +18,7 @@ const paymentSchema = new mongoose.Schema({
     },
     user_id_pay: {
         type: String,
-        required: true,
+        required: false,
     },
     user_id_receive: {
         type: String,
@@ -31,7 +31,7 @@ const paymentSchema = new mongoose.Schema({
     status_payment: {
         type: String,
         required: true,
-        enum: ['Pending', 'Completed', 'Failed'], // Các trạng thái thanh toán có thể
+        enum: ['Pending', 'Đã thanh toán', 'Failed'], // Các trạng thái thanh toán có thể
     },
     status: {
         type: Boolean,

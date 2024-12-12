@@ -12,6 +12,7 @@ const PurchaseOrder = () => {
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState(null);
     const [product, setProduct] = useState(null);
+    const [payment, setPayment] = useState(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [rating, setRating] = useState(0);
@@ -45,7 +46,8 @@ const PurchaseOrder = () => {
                 const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
 
-                
+                const paymentRe = await axios.get(`http://localhost:5555/payments/order/${orderId}`);
+                setPayment(paymentRe.data.data);
 
                 // Lấy thông tin chi tiết đơn hàng
                 const detailsResponse = await axios.get(`http://localhost:5555/orderDetails/order/${orderId}`);
@@ -78,6 +80,9 @@ const PurchaseOrder = () => {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
         });
     };
 
@@ -115,6 +120,8 @@ const PurchaseOrder = () => {
                         <p><strong>Trạng thái đơn hàng:</strong> {order.status_order}</p>
                         <p><strong>Ghi chú:</strong> {order.note ? order.note : "Không có"}</p>
                         <p><strong>Ngày giao:</strong> {formatDate(order.updatedAt)}</p>
+                        <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
+                        <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
                     </div>
                 </div>
                 <div className="bg-white w-1/3 rounded-lg p-6">
