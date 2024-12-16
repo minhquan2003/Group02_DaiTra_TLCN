@@ -99,7 +99,7 @@ const PurchaseOrder = () => {
     }
 
     return (
-        <div className="p-5">
+        <div className="p-5 bg-gray-100">
             <div className="flex items-center mb-4">
                 <BackButton />
                 {/* <h1 className="text-2xl font-bold ml-4">Thanh Toán</h1> */}
@@ -120,8 +120,13 @@ const PurchaseOrder = () => {
                         <p><strong>Trạng thái đơn hàng:</strong> {order.status_order}</p>
                         <p><strong>Ghi chú:</strong> {order.note ? order.note : "Không có"}</p>
                         <p><strong>Ngày giao:</strong> {formatDate(order.updatedAt)}</p>
+                        {payment[0] ? 
+                        <>
                         <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
                         <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
+                        </> :
+                        <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
+                        }
                     </div>
                 </div>
                 <div className="bg-white w-1/3 rounded-lg p-6">

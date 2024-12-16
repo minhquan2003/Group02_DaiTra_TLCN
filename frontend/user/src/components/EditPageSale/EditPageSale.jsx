@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProductsByIdSeller } from '../../hooks/Products'; // Giả sử bạn đã có hook này
+import { getProductsByIdSeller, getProductsNotApproveByIdSeller } from '../../hooks/Products'; // Giả sử bạn đã có hook này
 import BackButton from '../../commons/BackButton';
 import { useUserById } from '../../hooks/Users';
 import { Link } from 'react-router-dom';
@@ -10,8 +10,10 @@ import { deleteProductById } from '../../hooks/Products';
 const EditSalePage = () => {
     const { sellerId } = useParams();
     const { products, loading, error } = getProductsByIdSeller(sellerId);
+    const { productsnotapprove, loadingnotapprove, errornotapprove } = getProductsNotApproveByIdSeller(sellerId);
     const sellerInfo = useUserById(sellerId);
     const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState("approved"); // Quản lý tab đang hoạt động
 
     const handleDeleteProduct = async (idPro) => {
         const confirmed = window.confirm("Bạn có muốn xóa sản phẩm ra khỏi danh sách sản phẩm của bạn không?");
@@ -54,7 +56,7 @@ const EditSalePage = () => {
                                 Chỉnh sửa
                             </Link>
                             <button 
-                            onClick={()=>handleDeleteProduct(id)}
+                            onClick={() => handleDeleteProduct(id)}
                             className="bg-gray-100 border border-red-600 text-red-600 underline rounded p-2 hover:bg-red-300 transition duration-300">
                                 Xoá
                             </button>
@@ -85,9 +87,21 @@ const EditSalePage = () => {
                     </button>
                 </div>
                 <div className="w-3/4 p-4">
+                    <div className="flex mb-4">
+                        <button 
+                            onClick={() => setActiveTab("approved")} 
+                            className={`p-2 rounded w-1/2 ${activeTab === "approved" ? "bg-blue-100 text-blue-600 font-bold underline border border-blue-500" : "bg-gray-200 text-gray-700"}`}>
+                            Sản phẩm đã được chấp thuận
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab("notApproved")} 
+                            className={`p-2 rounded w-1/2 ${activeTab === "notApproved" ? "bg-blue-100 text-blue-600 font-bold underline border border-blue-500" : "bg-gray-200 text-gray-700"}`}>
+                            Sản phẩm chưa được chấp thuận
+                        </button>
+                    </div>
                     <div className="w-full h-auto flex flex-col justify-center items-center bg-main overflow-x-hidden">
                         <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
-                        {loading ? (
+                        {activeTab === "approved" && (loading ? (
                             <div className="flex items-center justify-center h-64">
                                 <div className="inline-block relative w-20 h-20 animate-spin">
                                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-4 border-gray-500 rounded-full"></div>
@@ -111,7 +125,32 @@ const EditSalePage = () => {
                                     />
                                 ))}
                             </div>
-                        )}
+                        ))}
+                        {activeTab === "notApproved" && (loadingnotapprove ? (
+                            <div className="flex items-center justify-center h-64">
+                                <div className="inline-block relative w-20 h-20 animate-spin">
+                                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-4 border-gray-500 rounded-full"></div>
+                                </div>
+                                <span className="ml-4 text-gray-500">Loading products...</span>
+                            </div>
+                        ) : errornotapprove ? (
+                            <div className="text-red-500 font-bold">Error: {errornotapprove}</div>
+                        ) : (
+                            <div className="flex flex-wrap mt-2 mb-2">
+                                {Array.isArray(productsnotapprove) && productsnotapprove.map((product) => (
+                                    <ProductCard
+                                        key={product._id}
+                                        id={product._id}
+                                        name={product.name}
+                                        description={product.description}
+                                        price={product.price}
+                                        quantity={product.quantity}
+                                        image_url={product.image_url}
+                                        partner={product.partner}
+                                    />
+                                ))}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -99,6 +99,8 @@ const ProductUpload = () => {
                 condition,
                 origin,
                 partner,
+                approve: false,
+                status: true
             };
             
             if(productId){
@@ -211,9 +213,9 @@ const ProductUpload = () => {
                                 className="border border-gray-300 p-2 w-full rounded"
                                 required
                             >
-                                <option value="new">Mới</option>
-                                <option value="used">Đã qua sử dụng</option>
-                                <option value="refurbished">Tái chế</option>
+                                <option value="Mới">Mới</option>
+                                <option value="Đã qua sử dụng">Đã qua sử dụng</option>
+                                <option value="Tái chế">Tái chế</option>
                             </select>
                         </div>
                         <div className="mb-4">

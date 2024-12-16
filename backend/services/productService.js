@@ -6,7 +6,7 @@ const createProduct = async (productData) => {
   };
   
 const getProducts = async () => {
-    return await Products.find({ status: true, quantity: { $gt: 0 } });
+    return await Products.find({ status: true, approve: true, quantity: { $gt: 0 } });
   };
   
 const getOneProductById = async (idProduct) => {
@@ -15,7 +15,7 @@ const getOneProductById = async (idProduct) => {
 
 const getProductsByCategory = async (categoryId) => {
   try {
-    const products = await Products.find({ category_id: categoryId, status: true });
+    const products = await Products.find({ category_id: categoryId, status: true, approve: true, });
     return products;
   } catch (error) {
     throw new Error(`Unable to fetch products: ${error.message}`);
@@ -24,7 +24,16 @@ const getProductsByCategory = async (categoryId) => {
 
 const getProductsByUserId = async (userId) => {
   try {
-      const products = await Products.find({ user_id: userId, status: true });
+      const products = await Products.find({ user_id: userId, status: true , approve: true});
+      return products;
+  } catch (error) {
+      throw new Error(`Unable to fetch products: ${error.message}`);
+  }
+};
+
+const getProductsByUserIdNotApprove = async (userId) => {
+  try {
+      const products = await Products.find({ user_id: userId, status: true , approve: false});
       return products;
   } catch (error) {
       throw new Error(`Unable to fetch products: ${error.message}`);
@@ -37,7 +46,8 @@ const searchProductsByName = async (productName) => {
       // Tìm kiếm sản phẩm với tên không phân biệt chữ hoa chữ thường
       return await Products.find({
           name: { $regex: productName, $options: 'i' }, // 'i' để không phân biệt chữ hoa chữ thường
-          status: true // Chỉ tìm kiếm sản phẩm còn hoạt động
+          status: true,
+          approve: true // Chỉ tìm kiếm sản phẩm còn hoạt động
       });
   } catch (error) {
       throw new Error(`Unable to search products: ${error.message}`);
@@ -46,7 +56,7 @@ const searchProductsByName = async (productName) => {
 
 const searchProducts = async (brand, categoryId) => {
   try {
-      const query = { status: true }; // Chỉ tìm sản phẩm còn hoạt động
+      const query = { status: true, approve: true }; // Chỉ tìm sản phẩm còn hoạt động
 
       // Thêm điều kiện tìm kiếm theo brand nếu có
       if (brand) {
@@ -97,4 +107,5 @@ export {createProduct,
   searchProducts, 
   updateOneProduct, 
   updateQuanlityProduct,
+  getProductsByUserIdNotApprove,
   deleteOneProduct}

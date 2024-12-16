@@ -21,6 +21,7 @@ import PaymentInfo from "./components/Checkout/InfoPayment";
 import Feedback from "./components/Feedback/Feedback";
 import ReGetPassword from "./components/AuthForm/LossPassword";
 import ChangePassword from "./components/AuthForm/ChangePassword";
+import Regulation from "./components/Regulation/Regulation";
 
 const App = () => {
   return (
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/regetpassword" element={<ReGetPassword />} />
           <Route path="/changepassword" element={<ChangePassword />} />
+          <Route path="/regulations" element={<Regulation />} />
         </Routes>
       </MainLayout>
     </Router>

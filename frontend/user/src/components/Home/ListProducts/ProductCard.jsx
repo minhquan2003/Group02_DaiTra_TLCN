@@ -20,7 +20,7 @@ const ProductCard = ({ id, name, description, price, quantity, image_url, partne
                     {String(partner) === "true" ? (  // So sánh partner với chuỗi "true"
                         <p className="text-sm text-green-600 mt-1 flex items-center">
                             <FaCheckCircle className="mr-1" /> {/* Biểu tượng check */}
-                            Đảm bảo
+                            Đảm bảo chất lượng
                         </p>
                     ) : null}
                     <p className="text-lg font-bold text-gray-800 mt-2">{price.toLocaleString('vi-VN')} VNĐ</p>

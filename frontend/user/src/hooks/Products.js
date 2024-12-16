@@ -49,6 +49,30 @@ const getProductsByIdSeller = (idSeller) => {
     return { products, loading, error };
 };
 
+const getProductsNotApproveByIdSeller = (idSeller) => {
+    const [productsnotapprove, setProducts] = useState([]);
+    const [loadingnotapprove, setLoading] = useState(true);
+    const [errornotapprove, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5555/products/notapprove/user/${idSeller}`);
+                setProducts(response.data);
+            } catch (err) {
+                console.error("Error fetching products:", err);
+                setError("Failed to load products. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    return { productsnotapprove, loadingnotapprove, errornotapprove };
+};
+
 const useProduct = (id) => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -228,4 +252,5 @@ export {useSearchProducts,
     addProduct, 
     getProductByName, 
     getProductsByIdSeller,
+    getProductsNotApproveByIdSeller,
     updateOneProduct};

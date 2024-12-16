@@ -139,8 +139,11 @@ const Checkout = () => {
                 console.error('Error creating payment:', error);
                 alert('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.' + error);
             }
+        }else{
+            navigate('/')
         }
         alert(`Đơn hàng đã được tạo thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
+        
     };
 
     return (
