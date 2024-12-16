@@ -30,10 +30,10 @@ const AuthLogin = () => {
           {error && <div className="text-red-500 mb-6">{error}</div>}
 
           <label className="block mb-4">
-            <span className="sr-only">Email hoặc Số điện thoại</span>
+            <span className="sr-only">Email</span>
             <input
               type="email"
-              placeholder="Email hoặc Số điện thoại"
+              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
@@ -62,7 +62,7 @@ const AuthLogin = () => {
             </div>
 
             <div className="flex justify-start">
-              <a href="#" className="text-red-500 hover:underline text-sm">
+              <a href="/regetpassword" className="text-red-500 hover:underline text-sm">
                 Quên mật khẩu?
               </a>
             </div>

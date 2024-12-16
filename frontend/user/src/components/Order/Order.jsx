@@ -157,15 +157,17 @@ const Order = () => {
                             {filteredAndSortedSellOrders.map(order => (
                                 <Link to={`/salesOder/${order._id}`} key={order._id}>
                                     <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
-                                        <div className="font-semibold text-lg">Họ tên: <span className="font-normal">{order.name}</span></div>
                                         <div className="text-gray-700">
-                                            <strong>Tổng giá:</strong> <span className="font-bold">{order.total_amount.toLocaleString()} VNĐ</span>
+                                            <strong>Họ tên:</strong> <span className="font-normal">{order.name} - </span>
                                         </div>
                                         <div className="text-gray-700">
-                                            <strong>Ngày tạo đơn hàng:</strong> <span className="font-normal">{formatDate(order.createdAt)}</span>
+                                            <strong>Tổng giá:</strong> <span className="font-normal">{order.total_amount.toLocaleString()} VNĐ - </span>
                                         </div>
                                         <div className="text-gray-700">
-                                            <strong>Số điện thoại người mua:</strong> <span className="font-normal">{order.phone}</span>
+                                            <strong>Ngày tạo đơn hàng:</strong> <span className="font-normal">{formatDate(order.createdAt)} - </span>
+                                        </div>
+                                        <div className="text-gray-700">
+                                            <strong>Số điện thoại người mua:</strong> <span className="font-normal">{order.phone} - </span>
                                         </div>
                                         <div className="text-gray-700">
                                             <strong>Trạng thái đơn hàng:</strong> <span className="font-normal text-red-500">{order.status_order}</span>
@@ -210,11 +212,11 @@ const Order = () => {
                             {filteredAndSortedBuyOrders.map(order => (
                                 <Link to={`/purchaseOrder/${order._id}`} key={order._id}>
                                     <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
-                                        <div className="font-semibold mb-2">
-                                            <strong>Tổng giá:</strong> <span className="font-bold">{order.total_amount.toLocaleString()} VNĐ</span>
+                                        <div className="text-gray-700">
+                                            <strong>Tổng giá:</strong> <span className="font-normal">{order.total_amount.toLocaleString()} VNĐ - </span>
                                         </div>
                                         <div className="text-gray-700">
-                                            <strong>Ngày mua hàng:</strong> <span className="font-normal">{formatDate(order.createdAt)}</span>
+                                            <strong>Ngày mua hàng:</strong> <span className="font-normal">{formatDate(order.createdAt)} - </span>
                                         </div>
                                         <div className="text-gray-700">
                                             <strong>Trạng thái đơn hàng:</strong> <span className="font-normal">{order.status_order}</span>

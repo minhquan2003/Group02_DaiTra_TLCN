@@ -6,7 +6,9 @@ import {
   FiBell,
   FiMessageCircle,
   FiShoppingCart,
+  FiShoppingBag,
   FiUser,
+  FiMail,
   FiLogIn
 } from "react-icons/fi";
 import { IoIosArrowForward } from "react-icons/io";
@@ -94,7 +96,7 @@ const Header = () => {
                 className="w-16 h-16 rounded-full" // Kích thước 16 và bo tròn
             />
         </div>
-          <nav className="ml-6">
+          {/* <nav className="ml-6">
             <ul className="flex space-x-4">
               <li>
                 <a href="#" className="flex items-center">
@@ -104,7 +106,7 @@ const Header = () => {
                 </a>
               </li>
             </ul>
-          </nav>
+          </nav> */}
         </div>
         <div className="flex items-center bg-gray-100 rounded-md overflow-hidden w-[40vw]">
           <input
@@ -114,17 +116,14 @@ const Header = () => {
             onChange={(e) => setNamProduct(e.target.value)}
             className="bg-gray-100 p-2 w-full text-gray-700 focus:outline-none"
           />
-          <button className="bg-gray-100 p-2 text-black" onClick={handleSearchSubmit}>
+          <button className="bg-yellow-400 p-2 text-black mr-1 rounded-full" onClick={handleSearchSubmit}>
             <FiSearch className="h-5 w-5" />
           </button>
         </div>
 
         <div className="flex items-center space-x-6">
-          <span className="cursor-pointer">
+          <span className="cursor-pointer" title="Thông báo">
             <NotificationIcon userId={id} />
-          </span>
-          <span className="cursor-pointer">
-            <FiMessageCircle className="h-5 w-5" /> {/* Message icon */}
           </span>
           <span className="relative cursor-pointer" onClick={() => navigate('/cart')} title="Giỏ hàng">
             <FiShoppingCart className="h-5 w-5" />
@@ -133,6 +132,22 @@ const Header = () => {
                 {cartItemCount}
               </span>
             )}
+          </span>
+          <span
+            onClick={() => {
+                if (userInfo) {
+                    navigate(`/order/${userInfo._id}`);
+                } else {
+                    alert("Bạn chưa đăng nhập!");
+                }
+            }}
+            className="cursor-pointer"
+            title="Đơn hàng"
+        >
+            <FiShoppingBag className="h-5 w-5" />
+        </span>
+          <span onClick={() => navigate('/feedback')} className="cursor-pointer" title="Đóng góp ý kiến">
+            <FiMail  className="h-5 w-5" /> {/* Message icon */}
           </span>
           <span className="relative inline-block cursor-pointer" onClick={toggleDropdown}>
             <div className="flex items-center space-x-1 rounded-md hover:bg-gray-100 transition duration-200" title="Trang cá nhân">
@@ -165,12 +180,7 @@ const Header = () => {
                       <button 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                         onClick={() => handleLinkClick(`/profile/${userInfo._id}`)}>
-                        Chỉnh sửa hồ sơ
-                      </button>
-                      <button 
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                        onClick={() => handleLinkClick(`/order/${userInfo._id}`)}>
-                        Đơn hàng
+                        Thông tin cá nhân
                       </button>
                       <button 
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -194,6 +204,11 @@ const Header = () => {
                         onClick={handleLogout}>
                         Đăng xuất
                       </button>
+                      <button 
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => handleLinkClick(`/changepassword`)}>
+                        Đổi mật khẩu
+                      </button>
                     </>
                   ) : (
                     <>
@@ -209,11 +224,6 @@ const Header = () => {
                     </button>
                     </>
                   )}
-                  <button 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                      onClick={() => navigate('/feedback')}>
-                      Đóng góp ý kiến
-                    </button>
                 </div>
               </div>
             )}

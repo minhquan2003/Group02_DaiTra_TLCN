@@ -4,7 +4,8 @@ import {addUser,
     getUserById,
     getUserByEmail,
     updateUserById,
-    deleteUserById
+    deleteUserById,
+    comparePassword
 } from '../controllers/userController.js';
 import authorize from '../middleware/authorize.js';
 
@@ -15,6 +16,7 @@ userRoute.post('/email', getUserByEmail);
 
 userRoute.get('/', getUsers);
 userRoute.get('/:id', getUserById);
+userRoute.post('/comparePassword', comparePassword);
 
 userRoute.put('/:id', updateUserById);
 userRoute.delete('/:id', authorize(['admin']), deleteUserById);

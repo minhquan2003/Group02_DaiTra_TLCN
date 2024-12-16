@@ -129,14 +129,14 @@ const EditProfile = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
             <div className="flex items-center mb-4">
                 <BackButton />
             </div>
             <h2 className="text-2xl font-bold mb-4 text-center">Chỉnh Sửa Thông Tin Cá Nhân</h2>
             <div className="flex mb-6">
                 <div className="w-1/3 justify-center items-center">
-                    <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                    <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden">
                         {userInfo.avatar_url ? (
                             <img src={userInfo.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -152,6 +152,14 @@ const EditProfile = () => {
                     <button onClick={handleAvatarSave} className="mt-2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
                         Thay đổi hình đại diện
                     </button>
+                    <div className="ml-4 flex-none">
+                        <h2 className="text-xl font-semibold mb-2">Mã QR:</h2>
+                        <img 
+                            src={qrUrl} 
+                            alt="Mã QR" 
+                            className="w-60 h-auto border rounded" 
+                        />
+                    </div>
                 </div>
                 <div className="w-2/3 ml-4">
                     <form onSubmit={handleSave}>
