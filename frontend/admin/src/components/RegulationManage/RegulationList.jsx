@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useRegulation from "../../hooks/useRegulation";
 
-const RegulationList = () => {
+const RegulationList = ({ refreshRegulations }) => {
   const { regulations, loading, error, deleteRegulation, customRegulation } =
     useRegulation();
   const [selectedRegulation, setSelectedRegulation] = useState(null);
-  const [showModal, setShowModal] = useState(false); // State để điều khiển việc hiển thị modal
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
   });
-  const [showMenu, setShowMenu] = useState(null); // State để điều khiển menu
+
+  useEffect(() => {
+    if (refreshRegulations) {
+      refreshRegulations();
+    }
+  }, [regulations]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -22,28 +27,24 @@ const RegulationList = () => {
 
   const handleDelete = (id) => {
     deleteRegulation(id);
-    setShowMenu(null); // Close the menu after deletion
   };
 
   const handleCustom = (id, regulation) => {
-    // Cập nhật formData với dữ liệu của regulation đang chỉnh sửa
     setFormData({
       title: regulation.title,
       description: regulation.description,
     });
-    setSelectedRegulation(id); // Cập nhật regulation đang được chỉnh sửa
-    setShowModal(true); // Mở modal
-    setShowMenu(null); // Close the menu when editing
+    setSelectedRegulation(id);
+    setShowModal(true);
   };
 
   const handleSubmit = () => {
-    // Logic để submit form chỉnh sửa
     customRegulation(selectedRegulation, formData);
-    setShowModal(false); // Đóng modal sau khi gửi form
+    setShowModal(false);
   };
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
+    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
         Our Regulations
       </h2>
@@ -52,60 +53,78 @@ const RegulationList = () => {
         placeholder="Search by title"
         className="mb-4 w-full p-2 border rounded"
       />
-      <ul>
-        {regulations.length === 0 ? (
-          <li>No active regulations found.</li>
-        ) : (
-          regulations.map((regulation) => (
-            <li
-              key={regulation._id}
-              className="items-center border-b border-gray-300 p-4 mb-4 flex justify-between"
-            >
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800 truncate">
+      {regulations.length === 0 ? (
+        <div>No active regulations found.</div>
+      ) : (
+        <table className="w-full table-auto border-collapse">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Title
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Description
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-center">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {regulations.map((regulation) => (
+              <tr key={regulation._id} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-4 py-2">
                   {regulation.title}
-                </h3>
-                <p className="text-sm text-gray-600 mt-2">
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
                   {regulation.description}
-                </p>
-              </div>
-
-              {/* Icon ba chấm dọc và tùy chọn */}
-              <div className="relative">
-                <button
-                  onClick={() =>
-                    setShowMenu(
-                      showMenu === regulation._id ? null : regulation._id
-                    )
-                  }
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  <span style={{ fontSize: "20px" }}>&#x22EE;</span>{" "}
-                  {/* Ba chấm dọc */}
-                </button>
-                {showMenu === regulation._id && (
-                  <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-md w-40">
-                    <button
-                      onClick={() => handleCustom(regulation._id, regulation)}
-                      className="w-full text-left p-2 hover:bg-gray-100"
+                </td>
+                <td className="border border-gray-300 px-4 py-2 text-center">
+                  <button
+                    onClick={() => handleCustom(regulation._id, regulation)}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      className="w-6 h-6"
                     >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(regulation._id)}
-                      className="w-full text-left p-2 hover:bg-gray-100 text-red-600"
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M10 6h10M10 12h10M10 18h10"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleDelete(regulation._id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      className="w-6 h-6"
                     >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </li>
-          ))
-        )}
-      </ul>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
-      {/* Popup form chỉnh sửa */}
       {showModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
           <div className="bg-white p-6 rounded-md w-96">

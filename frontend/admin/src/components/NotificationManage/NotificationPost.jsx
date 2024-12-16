@@ -32,75 +32,77 @@ const NotificationPost = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
-      <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-        Post a Notification
-      </h2>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col justify-between space-y-6 h-full"
-      >
-        {/* Message Input */}
-        <div>
-          <label
-            htmlFor="message"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Message:
-          </label>
-          <input
-            id="message"
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-            className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter your notification message"
-          />
-        </div>
+    <div className="w-2/3 mx-auto p-4 bg-gray-100 rounded-md pl-[16.6666%]">
+      <div className="rounded-md border border-gray-300 p-4">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+          Create new Notification
+        </h2>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col justify-between space-y-6 h-full"
+        >
+          {/* Message Input */}
+          <div>
+            <label
+              htmlFor="message"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Message:
+            </label>
+            <input
+              id="message"
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your notification message"
+            />
+          </div>
 
-        {/* Role Dropdown */}
-        <div>
-          <label
-            htmlFor="role"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Send to Role (Optional):
-          </label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">-- Select Role --</option>
-            <option value="user">User</option>
-            <option value="partner">Partner</option>
-            <option value="all">All</option>
-          </select>
-        </div>
+          {/* Role Dropdown */}
+          <div>
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Send to Role (Optional):
+            </label>
+            <select
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">-- Select Role --</option>
+              <option value="user">User</option>
+              <option value="partner">Partner</option>
+              <option value="all">All</option>
+            </select>
+          </div>
 
-        {/* Success and Error Messages */}
-        {successMessage && (
-          <p className="mt-4 text-green-600 text-center">{successMessage}</p>
-        )}
-        {error && (
-          <p className="mt-4 text-red-600 text-center">Error: {error}</p>
-        )}
+          {/* Success and Error Messages */}
+          {successMessage && (
+            <p className="mt-4 text-green-600 text-center">{successMessage}</p>
+          )}
+          {error && (
+            <p className="mt-4 text-red-600 text-center">Error: {error}</p>
+          )}
 
-        {/* Submit Button */}
-        <div className="mt-auto">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-6 py-2 text-white font-semibold rounded-md ${
-              loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
-            } focus:outline-none w-full`}
-          >
-            {loading ? "Posting..." : "Post Notification"}
-          </button>
-        </div>
-      </form>
+          {/* Submit Button */}
+          <div className="mt-auto">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`px-6 py-2 text-white font-semibold rounded-md ${
+                loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+              } focus:outline-none w-full`}
+            >
+              {loading ? "Posting..." : "Post Notification"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

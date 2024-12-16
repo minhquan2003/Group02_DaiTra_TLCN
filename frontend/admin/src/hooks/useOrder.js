@@ -62,4 +62,65 @@ const usePurchaseOverview = () => {
   return { overviewData, loading, error };
 };
 
-export { useTopSellingProducts, usePurchaseOverview };
+const useOrders = (page, limit) => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("http://localhost:5555/admin/orders", {
+          params: { page, limit },
+        });
+        setOrders(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [page, limit]);
+
+  return { orders, loading, error };
+};
+
+const useSearchOrder = (page, limit, searchQuery) => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!searchQuery) return; // Nếu không có từ khóa tìm kiếm, không gọi API
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          "http://localhost:5555/admin/search-orders",
+          {
+            params: { page, limit, search: searchQuery },
+          }
+        );
+        setOrders(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [page, limit, searchQuery]);
+
+  return { orders, loading, error };
+};
+
+export {
+  useTopSellingProducts,
+  usePurchaseOverview,
+  useOrders,
+  useSearchOrder,
+};

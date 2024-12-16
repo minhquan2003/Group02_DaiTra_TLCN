@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import usePartner from "../../hooks/usePartner";
 import { TbListDetails } from "react-icons/tb";
 import { GiCancel } from "react-icons/gi";
+import { SiTicktick } from "react-icons/si";
 
-const PartnerList = () => {
+const PartnerRequest = () => {
   const { partners, loading, error } = usePartner();
   const [selectedPartner, setSelectedPartner] = useState(null); // State to track the selected partner
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
@@ -51,7 +52,13 @@ const PartnerList = () => {
                 {partner.phone || "N/A"}
               </td>
               <td className="border px-4 py-2 ">
-                <div className="flex justify-center space-x-2">
+                <div className="flex justify-center space-x-4">
+                  <button
+                    onClick={() => handleApprove(product._id)}
+                    className="px-3 py-1 text-sm text-white bg-green-500 rounded hover:bg-green-600"
+                  >
+                    <SiTicktick />
+                  </button>
                   <button
                     className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-600"
                     onClick={() => openModal(partner)}
@@ -112,4 +119,4 @@ const PartnerList = () => {
   );
 };
 
-export default PartnerList;
+export default PartnerRequest;

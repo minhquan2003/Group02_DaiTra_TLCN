@@ -72,11 +72,11 @@ const StatisticsChart = () => {
   };
 
   return (
-    <div className="max-w-4xl w-full p-6 bg-gray-100 rounded-lg mt-4">
-      <h2 className="text-xl font-bold text-gray-700 mb-4">Statistics</h2>
+    <div className="ml-[16.6666%] p-4 bg-gray-100 rounded-md border-b-2 border-black-300 pb-8">
+      <h2 className="text-xl font-bold text-gray-700 mb-4  mx-4">Statistics</h2>
 
       {/* Timeframe Selection */}
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4 mb-4  mx-4">
         <button
           onClick={() => setTimeframe("week")}
           className={`px-4 py-2 rounded ${
@@ -109,7 +109,7 @@ const StatisticsChart = () => {
 
       {/* Chart */}
       {!loading && data && (
-        <div className="relative w-full" style={{ height: "400px" }}>
+        <div className="relative" style={{ height: "300px" }}>
           {" "}
           {/* Set a fixed height */}
           <Bar data={chartData} options={chartOptions} />

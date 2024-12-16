@@ -1,63 +1,64 @@
 import Users from "../../../models/Users.js";
-import Products from "../../../models/Products.js";
 
-export const getStatisticsByTime = async (timeframe) => {
+export const getUserStatisticsByYear = async (year) => {
   try {
-    let dateGroup;
-    let format;
+    const startOfYear = new Date(`${year}-01-01T00:00:00Z`);
+    const endOfYear = new Date(`${year}-12-31T23:59:59Z`);
+    const startOfPreviousYear = new Date(`${year - 1}-01-01T00:00:00Z`);
+    const endOfPreviousYear = new Date(`${year - 1}-12-31T23:59:59Z`);
 
-    // Set grouping logic based on timeframe
-    if (timeframe === "week") {
-      dateGroup = {
-        $isoWeek: "$updatedAt", // Group by ISO week
-      };
-      format = "Week";
-    } else if (timeframe === "month") {
-      dateGroup = {
-        $month: "$updatedAt", // Group by month
-      };
-      format = "Month";
-    } else if (timeframe === "year") {
-      dateGroup = {
-        $year: "$updatedAt", // Group by year
-      };
-      format = "Year";
-    } else {
-      throw new Error("Invalid timeframe. Use 'week', 'month', or 'year'.");
-    }
+    // Lấy tổng số người dùng tích lũy đến cuối năm trước
+    const previousYearTotal = await Users.countDocuments({
+      createdAt: { $lte: endOfPreviousYear },
+    });
 
-    // Statistics for users
-    const userStats = await Users.aggregate([
+    // Lấy số lượng người dùng mới tạo trong từng tháng của năm hiện tại
+    const statistics = await Users.aggregate([
       {
-        $group: {
-          _id: dateGroup,
-          count: { $sum: 1 },
+        $match: {
+          createdAt: {
+            $gte: startOfYear,
+            $lte: endOfYear,
+          },
         },
       },
       {
-        $sort: { _id: 1 }, // Sort by the grouped value (week, month, or year)
-      },
-    ]);
-
-    // Statistics for products
-    const productStats = await Products.aggregate([
-      {
         $group: {
-          _id: dateGroup,
-          count: { $sum: 1 },
+          _id: { $month: "$createdAt" },
+          totalUsers: { $sum: 1 },
         },
       },
       {
-        $sort: { _id: 1 }, // Sort by the grouped value (week, month, or year)
+        $project: {
+          month: "$_id",
+          totalUsers: 1,
+          _id: 0,
+        },
+      },
+      {
+        $sort: { month: 1 },
       },
     ]);
 
-    return {
-      format,
-      users: userStats,
-      products: productStats,
-    };
+    // Đảm bảo tất cả các tháng (1-12) đều có dữ liệu
+    const fullStatistics = Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      totalUsers: 0,
+    }));
+
+    statistics.forEach((stat) => {
+      fullStatistics[stat.month - 1].totalUsers = stat.totalUsers;
+    });
+
+    // Tính tổng tích lũy, với tháng 1 bắt đầu từ tổng của năm trước
+    let cumulativeTotal = previousYearTotal;
+    const cumulativeStatistics = fullStatistics.map((stat) => {
+      cumulativeTotal += stat.totalUsers;
+      return { month: stat.month, totalUsers: cumulativeTotal };
+    });
+
+    return cumulativeStatistics;
   } catch (error) {
-    throw new Error("Failed to fetch statistics: " + error.message);
+    throw new Error("Error calculating user statistics");
   }
 };

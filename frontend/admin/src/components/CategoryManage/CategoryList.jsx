@@ -9,7 +9,7 @@ function CategoryList() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md">
+    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {categories.map((category) => (
           <div

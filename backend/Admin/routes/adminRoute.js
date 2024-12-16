@@ -1,5 +1,6 @@
 // routes.js
 import express from "express";
+import { loginAdmin } from "../controllers/auth/adminAuthController.js";
 import {
   getAllUsers,
   getUsersWithPartnerRole,
@@ -39,14 +40,18 @@ import {
   removeRegulation,
 } from "../controllers/regulation/adminRegulationController.js";
 
-import { getStatisticsByTimeController } from "../controllers/chart/adminChartController.js";
+import { getUserStatistics } from "../controllers/chart/adminChartController.js";
 
 import {
   fetchTopSellingProducts,
   fetchOrderStats,
+  fetchAllOrders,
+  searchOrders,
 } from "../controllers/order/adminOrderController.js";
 
 const adminRouter = express.Router();
+
+adminRouter.post("/login", loginAdmin);
 
 adminRouter.get("/all-users", getAllUsers);
 adminRouter.get("/all-partners", getUsersWithPartnerRole);
@@ -77,9 +82,11 @@ adminRouter.post("/regulation/", addRegulation);
 adminRouter.put("/regulation/:id", editRegulation);
 adminRouter.delete("/regulation/:id", removeRegulation);
 
-adminRouter.get("/statistics-by-time", getStatisticsByTimeController);
+adminRouter.get("/statistics/yearly-users", getUserStatistics);
 
 adminRouter.get("/top-selling-products", fetchTopSellingProducts);
 adminRouter.get("/order-stats", fetchOrderStats);
+adminRouter.get("/orders", fetchAllOrders);
+adminRouter.get("/search-orders", searchOrders);
 
 export default adminRouter;

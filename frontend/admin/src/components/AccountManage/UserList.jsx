@@ -76,7 +76,7 @@ const UserList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
+    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
         User Manage
       </h2>

@@ -54,8 +54,8 @@ const TopTenOrder = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded-lg ">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">{getTitle()}</h2>
+    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md px-8 border-b-2 border-black-300 pb-8">
+      <h2 className="text-2xl font-bold text-blue-600 mb-6">{getTitle()}</h2>
       {/* Title changes based on timeFrame */}
       {/* Filter Icon */}
       <div className="relative">
@@ -72,9 +72,9 @@ const TopTenOrder = () => {
         {showFilterMenu && (
           <div
             ref={filterMenuRef}
-            className="absolute left-0 top-full mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-10"
+            className="absolute left-0 top-full mt-2 bg-white border "
           >
-            <ul className="space-y-2 p-2">
+            <ul className="space-y-2 p-4">
               <li>
                 <button
                   onClick={() => handleTimeFrameChange("day")}
@@ -114,27 +114,36 @@ const TopTenOrder = () => {
       {/* Loading/Error State */}
       {loading && <p className="text-gray-500">Loading...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
-      {/* Product List */}
+      {/* Product Table */}
       {!loading && !error && (
-        <ul className="divide-y divide-gray-200">
-          {topProducts.map((product) => (
-            <li key={product.productId} className="flex items-center py-4">
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className="w-16 h-16 object-cover rounded-md mr-4"
-              />
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-800">
+        <table className="min-w-full bg-white border border-gray-200 rounded-md shadow-md">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="px-4 py-2 text-left">Product</th>
+              <th className="px-4 py-2 text-left">Image</th>
+              <th className="px-4 py-2 text-left">Sold</th>
+            </tr>
+          </thead>
+          <tbody>
+            {topProducts.map((product) => (
+              <tr key={product.productId} className="border-t">
+                <td className="px-4 py-2 text-sm font-semibold text-gray-800">
                   {product.name}
-                </p>
-                <p className="text-gray-600 text-sm">
-                  Sold: {product.totalQuantity}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
+                </td>
+                <td className="px-4 py-2">
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-12 h-12 object-cover rounded-md"
+                  />
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-600">
+                  {product.totalQuantity}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

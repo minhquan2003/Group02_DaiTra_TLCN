@@ -21,13 +21,13 @@ const LeftSidebar = () => {
   };
 
   return (
-    <div className="w-64 bg-gray-100 text-blue-500 h-full flex flex-col">
-      <div className="flex items-center justify-center p-4 bg-gray-100">
+    <div className="w-64 bg-white text-blue-500 h-full flex flex-col">
+      <div className="flex items-center justify-center p-4 ">
         <img src="../../public/images/logo.png" alt="Logo" className="h-22" />
       </div>
 
       <div className="flex-1 px-4 py-6">
-        <ul className="space-y-4">
+        <ul className="space-y-2">
           <li>
             <Link
               to="/"
@@ -102,6 +102,19 @@ const LeftSidebar = () => {
               }`}
             >
               <FaListAlt className="mr-2" /> Category Management
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/admin/order"
+              onClick={() => handleLinkClick("/admin/order")}
+              className={`flex items-center text-sm p-2 rounded ${
+                activeLink === "/admin/order"
+                  ? "bg-blue-500 text-white"
+                  : "text-gray-500"
+              }`}
+            >
+              <FaListAlt className="mr-2" /> Order Management
             </Link>
           </li>
           <li>

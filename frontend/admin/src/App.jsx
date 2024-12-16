@@ -8,80 +8,102 @@ import CategoryManage from "./pages/CategoryManage";
 import NotificationManage from "./pages/NotificationManage";
 import RegulationManage from "./pages/RegulationManage";
 import PartnerManage from "./pages/PartnerManage";
+import OrderManage from "./pages/OrderManage";
+import Login from "./pages/Login";
+import PrivateRoute from "./privateroute/PrivateRoute";
 
 const App = () => (
   <Router>
     <Routes>
+      <Route path="/login" element={<Login />} />
       <Route
         path="/"
         element={
-          <AdminLayout>
-            <Dashboard />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <Dashboard />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
       <Route
         path="/admin/users"
         element={
-          <AdminLayout>
-            <AccountManage />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <AccountManage />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
       <Route
         path="/admin/posts"
         element={
-          <AdminLayout>
-            <ProductManage />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <ProductManage />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
       <Route
         path="/admin/partner"
         element={
-          <AdminLayout>
-            <PartnerManage />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <PartnerManage />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
       <Route
         path="/admin/feedbacks"
         element={
-          <AdminLayout>
-            <FeedbackManage />
-          </AdminLayout>
-        }
-      />
-      <Route
-        path="/admin/feedbacks"
-        element={
-          <AdminLayout>
-            <FeedbackManage />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <FeedbackManage />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
       <Route
         path="/admin/category"
         element={
-          <AdminLayout>
-            <CategoryManage />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <CategoryManage />
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/order"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <OrderManage />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
       <Route
         path="/admin/notifications"
         element={
-          <AdminLayout>
-            <NotificationManage />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <NotificationManage />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
       <Route
         path="/admin/regulation"
         element={
-          <AdminLayout>
-            <RegulationManage />
-          </AdminLayout>
+          <PrivateRoute>
+            <AdminLayout>
+              <RegulationManage />
+            </AdminLayout>
+          </PrivateRoute>
         }
       />
     </Routes>
