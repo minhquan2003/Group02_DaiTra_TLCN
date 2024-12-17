@@ -23,6 +23,13 @@ const ChangePassword = () => {
             return;
         }
 
+        if (newPassword.length < 6) {
+            alert("Mật khẩu phải có ít nhất 6 ký tự!");
+            setNewPassword('');
+            setConfirmPassword('');
+            return;
+        }
+
         try {
             const response = await axios.post("http://localhost:5555/users/comparePassword", {
                 id: userInfo._id,

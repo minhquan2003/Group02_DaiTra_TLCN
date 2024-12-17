@@ -21,15 +21,20 @@ const PurchaseOrder = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if(rating == 0 || !comment){
+            alert("Hãy điền đủ thông tin đánh giá!")
+            return
+        }
         addReview({
             product_id: product._id,
             user_id: order.user_id_buyer,
             rating: rating,
             comment: comment
         })
-        alert("Đánh giá: " + rating + " Nhận xét: " + comment);
+        alert(`Bạn đã đánh giá cho sản phẩm ${product.name}.`);
         setRating(0);
         setComment('');
+        navigate(`/order/${orderId}`)
     };
 
     const handleCancel = () => {
@@ -104,74 +109,78 @@ const PurchaseOrder = () => {
                 <BackButton />
                 {/* <h1 className="text-2xl font-bold ml-4">Thanh Toán</h1> */}
             </div>
-            <h1 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h1>
-            <div className="flex bg-white rounded-lg shadow-md">
-                <div className="bg-white h-full w-2/3 flex rounded-lg shadow-md p-6">
-                    <div className="bg-white rounded-lg p-6 flex flex-col items-center">
-                        <img src={product.image_url} alt={product.name} className="w-3/4 h-auto rounded-md mb-4" />
-                        <p><strong></strong> {product.name}</p>
-                        <p><strong></strong>Số lượng:{" " + orderDetails.quantity}</p>
+            <div className="w-full flex flex-col items-center mb-10">
+                <h1 className="text-2xl font-bold mb-4">Thông tin đơn hàng</h1>
+                <div className="flex bg-white rounded-lg shadow-md w-4/5">
+                    <div className="bg-white h-full w-4/6 flex rounded-lg shadow-md p-6">
+                        <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center">
+                            <img src={product.image_url} alt={product.name} className="w-full h-auto rounded-md mb-4" />
+                            <p><strong></strong>Số lượng:{" " + orderDetails.quantity}</p>
+                        </div>
+                        <div className="ml-4">
+                            <h2 className="text-xl font-semibold">Đơn hàng</h2>
+                            <p className="text-xl text-green-600"><strong></strong> {product.name}</p>
+                            <p><strong>Mã đơn hàng:</strong> {order._id}</p>
+                            <p><strong>Địa chỉ giao hàng:</strong> {order.address}</p>
+                            <p><strong>Tổng số tiền:</strong> {order.total_amount.toLocaleString()} VNĐ</p>
+                            <p><strong>Trạng thái đơn hàng:</strong> {order.status_order}</p>
+                            <p><strong>Ghi chú:</strong> {order.note ? order.note : "Không có"}</p>
+                            <p><strong>Ngày tạo đơn:</strong> {formatDate(order.createdAt)}</p>
+                            {payment[0] ? 
+                            <>
+                            <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
+                            <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
+                            </> :
+                            <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
+                            }
+                        </div>
                     </div>
-                    <div className="ml-4">
-                        <h2 className="text-xl font-semibold">Đơn hàng</h2>
-                        <p><strong>Mã đơn hàng:</strong> {order._id}</p>
-                        <p><strong>Địa chỉ giao hàng:</strong> {order.address}</p>
-                        <p><strong>Tổng số tiền:</strong> {order.total_amount.toLocaleString()} VNĐ</p>
-                        <p><strong>Trạng thái đơn hàng:</strong> {order.status_order}</p>
-                        <p><strong>Ghi chú:</strong> {order.note ? order.note : "Không có"}</p>
-                        <p><strong>Ngày giao:</strong> {formatDate(order.updatedAt)}</p>
-                        {payment[0] ? 
-                        <>
-                        <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
-                        <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
-                        </> :
-                        <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
+                    <div className="w-2/6 flex flex-col justify-center">
+                        <div className="bg-white w-full h-full rounded-lg p-6">
+                        {order && (order.status_order == 'Pending' || order.status_order == 'Confirmed') ?
+                            (<div>
+                                <button onClick={() => handleCancel()} className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
+                                    Huỷ đơn hàng
+                                </button>
+                            </div>)
+                        : order.status_order == 'Success' ?
+                            (<div>
+                                <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
+                            <form onSubmit={handleSubmit} className="py-4">
+                                <div className="mb-2">
+                                    {/* <label className="block mb-1">Đánh giá:</label> */}
+                                    <div className="flex">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <span
+                                                key={star}
+                                                className={`cursor-pointer text-2xl ${star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                                                onClick={() => setRating(star)}
+                                            >
+                                                ★
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block mb-1" htmlFor="comment">Nhận xét:</label>
+                                    <textarea
+                                        id="comment"
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        className="border rounded p-2 w-full"
+                                        rows="4"
+                                    />
+                                </div>
+                                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2">
+                                    Gửi đánh giá
+                                </button>
+                            </form>
+                            </div>) : null
                         }
+                            
+                        </div>
                     </div>
-                </div>
-                <div className="bg-white w-1/3 rounded-lg p-6">
-                {order && (order.status_order == 'Pending' || order.status_order == 'Confirmed') ?
-                    (<div>
-                        <button onClick={() => handleCancel()} className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                            Huỷ đơn hàng
-                        </button>
-                    </div>)
-                 : order.status_order == 'Success' ?
-                    (<div>
-                        <h2 className="text-xl font-semibold">Đánh giá sản phẩm</h2>
-                    <form onSubmit={handleSubmit} className="py-4">
-                        <div className="mb-4">
-                            {/* <label className="block mb-1">Đánh giá:</label> */}
-                            <div className="flex">
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <span
-                                        key={star}
-                                        className={`cursor-pointer text-2xl ${star <= rating ? 'text-yellow-500' : 'text-gray-300'}`}
-                                        onClick={() => setRating(star)}
-                                    >
-                                        ★
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="mb-4">
-                            <label className="block mb-1" htmlFor="comment">Nhận xét:</label>
-                            <textarea
-                                id="comment"
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                className="border rounded p-2 w-full"
-                                rows="4"
-                            />
-                        </div>
-                        <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2">
-                            Gửi đánh giá
-                        </button>
-                    </form>
-                    </div>) : null
-                }
-                    
-                </div>
+            </div>
             </div>
         </div>
     );

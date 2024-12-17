@@ -184,6 +184,7 @@ const ProductUpload = () => {
                                 onChange={(e) => setPrice(e.target.value)} 
                                 className="border border-gray-300 p-2 w-full rounded"
                                 required
+                                min="0"
                             />
                         </div>
                         <div className="mb-4">
@@ -194,6 +195,7 @@ const ProductUpload = () => {
                                 onChange={(e) => setQuantity(e.target.value)} 
                                 className="border border-gray-300 p-2 w-full rounded"
                                 required
+                                min="1"
                             />
                         </div>
                         <div className="mb-4">

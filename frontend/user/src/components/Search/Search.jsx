@@ -1,51 +1,56 @@
 import { getProductByName } from '../../hooks/Products';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import ListProductCard from '../Home/ListProducts/ListProductCard';
 import { getCategories } from '../../hooks/Categories';
 import React, { useState, useEffect } from 'react';
 
 const ProductByName = () => {
-    const [searchParams] = useSearchParams(); // Gọi useSearchParams ở đây
-    const name = searchParams.get('name'); // Lấy tên sản phẩm từ tham số tìm kiếm
+    const [searchParams] = useSearchParams();
+    const name = searchParams.get('name');
     const { products, loading, error } = getProductByName(name);
-    const data = products || []; // Đảm bảo data không là undefined
+    const data = products || [];
     const [brand, setBrand] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState(''); // Giá trị mặc định là '' cho "Tất cả"
-    const [minPrice, setMinPrice] = useState(''); // Giá tối thiểu
-    const [maxPrice, setMaxPrice] = useState(''); // Giá tối đa
-    const [filteredProducts, setFilteredProducts] = useState(data); // Lưu trữ sản phẩm đã lọc
+    const [minPrice, setMinPrice] = useState('');
+    const [maxPrice, setMaxPrice] = useState('');
+    const [origin, setOrigin] = useState('');
+    const [condition, setCondition] = useState('');
+    const [filteredProducts, setFilteredProducts] = useState(data);
     const { categories } = getCategories();
 
-    // Cập nhật filteredProducts khi dữ liệu sản phẩm thay đổi
     useEffect(() => {
         setFilteredProducts(data);
     }, [data]);
 
-    // Hàm lọc sản phẩm
     const handleFilter = () => {
         const newFilteredProducts = data.filter((product) => {
             const isInPriceRange =
                 (minPrice === '' || product.price >= Number(minPrice)) &&
                 (maxPrice === '' || product.price <= Number(maxPrice));
             const isInBrand = brand ? product.brand.toLowerCase().includes(brand.toLowerCase()) : true;
+            const isInOrigin = origin ? product.origin.toLowerCase().includes(origin.toLowerCase()) : true;
+            const isInCondition = condition ? product.condition === condition : true;
 
-            return isInPriceRange && isInBrand;
+            return isInPriceRange && isInBrand && isInOrigin && isInCondition;
         });
-        setFilteredProducts(newFilteredProducts); // Cập nhật danh sách sản phẩm đã lọc
+        setFilteredProducts(newFilteredProducts);
     };
 
-    // Hàm hủy lọc
     const handleResetFilters = () => {
         setBrand('');
         setMinPrice('');
         setMaxPrice('');
-        setFilteredProducts(data); // Đặt lại danh sách sản phẩm về mặc định
+        setOrigin('');
+        setCondition('');
+        setFilteredProducts(data);
     };
 
     return (
-        <div className="p-4">
+        <div className="p-4 min-h-screen bg-gray-100">
             <div className="mb-6 bg-white shadow rounded-lg p-4 flex flex-col">
-                {/* <h2 className="text-lg font-semibold mb-3 text-center">Lọc sản phẩm</h2> */}
+                <div className="text-lg font-semibold text-gray-800">
+                    Bạn đang tìm kiếm cho từ khoá: 
+                    <span className="text-xl font-bold text-red-600 ml-1">{name}</span>
+                </div>
                 <div className="flex flex-wrap gap-2">
                     <div className="flex-1">
                         <label className="block mb-1 text-sm font-medium" htmlFor="brandInput">Thương hiệu:</label>
@@ -80,16 +85,41 @@ const ProductByName = () => {
                             className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                     </div>
+                    <div className="flex-1">
+                        <label className="block mb-1 text-sm font-medium" htmlFor="originInput">Xuất xứ:</label>
+                        <input
+                            id="originInput"
+                            type="text"
+                            placeholder="Nhập xuất xứ"
+                            value={origin}
+                            onChange={(e) => setOrigin(e.target.value)}
+                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <label className="block mb-1 text-sm font-medium" htmlFor="conditionSelect">Tình trạng:</label>
+                        <select
+                            id="conditionSelect"
+                            value={condition}
+                            onChange={(e) => setCondition(e.target.value)}
+                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <option value="">Tất cả</option>
+                            <option value="Mới">Mới</option>
+                            <option value="Đã qua sử dụng">Đã qua sử dụng</option>
+                            <option value="Tái chế">Tái chế</option>
+                        </select>
+                    </div>
                     <div className="flex items-end">
                         <button
                             onClick={handleFilter}
-                            className="mt-4 border border-gray-300  bg-gray-100 text-black py-2 px-4 rounded-md hover:bg-gray-400 transition duration-200"
+                            className="mt-4 border border-gray-300 bg-gray-100 text-black py-2 px-4 rounded-md hover:bg-gray-400 transition duration-200"
                         >
                             Tìm Kiếm
                         </button>
                         <button
                             onClick={handleResetFilters}
-                            className="mt-4 border border-gray-300  bg-gray-100 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-200 ml-2"
+                            className="mt-4 border border-gray-300 bg-gray-100 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-200 ml-2"
                         >
                             Bỏ Tìm
                         </button>
@@ -98,7 +128,15 @@ const ProductByName = () => {
             </div>
             
             <div className="w-full flex flex-col justify-center items-center bg-main overflow-x-hidden mt-6">
-                <ListProductCard data={{ products: filteredProducts, loading, error }} />
+                {loading ? (
+                    <p>Đang tải sản phẩm...</p>
+                ) : error ? (
+                    <p>Có lỗi xảy ra: {error.message}</p>
+                ) : filteredProducts.length > 0 ? (
+                    <ListProductCard data={{ products: filteredProducts, loading, error }} />
+                ) : (
+                    <p className="text-red-500">Không tìm thấy sản phẩm mong muốn.</p>
+                )}
             </div>
         </div>
     );

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateProfile } from '../../hooks/Users';
 import BackButton from '../../commons/BackButton';
+import nonAvata from '../../assets/img/nonAvata.jpg'
 
 const EditProfile = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -19,6 +20,8 @@ const EditProfile = () => {
     const [isPartnerRegistration, setIsPartnerRegistration] = useState(false);
     const navigate = useNavigate();
 
+    const phoneInputRef = useRef(null);
+
     useEffect(() => {
         if (userInfo) {
             setEmail(userInfo.email || '');
@@ -28,7 +31,7 @@ const EditProfile = () => {
             setPhone(userInfo.phone || '');
             setQrUrl(userInfo.qrPayment || '');
         }
-    }, [userInfo]);
+    }, []);
 
     const handleEdit = () => {
         if (userInfo) {
@@ -73,9 +76,18 @@ const EditProfile = () => {
                 updatedUserInfo.qrPayment = uploadedQrUrl; // Lưu URL mã QR
             }
 
+            const phonePattern = /^0\d{9}$/;
+            if (!phonePattern.test(phone)) {
+                alert("Số điện thoại phải gồm 10 số và bắt đầu bằng số 0!");
+                setPhone('');
+                phoneInputRef.current.focus();
+                return;
+            }
+
             // Cập nhật thông tin cá nhân
-            await updateProfile(userInfo._id, updatedUserInfo);
+            const user = await updateProfile(userInfo._id, updatedUserInfo);
             alert('Thông tin cá nhân đã được cập nhật!');
+            sessionStorage.setItem("userInfo", JSON.stringify(user));
             setIsEditing(false);
             navigate(`/profile/${userInfo._id}`);
         } catch (error) {
@@ -120,6 +132,13 @@ const EditProfile = () => {
     const handleConfirmPartnerRegistration = async () => {
         alert('Đăng ký đối tác đang chờ xác nhận!');
         const updatedUserInfo = { email, username, name, address, phone, avatarFile, role: 'regisPartner' };
+        const phonePattern = /^0\d{9}$/;
+            if (!phonePattern.test(phone)) {
+                alert("Số điện thoại phải gồm 10 số và bắt đầu bằng số 0!");
+                setPhone('');
+                phoneInputRef.current.focus();
+                return;
+            }
         await updateProfile(userInfo._id, updatedUserInfo);
         setIsPartnerRegistration(false);
     };
@@ -129,7 +148,7 @@ const EditProfile = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-6 mb-6">
             <div className="flex items-center mb-4">
                 <BackButton />
             </div>
@@ -140,7 +159,7 @@ const EditProfile = () => {
                         {userInfo.avatar_url ? (
                             <img src={userInfo.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                            <span className="text-gray-500">No Image</span>
+                            <img src={nonAvata} alt="Avatar" className="w-full h-full object-cover" />
                         )}
                     </div>
                     <input
@@ -154,11 +173,16 @@ const EditProfile = () => {
                     </button>
                     <div className="ml-4 flex-none">
                         <h2 className="text-xl font-semibold mb-2">Mã QR:</h2>
+                        {qrUrl ? (
                         <img 
                             src={qrUrl} 
                             alt="Mã QR" 
                             className="w-60 h-auto border rounded" 
                         />
+                        ) : (
+                            <div className="text-xl font-bold mb-4 text-center">Chưa có</div>
+                        )}
+                        
                     </div>
                 </div>
                 <div className="w-2/3 ml-4">
@@ -172,6 +196,7 @@ const EditProfile = () => {
                                     onChange={(e) => setName(e.target.value)}
                                     readOnly={!isEditing}
                                     className={`mt-1 block w-full border rounded-md p-2 ${isEditing ? 'border-blue-500' : 'bg-gray-200'}`}
+                                    required
                                 />
                             </div>
                             <div className="w-1/2 pl-2">
@@ -182,6 +207,7 @@ const EditProfile = () => {
                                     onChange={(e) => setUsername(e.target.value)}
                                     readOnly={!isEditing}
                                     className={`mt-1 block w-full border rounded-md p-2 ${isEditing ? 'border-blue-500' : 'bg-gray-200'}`}
+                                    required
                                 />
                             </div>
                         </div>
@@ -191,9 +217,11 @@ const EditProfile = () => {
                                 <input
                                     type="tel"
                                     value={phone}
+                                    ref={phoneInputRef} 
                                     onChange={(e) => setPhone(e.target.value)}
                                     readOnly={!isEditing}
                                     className={`mt-1 block w-full border rounded-md p-2 ${isEditing ? 'border-blue-500' : 'bg-gray-200'}`}
+                                    required
                                 />
                             </div>
                             <div className="w-1/2 pl-2">
@@ -204,6 +232,7 @@ const EditProfile = () => {
                                     onChange={(e) => setEmail(e.target.value)}
                                     readOnly={!isEditing}
                                     className={`mt-1 block w-full border rounded-md p-2 ${isEditing ? 'border-blue-500' : 'bg-gray-200'}`}
+                                    required
                                 />
                             </div>
                         </div>
@@ -215,6 +244,7 @@ const EditProfile = () => {
                                 readOnly={!isEditing}
                                 className={`mt-1 block w-full border rounded-md p-2 ${isEditing ? 'border-blue-500' : 'bg-gray-200'}`}
                                 rows="3"
+                                required
                             />
                         </div>
                         <div className="mb-4">

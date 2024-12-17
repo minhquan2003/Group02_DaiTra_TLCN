@@ -4,7 +4,7 @@ import AuthSignUp from "../../components/AuthForm/AuthSignUp";
 const SignupPage = () => {
   const { signup } = useAuth();
   return (
-    <div className="flex justify-center h-screen item-center">
+    <div className="flex justify-center min-h-screen item-center">
       <AuthSignUp onSubmit={signup} />
     </div>
   );

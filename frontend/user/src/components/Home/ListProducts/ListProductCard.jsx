@@ -6,7 +6,7 @@ const ListProductCard = ({ data }) => {
     // alert("ba " + JSON.stringify(products))
 
     return (
-        <div className="flex flex-col bg-white items-center">
+        <div className="flex flex-col bg-white items-center rounded-lg">
             <h1 className="text-2xl font-bold mb-4">Danh sách sản phẩm</h1>
             {loading ? (
                 <div className="flex items-center justify-center h-64">
@@ -18,19 +18,21 @@ const ListProductCard = ({ data }) => {
             ) : error ? (
                 <div className="text-red-500 font-bold">Error: {error}</div>
             ) : (
-                <div className="flex flex-wrap mt-2 mb-2">
-                    {Array.isArray(products) && products.map((product) => (
-                        <ProductCard
-                            key={product._id}
-                            id={product._id}
-                            name={product.name}
-                            description={product.description}
-                            price={product.price}
-                            quantity={product.quantity}
-                            image_url={product.image_url}
-                            partner={product.partner}
-                        />
-                    ))}
+                <div className="mt-2 mb-2 bg-white justify-center items-center">
+                    <div className="flex flex-wrap justify-start items-center" style={{ width: '1225px'}}>
+                        {Array.isArray(products) && products.map((product) => (
+                            <ProductCard
+                                key={product._id}
+                                id={product._id}
+                                name={product.name}
+                                description={product.description}
+                                price={product.price}
+                                quantity={product.quantity}
+                                image_url={product.image_url}
+                                partner={product.partner}
+                            />
+                        ))}
+                    </div>
                 </div>
             )}
         </div>

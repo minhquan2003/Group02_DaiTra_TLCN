@@ -13,6 +13,7 @@ const Order = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchPhone, setSearchPhone] = useState(''); // Thêm state cho tìm kiếm số điện thoại
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -36,7 +37,8 @@ const Order = () => {
     const filteredSellOrders = sellOrders.filter(order => {
         const matchesStatus = order.status_order === activeSellTab;
         const matchesSearch = order.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesStatus && matchesSearch;
+        const matchesPhone = order.phone.includes(searchPhone); // Lọc theo số điện thoại
+        return matchesStatus && matchesSearch && matchesPhone;
     });
 
     const filteredBuyOrders = buyOrders.filter(order => {
@@ -46,7 +48,7 @@ const Order = () => {
     });
 
     const sortOrders = (orders) => {
-        return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sắp xếp theo thời gian mới nhất
+        return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     };
 
     const filterByDateRange = (orders) => {
@@ -78,6 +80,7 @@ const Order = () => {
         setSortOrder('none');
         setSearchTerm('');
         setActiveBuyStatus('All');
+        setSearchPhone(''); // Đặt lại số điện thoại tìm kiếm
     };
 
     return (
@@ -102,25 +105,34 @@ const Order = () => {
 
             {activeTab === 'sell' && (
                 <div>
-                    <h2 className="text-xl font-bold">Danh Sách Đơn Bán</h2>
-                    <div className="flex mb-4">
+                    <div className="text-xl font-bold">Tìm kiếm đơn hàng</div>
+                    <div className="flex items-center mb-4 space-x-2">
+                        <div className="text-xl font-semibold">Từ ngày:</div>
                         <input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="border border-gray-300 p-2 rounded mr-2"
+                            className="border border-gray-300 p-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
+                        <div className="text-xl font-semibold">đến ngày:</div>
                         <input
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="border border-gray-300 p-2 rounded mr-2"
+                            className="border border-gray-300 p-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                         />
                         <input
                             type="text"
                             placeholder="Tìm theo tên người mua"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            className="border border-gray-300 p-2 rounded mr-2"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Tìm theo số điện thoại"
+                            value={searchPhone}
+                            onChange={(e) => setSearchPhone(e.target.value)}
                             className="border border-gray-300 p-2 rounded mr-2"
                         />
                         <select 
@@ -182,7 +194,7 @@ const Order = () => {
 
             {activeTab === 'buy' && (
                 <div>
-                    <h2 className="text-xl font-bold">Danh Sách Đơn Mua</h2>
+                    <div className="text-xl font-bold">Tìm kiếm đơn hàng</div>
                     <div className="flex mb-4">
                         <select 
                             value={activeBuyStatus}

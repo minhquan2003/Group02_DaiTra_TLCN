@@ -142,7 +142,7 @@ const Checkout = () => {
         }else{
             navigate('/')
         }
-        alert(`Đơn hàng đã được tạo thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
+        alert(`Đơn hàng đã được tạo thành công!`);
         
     };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef  } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../hooks/auth";
@@ -17,11 +17,28 @@ const AuthSignUp = () => {
     const [otp, setOtp] = useState("");
     const [otpSent, setOtpSent] = useState(false);
 
+    const phoneInputRef = useRef(null);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (password !== confirmpassword) {
             alert("Mật khẩu và xác nhận mật khẩu không khớp!");
+            return;
+        }
+
+        const phonePattern = /^0\d{9}$/;
+        if (!phonePattern.test(phone)) {
+            alert("Số điện thoại phải gồm 10 số và bắt đầu bằng số 0!");
+            setPhone('');
+            phoneInputRef.current.focus();
+            return;
+        }
+
+        if (password.length < 6) {
+            alert("Mật khẩu phải có ít nhất 6 ký tự!");
+            setPassword('');
+            setConfirmPassword('');
             return;
         }
 
@@ -51,8 +68,8 @@ const AuthSignUp = () => {
     };
 
     return (
-        <div className="flex items-center h-auto bg-white w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full my-20">
+        <div className="flex items-center bg-white w-full mt-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                 <div className="hidden md:flex items-center justify-start">
                     <img src={imageLink} alt="Shopping" className="w-[90%] h-auto" />
                 </div>
@@ -108,6 +125,7 @@ const AuthSignUp = () => {
                             type="text"
                             placeholder="Số điện thoại"
                             value={phone}
+                            ref={phoneInputRef} 
                             onChange={(e) => setPhone(e.target.value)}
                             className="w-full py-3 border-b border-gray-300 focus:outline-none focus:border-red-500"
                             required

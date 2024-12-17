@@ -169,11 +169,15 @@ const ProductDisplay = () => {
                         <ul className="mt-4">
                             {reviews.map(review => (
                                 <li key={review._id} className="border-b py-2">
-                                    {/* <div>
-                                        <strong>User ID: {review.user_id}</strong>
-                                    </div> */}
                                     <div>
-                                        <strong>Rating: {review.rating}/5</strong>
+                                        <strong>Rating:</strong>
+                                        <div className="flex items-center">
+                                            {Array.from({ length: 5 }, (v, i) => (
+                                                <span key={i} className={`text-lg ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'}`}>
+                                                    ★
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                     <div>
                                         <p>{review.comment}</p>
