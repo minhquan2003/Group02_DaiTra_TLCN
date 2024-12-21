@@ -1,6 +1,7 @@
 import {
   getAllNotifications,
   createNotification,
+  deleteNotification,
 } from "../../services/notification/adminNotificationService.js";
 
 export const fetchAllNotifications = async (req, res) => {
@@ -49,6 +50,32 @@ export const postNotification = async (req, res) => {
     });
   } catch (error) {
     console.error(`Error in postNotification: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const removeNotification = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Notification ID is required.",
+      });
+    }
+
+    const deletedNotification = await deleteNotification(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Notification deleted successfully.",
+      data: deletedNotification,
+    });
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: error.message,

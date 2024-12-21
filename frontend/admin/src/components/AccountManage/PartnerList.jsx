@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import usePartner from "../../hooks/usePartner";
+import usePartners from "../../hooks/usePartner";
 import { TbListDetails } from "react-icons/tb";
 import { GiCancel } from "react-icons/gi";
 
 const PartnerList = () => {
-  const { partners, loading, error } = usePartner();
+  const { partners, loading, error, deletePartner } = usePartners(); // Assuming deletePartner is part of your custom hook
   const [selectedPartner, setSelectedPartner] = useState(null); // State to track the selected partner
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
@@ -16,6 +16,10 @@ const PartnerList = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedPartner(null);
+  };
+
+  const handleDelete = async (partnerId) => {
+    await deletePartner(partnerId); // Call the hook's denyPartner function
   };
 
   if (loading) {
@@ -50,11 +54,11 @@ const PartnerList = () => {
               <td className="text-sm border px-4 py-2">
                 {partner.phone || "N/A"}
               </td>
-              <td className="border px-4 py-2 ">
+              <td className="border px-4 py-2">
                 <div className="flex justify-center space-x-2">
                   <button
                     className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-600"
-                    onClick={() => openModal(partner)}
+                    onClick={() => handleDelete(partner._id)}
                   >
                     <GiCancel />
                   </button>
@@ -99,7 +103,7 @@ const PartnerList = () => {
             </div>
             <div className="mt-4 text-right">
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
                 onClick={closeModal}
               >
                 Close

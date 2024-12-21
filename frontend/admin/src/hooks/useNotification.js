@@ -20,6 +20,7 @@ const useNotification = () => {
       setLoading(false);
     }
   };
+
   // Post a new notification
   const postNotification = async (payload) => {
     setLoading(true);
@@ -29,6 +30,24 @@ const useNotification = () => {
         payload
       );
       // Refresh notifications after successful post
+      fetchNotifications();
+      return response.data;
+    } catch (err) {
+      setError(err.message);
+      throw err; // Rethrow to handle in component
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Remove a notification by setting its status to false
+  const removeNotification = async (id) => {
+    setLoading(true);
+    try {
+      const response = await axios.delete(
+        `http://localhost:5555/admin/notifications/${id}`
+      );
+      // Refresh notifications after successful delete
       fetchNotifications();
       return response.data;
     } catch (err) {
@@ -49,6 +68,7 @@ const useNotification = () => {
     error,
     fetchNotifications,
     postNotification,
+    removeNotification, // Expose removeNotification
   };
 };
 

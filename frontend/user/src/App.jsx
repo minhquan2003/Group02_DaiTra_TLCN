@@ -17,6 +17,10 @@ import SellerPage from "./components/SellerPage/SellerPage";
 import PurchaseOrder from "./components/Order/PurchaseOrder";
 import SalesOder from "./components/Order/SalesOder";
 import EditSalePage from "./components/EditPageSale/EditPageSale";
+import PaymentInfo from "./components/Checkout/InfoPayment";
+import Feedback from "./components/Feedback/Feedback";
+import ReGetPassword from "./components/AuthForm/LossPassword";
+import ChangePassword from "./components/AuthForm/ChangePassword";
 
 const App = () => {
   return (
@@ -38,6 +42,11 @@ const App = () => {
           <Route path="/purchaseOrder/:orderId" element={<PurchaseOrder />} />
           <Route path="/salesOder/:orderId" element={<SalesOder />} />
           <Route path="/editSale/:sellerId" element={<EditSalePage />} />
+          <Route path="/payment/:orderId" element={<PaymentInfo />} />
+          <Route path="/edit/product/:productId" element={<PostProductPage />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/regetpassword" element={<ReGetPassword />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
         </Routes>
       </MainLayout>
     </Router>

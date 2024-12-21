@@ -16,6 +16,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import adminRouter from "./Admin/routes/Adminroute.js";
 import paymentRoutes from "./routes/payment.js";
+import mailRoute from "./routes/mailRoute.js";
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/orders", orderRoute);
 app.use("/orderDetails", orderDetailRoute);
 app.use("/carts", cartRoute);
 app.use("/payment", paymentRoutes);
+app.use("/mail", mailRoute);
 
 //Admin
 app.use("/admin", adminRouter);

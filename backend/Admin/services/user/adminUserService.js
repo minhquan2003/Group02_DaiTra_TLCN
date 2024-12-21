@@ -177,6 +177,27 @@ const searchUsers = async (keyword) => {
   }
 };
 
+// Chuyển role giữa regisPartner và partner
+const switchRole = async (userId, currentRole, newRole) => {
+  try {
+    const user = await Users.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.role !== currentRole) {
+      throw new Error(`User is not in role: ${currentRole}`);
+    }
+
+    // Cập nhật role mới
+    user.role = newRole;
+    await user.save();
+    return user;
+  } catch (error) {
+    throw new Error("Error switching user role: " + error.message);
+  }
+};
+
 export {
   getCountExcludingRole,
   getCountByRole,
@@ -190,4 +211,5 @@ export {
   toggleUserRole,
   fetchUserById,
   searchUsers,
+  switchRole,
 };

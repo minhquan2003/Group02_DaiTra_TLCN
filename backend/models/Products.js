@@ -57,7 +57,7 @@ const productSchema = new mongoose.Schema(
       required: false, // Không bắt buộc
     },
     partner: {
-      type: String,
+      type: Boolean,
       default: false, // Không bắt buộc
     },
   },

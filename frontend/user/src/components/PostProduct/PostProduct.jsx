@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { addProduct } from '../../hooks/Products';
 import { getCategories } from '../../hooks/Categories';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getProductById, updateOneProduct } from '../../hooks/Products';
 
 const ProductUpload = () => {
-        const [image, setImage] = useState(null);
+    const userInfoString = sessionStorage.getItem('userInfo');
+    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+    const { productId } = useParams();
+    const [image, setImage] = useState(null);
     const [imgUrl, setImgUrl] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -14,6 +19,38 @@ const ProductUpload = () => {
     const [origin, setOrigin] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const { categories } = getCategories();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            if (productId) {
+                const product = await getProductById(productId);
+                if (product) {
+                    setName(product.name);
+                    setDescription(product.description);
+                    setPrice(product.price);
+                    setQuantity(product.quantity);
+                    setBrand(product.brand);
+                    setCondition(product.condition);
+                    setOrigin(product.origin);
+                    setSelectedCategory(product.category_id);
+                    setImgUrl(product.image_url);
+                }
+            }else{
+                setImage(null);
+                setImgUrl('');
+                setName('');
+                setDescription('');
+                setPrice('');
+                setQuantity('');
+                setBrand('');
+                setCondition('new');
+                setOrigin('');
+                setSelectedCategory('');
+            }
+        };
+        fetchProduct();
+    }, [productId]);
 
     const handleImageChange = (e) => {
         const selectedImage = e.target.files[0];
@@ -22,7 +59,7 @@ const ProductUpload = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!image) {
+        if (!productId && !image) {
             alert("Vui lòng chọn hình ảnh.");
             return;
         }
@@ -44,9 +81,10 @@ const ProductUpload = () => {
             });
             const uploadedImageUrl = await response.json();
             setImgUrl(uploadedImageUrl.secure_url);
-            let partner= false;
-            if(userInfo.role == 'partner'){
-                partner: true
+            let partner = false;
+            // Assuming userInfo is defined somewhere in your component
+            if (userInfo.role === 'partner') {
+                partner = true;
             }
 
             const productData = {
@@ -62,8 +100,16 @@ const ProductUpload = () => {
                 origin,
                 partner,
             };
-            await addProduct(productData);
-            alert("Bạn đã đăng sản phẩm thành công.");
+            
+            if(productId){
+                await updateOneProduct(productId, productData);
+                alert("Bạn đã chỉnh sửa sản phẩm thành công.");
+                navigate(`/editSale/${userInfo._id}`)
+            }else{
+                await addProduct(productData);
+                alert("Bạn đã đăng sản phẩm thành công.");
+                navigate(`/editSale/${userInfo._id}`)
+            }
 
             // Reset các giá trị sau khi thêm sản phẩm
             setImage(null);
@@ -98,6 +144,11 @@ const ProductUpload = () => {
                         <div>
                             <p className="text-sm text-gray-700">Đã chọn: {image.name}</p>
                             <img src={URL.createObjectURL(image)} alt="Product" className="mt-2 w-full h-auto rounded"/>
+                        </div>
+                    )}
+                    {imgUrl && (
+                        <div>
+                            <img src={imgUrl} alt="Uploaded" className="mt-2 w-full h-auto rounded"/>
                         </div>
                     )}
                 </div>
@@ -189,9 +240,23 @@ const ProductUpload = () => {
                                 ))}
                             </select>
                         </div>
+                        {productId ?
+                        <div className="flex">
+                        <button 
+                         className="border border-green-600 bg-gray-100 text-xl font-bold text-green-600 p-2 rounded hover:bg-gray-300 transition duration-200 w-full">
+                            Lưu
+                        </button>
+                        <button 
+                        onClick={()=> navigate(`/editSale/${userInfo._id}`)}
+                         className="bg-blue-500 ml-6 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full">
+                            Thoát
+                        </button>
+                        </div>
+                        :
                         <button type="submit" className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-200 w-full">
                             Đăng Sản Phẩm
-                        </button>
+                        </button>}
+                        
                     </form>
                 </div>
             </div>

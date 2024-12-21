@@ -6,6 +6,7 @@ import {createOrder} from '../../hooks/Orders'
 import { createOrderDetail } from '../../hooks/Orderdetails';
 import { updateProduct } from '../../hooks/Products';
 import {removeFromCart} from '../../hooks/Carts';
+import { createNotification } from '../../hooks/Notifications';
 
 const Checkout = () => {
     const userInfoString = sessionStorage.getItem('userInfo');
@@ -50,6 +51,9 @@ const Checkout = () => {
         const userInfoString = sessionStorage.getItem('userInfo');
         const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
         // Kiểm tra các trường dữ liệu
+
+        let finalPaymentInfo = [];
+
         if (!fullName || !phoneNumber || !address) {
             alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
             return; // Dừng thực hiện nếu có trường không hợp lệ
@@ -61,6 +65,7 @@ const Checkout = () => {
         }      
 
         let order;
+        let orderIds = [];
 
         for (const item of cartItems) {
             // Kiểm tra thông tin sản phẩm
@@ -88,11 +93,11 @@ const Checkout = () => {
                 name: fullName,
                 phone: phoneNumber,
                 address: address,
-                total_amount: totalAmount, // Tổng tiền
+                total_amount: item.product_price * item.product_quantity, // Tổng tiền
                 note: note,
             });
 
-            alert(JSON.stringify(order))
+            orderIds.push(order.data._id);
 
             await createOrderDetail({
                 order_id: order.data._id,
@@ -101,32 +106,41 @@ const Checkout = () => {
                 price: item.product_price,
             });
 
+            if(userInfo){
+                const aa = await createNotification({
+                    user_id_created: userInfo._id,
+                    user_id_receive: userInfo._id,
+                    message: `Bạn đã đặt thành công đơn hàng ${order.data.total_amount} VNĐ.`
+                })
+            }
+
+
             const idCart = item._id;
             if (!location.state?.product) {
                 await removeFromCart(idCart);
             }
+
+            const newPaymentInfo = {
+                user_id_seller: cartItems[0].user_seller,
+                order_id: order.data._id,
+                product_id: item.product_id,
+                quantity: item.product_quantity,
+                price: item.product_price,
+            };
+
         }
-    
-        if (paymentMethod === 'momo') {
-            // Gọi API thanh toán Momo
+
+        sessionStorage.setItem("orderIds", JSON.stringify(orderIds));
+        
+        if (paymentMethod === 'onlinepay') {
             try {
-                const paymentResponse = await axios.post('http://localhost:5555/payment/momo', {
-                    amount: totalAmount,
-                    orderInfo: `Đơn hàng từ ${fullName}`,
-                    orderId: order.data._id, // ID đơn hàng
-                });
-    
-                // Chuyển hướng đến trang thanh toán Momo
-                if (paymentResponse.data.payUrl) {
-                    window.location.href = paymentResponse.data.payUrl; // Chuyển hướng đến Momo để thanh toán
-                }
+                navigate(`/payment/${order.data._id}`, { state: { cartItems } }); // Đặt cartItems vào một đối tượng
             } catch (error) {
                 console.error('Error creating payment:', error);
                 alert('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.' + error);
             }
         }
         alert(`Đơn hàng đã được tạo thành công! \nThông tin: \nHọ tên: ${fullName} \nSố điện thoại: ${phoneNumber} \nĐịa chỉ: ${address} \nEmail: ${email} \nPhương thức thanh toán: ${paymentMethod} \nGhi chú: ${note}`);
-            navigate('/');
     };
 
     return (
@@ -194,11 +208,11 @@ const Checkout = () => {
                         <label className="ml-4">
                             <input 
                                 type="radio" 
-                                value="momo" 
-                                checked={paymentMethod === 'momo'} 
-                                onChange={() => setPaymentMethod('momo')} 
+                                value="onlinepay" 
+                                checked={paymentMethod === 'onlinepay'} 
+                                onChange={() => setPaymentMethod('onlinepay')} 
                             />
-                            Thanh toán MoMo
+                            Thanh toán bằng thông tin tài khoản bên bán
                         </label>
                         <label className="ml-4">
                             <input 

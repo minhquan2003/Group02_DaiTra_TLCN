@@ -14,6 +14,7 @@ const SalesOder = () => {
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState(null);
     const [product, setProduct] = useState(null);
+    const [payment, setPayment] = useState(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [cancelText, setCancelText] = useState('');
@@ -26,6 +27,9 @@ const SalesOder = () => {
                 // Lấy thông tin đơn hàng
                 const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
+
+                const paymentRe = await axios.get(`http://localhost:5555/payments/order/${orderId}`);
+                setPayment(paymentRe.data.data);
 
                 // Lấy thông tin chi tiết đơn hàng
                 const detailsResponse = await axios.get(`http://localhost:5555/orderDetails/order/${orderId}`);
@@ -57,6 +61,9 @@ const SalesOder = () => {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
         });
     };
 
@@ -145,6 +152,8 @@ const SalesOder = () => {
                         <p><strong>Trạng thái đơn hàng:</strong> {order.status_order}</p>
                         <p><strong>Ghi chú:</strong> {order.note ? order.note : "Không có"}</p>
                         <p><strong>Ngày tạo đơn:</strong> {formatDate(order.createdAt)}</p>
+                        <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
+                        <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
                     </div>
                 </div>
                 <div className="bg-white w-1/2 rounded-lg p-6">

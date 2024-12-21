@@ -9,7 +9,7 @@ const feedbackSchema = new mongoose.Schema({
     // },
     user_id: {
         type: String,
-        required: true,
+        required: false,
     },
     message: {
         type: String,

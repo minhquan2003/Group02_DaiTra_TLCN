@@ -88,32 +88,36 @@ const useOrders = (page, limit) => {
   return { orders, loading, error };
 };
 
-const useSearchOrder = (page, limit, searchQuery) => {
+const useSearchOrder = (page, limit, name) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!searchQuery) return; // Nếu không có từ khóa tìm kiếm, không gọi API
+      if (!name) return; // Nếu không có từ khóa tìm kiếm, không gọi API
       setLoading(true);
       try {
         const response = await axios.get(
           "http://localhost:5555/admin/search-orders",
-          {
-            params: { page, limit, search: searchQuery },
-          }
+          { params: { page, limit, name } }
         );
         setOrders(response.data.data);
-        setLoading(false);
+        setError(null); // Xóa lỗi trước đó
       } catch (err) {
-        setError(err.message);
+        if (err.response && err.response.status === 404) {
+          setOrders([]); // Trả về danh sách rỗng nếu không tìm thấy
+          setError("No orders found");
+        } else {
+          setError("An error occurred"); // Xử lý lỗi khác
+        }
+      } finally {
         setLoading(false);
       }
     };
 
     fetchOrders();
-  }, [page, limit, searchQuery]);
+  }, [page, limit, name]);
 
   return { orders, loading, error };
 };

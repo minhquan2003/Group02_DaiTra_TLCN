@@ -4,6 +4,8 @@ import { createUser,
     updateUser,
     deleteUser,
     getAllUsers, } from '../services/userService.js';
+import bcrypt from 'bcrypt';
+
 
 const addUser = async (req, res) => {
     try {
@@ -64,9 +66,9 @@ const getUserById = async (req, res) => {
 const getUserByEmail = async (req, res) => {
     try {
         const user = await findUserByEmail(req.body.email);
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
-        }
+        // if (!user) {
+        //     return res.status(404).send({ message: 'User not found' });
+        // }
         return res.status(200).send(user);
     } catch (error) {
         console.log(error.message);
@@ -102,4 +104,24 @@ const deleteUserById = async (req, res) => {
     }
 };
 
-export {addUser, getUsers, getUserById, getUserByEmail, updateUserById, deleteUserById}
+
+const comparePassword = async (req, res) => {
+    const { id, password } = req.body;
+    try {
+        const user = await findUserById(id); // Sử dụng `findById` để lấy người dùng
+
+        if (!user) {
+            return res.status(404).send({ message: "Người dùng không tồn tại." });
+        }
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+            return res.status(200).send({ valid: true });
+        } else {
+            return res.status(401).send({ valid: false, message: "Mật khẩu không đúng." });
+        }
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+};
+
+export {addUser, getUsers, getUserById, getUserByEmail, updateUserById, deleteUserById, comparePassword}

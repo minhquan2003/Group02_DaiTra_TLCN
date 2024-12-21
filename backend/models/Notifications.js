@@ -10,7 +10,7 @@ const notificationSchema = new mongoose.Schema(
     // },
     user_id_created: {
       type: String,
-      required: true,
+      required: false,
     },
     user_id_receive: {
         type: String,

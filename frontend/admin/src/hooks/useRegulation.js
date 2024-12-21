@@ -34,11 +34,14 @@ const useRegulation = () => {
       );
       const addedRegulation = response.data.data;
       setSuccess(true);
-      // Add the new regulation to the list without refetching
-      setRegulations((prevRegulations) => [
-        ...prevRegulations,
-        addedRegulation,
-      ]);
+
+      // Ensure we add only active regulations to the list immediately
+      if (addedRegulation.status === true) {
+        setRegulations((prevRegulations) => [
+          ...prevRegulations,
+          addedRegulation,
+        ]);
+      }
     } catch (err) {
       setError("Error posting regulation");
       setSuccess(false);
@@ -72,6 +75,29 @@ const useRegulation = () => {
     }
   };
 
+  // Fetch regulations based on search keyword
+  const searchRegulations = async (searchKeyword = "") => {
+    setLoading(true);
+    try {
+      const keywordParam = searchKeyword.trim() === "" ? "" : searchKeyword;
+
+      const response = await axios.get(
+        `http://localhost:5555/admin/regulation/search?keyword=${keywordParam}`
+      );
+      console.log("API Response:", response.data); // Log the API response
+
+      const activeRegulations = response.data.data.filter(
+        (regulation) => regulation.status === true
+      );
+      setRegulations(activeRegulations);
+    } catch (err) {
+      console.error("Error fetching regulations:", err); // Log the error
+      setError("Error fetching regulations");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Fetch regulations when the component is loaded
   useEffect(() => {
     fetchRegulations();
@@ -84,6 +110,7 @@ const useRegulation = () => {
     deleteRegulation,
     customRegulation,
     postRegulation,
+    searchRegulations,
     success,
   };
 };

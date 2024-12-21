@@ -55,9 +55,9 @@ const AccountOverview = () => {
           </div>
           <div className="flex text-center items-center space-x-6">
             <div className="text-lg font-medium text-white">
-              {feedbackTotal}
+              {/* {feedbackTotal} */}2
             </div>
-            <div className="text-sm text-white">Feedbacks</div>
+            <div className="text-sm text-white">Request Partners</div>
           </div>
         </div>
         <div className="flex flex-col items-center bg-green-500 py-8 hover:scale-105 transition-all duration-300 ease-in-out">

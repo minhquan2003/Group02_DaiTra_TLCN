@@ -11,9 +11,11 @@ import {
   FaCogs,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { useAuth } from "../hooks/useAuth";
 
 const LeftSidebar = () => {
   const [activeLink, setActiveLink] = useState("/"); // default active link
+  const { logout } = useAuth();
 
   // Function to handle active link
   const handleLinkClick = (link) => {
@@ -142,6 +144,21 @@ const LeftSidebar = () => {
             >
               <FaListAlt className="mr-2" /> Regulation Management
             </Link>
+          </li>
+          <li>
+            <button
+              onClick={() => {
+                const confirmLogout = window.confirm(
+                  "Are you sure you want to log out?"
+                );
+                if (confirmLogout) {
+                  logout(); // Proceed with the logout function
+                }
+              }}
+              className="flex items-center text-sm p-2 rounded text-gray-500 hover:bg-red-500 hover:text-white"
+            >
+              <FaSignOutAlt className="mr-2" /> Log Out
+            </button>
           </li>
         </ul>
       </div>

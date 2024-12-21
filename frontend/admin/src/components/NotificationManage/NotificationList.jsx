@@ -8,17 +8,18 @@ const NotificationList = () => {
     loading,
     error,
     removeNotification,
-    editNotification,
+    postNotification,
   } = useNotification();
 
   const [editMode, setEditMode] = useState(null); // ID of the notification being edited
   const [editTitle, setEditTitle] = useState(""); // Content for editing
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const notificationsPerPage = 10;
 
-  // Calculate the index of the first and last notification to display
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal
+  const [notificationToDelete, setNotificationToDelete] = useState(null); // Store the notification id to delete
+
   const indexOfLastNotification = currentPage * notificationsPerPage;
   const indexOfFirstNotification =
     indexOfLastNotification - notificationsPerPage;
@@ -29,12 +30,22 @@ const NotificationList = () => {
 
   // Handle edit and delete actions
   const handleEdit = (id) => {
-    editNotification(id, { title: editTitle });
+    postNotification(id, { title: editTitle });
     setEditMode(null);
   };
 
-  const handleDelete = (id) => {
-    removeNotification(id);
+  // Open confirmation modal
+  const confirmDelete = (id) => {
+    setIsModalOpen(true);
+    setNotificationToDelete(id);
+  };
+
+  // Handle the actual delete after confirmation
+  const handleDelete = () => {
+    if (notificationToDelete) {
+      removeNotification(notificationToDelete);
+      setIsModalOpen(false); // Close the modal after deleting
+    }
   };
 
   // Pagination control functions
@@ -104,18 +115,8 @@ const NotificationList = () => {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-4">
-                    {/* <button
-                      onClick={() => {
-                        setEditMode(notification._id);
-                        setEditTitle(notification.message);
-                      }}
-                      className="text-blue-500 hover:text-blue-600"
-                      title="Edit"
-                    >
-                      <FaEdit />
-                    </button> */}
                     <button
-                      onClick={() => handleDelete(notification._id)}
+                      onClick={() => confirmDelete(notification._id)}
                       className="text-red-500 hover:text-red-600"
                       title="Delete"
                     >
@@ -149,6 +150,30 @@ const NotificationList = () => {
           Next
         </button>
       </div>
+
+      {/* Confirmation Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-md w-1/3">
+            <h2 className="text-xl font-semibold mb-4">Confirm Delete</h2>
+            <p>Are you sure you want to delete this notification?</p>
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

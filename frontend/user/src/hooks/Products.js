@@ -85,6 +85,17 @@ const updateProduct = async ({id, quanlity}) => {
     }
 };
 
+const updateOneProduct = async (id, product) => {
+    try {
+        const response = await axios.put(`http://localhost:5555/products/${id}`, product);
+        const data = response.data;
+        return data;
+    } catch (error) {
+        console.error('Error update product:', error);
+        throw error;
+    }
+};
+
 const addProduct = async (product) => {
     try {
         const response = await axios.post(`http://localhost:5555/products`, product);
@@ -127,6 +138,17 @@ const getProductById = async (id) => {
         return product; // Trả về sản phẩm
     } catch (err) {
         console.error("Error fetching product:", err);
+        throw new Error("Failed to load product. Please try again later.");
+    }
+};
+
+const deleteProductById = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:5555/products/${id}`);
+        const product = response.data
+        return product; // Trả về sản phẩm
+    } catch (err) {
+        console.error("Error delete product:", err);
         throw new Error("Failed to load product. Please try again later.");
     }
 };
@@ -196,4 +218,14 @@ const useSearchProducts = (brand, categoryId) => {
     return { products, loading, error };
 };
 
-export {useSearchProducts, getProducts, getProductById, useProduct, updateProduct, getProductByCategory, addProduct, getProductByName, getProductsByIdSeller};
+export {useSearchProducts, 
+    getProducts, 
+    deleteProductById, 
+    getProductById, 
+    useProduct, 
+    updateProduct, 
+    getProductByCategory, 
+    addProduct, 
+    getProductByName, 
+    getProductsByIdSeller,
+    updateOneProduct};

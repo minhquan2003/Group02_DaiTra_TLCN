@@ -3,6 +3,7 @@ import {
   createRegulation,
   updateRegulation,
   deleteRegulation,
+  searchRegulationsByTitle,
 } from "../../services/regulation/adminRegulationService.js";
 
 // Lấy tất cả quy định với phân trang
@@ -86,4 +87,37 @@ const removeRegulation = async (req, res) => {
   }
 };
 
-export { getRegulations, addRegulation, editRegulation, removeRegulation };
+// Tìm kiếm quy định theo title
+const searchRegulations = async (req, res) => {
+  const { keyword, page = 1, limit = 10 } = req.query;
+
+  try {
+    const result = await searchRegulationsByTitle(
+      keyword,
+      parseInt(page),
+      parseInt(limit)
+    );
+
+    res.status(200).json({
+      success: true,
+      total: result.total,
+      totalPages: result.totalPages,
+      currentPage: result.currentPage,
+      data: result.regulations,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to search regulations",
+      error: error.message,
+    });
+  }
+};
+
+export {
+  getRegulations,
+  addRegulation,
+  editRegulation,
+  removeRegulation,
+  searchRegulations,
+};

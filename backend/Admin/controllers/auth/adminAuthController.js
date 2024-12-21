@@ -43,3 +43,15 @@ export const loginAdmin = async (request, response) => {
     return response.status(500).send({ message: "Đã xảy ra lỗi." + error });
   }
 };
+
+export const logoutAdmin = async (req, res) => {
+  try {
+    // The server doesn't need to manage token invalidation explicitly,
+    // since JWT is stateless and doesn't require the server to store the token.
+    // But you can inform the client to remove the token from the client-side storage.
+    res.status(200).send({ message: "Logged out successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Đã xảy ra lỗi khi đăng xuất." });
+  }
+};

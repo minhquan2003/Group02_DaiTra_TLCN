@@ -2,14 +2,23 @@ import React, { useState, useEffect } from "react";
 import useRegulation from "../../hooks/useRegulation";
 
 const RegulationList = ({ refreshRegulations }) => {
-  const { regulations, loading, error, deleteRegulation, customRegulation } =
-    useRegulation();
+  const {
+    regulations,
+    loading,
+    error,
+    deleteRegulation,
+    customRegulation,
+    searchRegulations,
+  } = useRegulation();
   const [selectedRegulation, setSelectedRegulation] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
   });
+  const [searchKeyword, setSearchKeyword] = useState(""); // State for search input
 
   useEffect(() => {
     if (refreshRegulations) {
@@ -17,16 +26,15 @@ const RegulationList = ({ refreshRegulations }) => {
     }
   }, [regulations]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const handleSearchChange = (e) => {
+    setSearchKeyword(e.target.value);
+    searchRegulations(e.target.value); // Trigger search on input change
+  };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  const handleDelete = (id) => {
-    deleteRegulation(id);
+  const openDeleteModal = (id) => {
+    setSelectedRegulation(id);
+    setConfirmAction("delete");
+    setShowConfirmModal(true);
   };
 
   const handleCustom = (id, regulation) => {
@@ -38,9 +46,19 @@ const RegulationList = ({ refreshRegulations }) => {
     setShowModal(true);
   };
 
+  const handleConfirm = () => {
+    if (confirmAction === "delete") {
+      deleteRegulation(selectedRegulation);
+    } else if (confirmAction === "save") {
+      customRegulation(selectedRegulation, formData);
+      setShowModal(false);
+    }
+    setShowConfirmModal(false);
+  };
+
   const handleSubmit = () => {
-    customRegulation(selectedRegulation, formData);
-    setShowModal(false);
+    setConfirmAction("save");
+    setShowConfirmModal(true);
   };
 
   return (
@@ -50,36 +68,33 @@ const RegulationList = ({ refreshRegulations }) => {
       </h2>
       <input
         type="text"
+        value={searchKeyword} // Bind the value to searchKeyword state
+        onChange={handleSearchChange} // Trigger search on input change
         placeholder="Search by title"
         className="mb-4 w-full p-2 border rounded"
       />
-      {regulations.length === 0 ? (
+      {loading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        <div>{error}</div>
+      ) : regulations.length === 0 ? (
         <div>No active regulations found.</div>
       ) : (
         <table className="w-full table-auto border-collapse">
           <thead>
             <tr className="bg-gray-200">
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                Title
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left">
-                Description
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-center">
-                Actions
-              </th>
+              <th className="border px-4 py-2 text-left">Title</th>
+              <th className="border px-4 py-2 text-left">Description</th>
+              <th className="border px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {regulations.map((regulation) => (
               <tr key={regulation._id} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-4 py-2">
-                  {regulation.title}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {regulation.description}
-                </td>
-                <td className="border border-gray-300 px-4 py-2 text-center">
+                <td className="border px-4 py-2">{regulation.title}</td>
+                <td className="border px-4 py-2">{regulation.description}</td>
+                <td className="border px-4 py-2 text-center">
+                  {/* Edit Button */}
                   <button
                     onClick={() => handleCustom(regulation._id, regulation)}
                     className="text-blue-600 hover:text-blue-800"
@@ -99,9 +114,11 @@ const RegulationList = ({ refreshRegulations }) => {
                       />
                     </svg>
                   </button>
+
+                  {/* Delete Button */}
                   <button
-                    onClick={() => handleDelete(regulation._id)}
-                    className="text-red-600 hover:text-red-800"
+                    onClick={() => openDeleteModal(regulation._id)}
+                    className="text-red-600 hover:text-red-800 ml-2"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -125,32 +142,29 @@ const RegulationList = ({ refreshRegulations }) => {
         </table>
       )}
 
+      {/* Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
           <div className="bg-white p-6 rounded-md w-96">
             <h3 className="text-xl font-bold mb-4">Edit Regulation</h3>
-            <div>
-              <label className="block mb-2">Title</label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                className="w-full p-2 border rounded mb-4"
-              />
-            </div>
-            <div>
-              <label className="block mb-2">Description</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                className="w-full p-2 border rounded mb-4"
-              ></textarea>
-            </div>
-            <div className="flex justify-between">
+            <label className="block mb-2">Title</label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              className="w-full p-2 border rounded mb-4"
+            />
+            <label className="block mb-2">Description</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              className="w-full p-2 border rounded mb-4"
+            ></textarea>
+            <div className="flex justify-end gap-2">
               <button
                 onClick={handleSubmit}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -162,6 +176,33 @@ const RegulationList = ({ refreshRegulations }) => {
                 className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
+          <div className="bg-white p-6 rounded-md w-96 text-center">
+            <h3 className="text-xl font-bold mb-4">
+              {confirmAction === "delete"
+                ? "Are you sure you want to delete this regulation?"
+                : "Do you want to save the changes?"}
+            </h3>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={handleConfirm}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+              >
+                No
               </button>
             </div>
           </div>

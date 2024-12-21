@@ -48,6 +48,14 @@ const OrderList = () => {
         className="mb-4 p-2 w-full border rounded-md"
       />
 
+      {/* Display a message if no results were found */}
+      {searchTerm && searchOrders.length === 0 && (
+        <p className="text-red-500 font-semibold mb-4">
+          No orders found with the given name.
+        </p>
+      )}
+
+      {/* Orders Table */}
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr className="bg-gray-100">
@@ -112,7 +120,7 @@ const OrderList = () => {
           ) : (
             <tr>
               <td colSpan="7" className="p-4 text-center">
-                No orders found
+                No orders available.
               </td>
             </tr>
           )}
@@ -124,14 +132,15 @@ const OrderList = () => {
         <button
           onClick={handlePreviousPage}
           disabled={page === 1}
-          className="px-4 py-2 text-blue-600 hover:text-blue-400 rounded disabled:opacity-0 h"
+          className="px-4 py-2 text-blue-600 hover:text-blue-400 rounded disabled:opacity-50"
         >
           <MdArrowBackIos />
         </button>
-        <span className="text-lg">{page}</span>
+        <span className="text-lg mx-4">{page}</span>
         <button
           onClick={handleNextPage}
-          className="px-4 py-2 text-blue-600 rounded hover:text-blue-400"
+          disabled={displayOrders.length < limit}
+          className="px-4 py-2 text-blue-600 rounded hover:text-blue-400 disabled:opacity-50"
         >
           <MdArrowForwardIos />
         </button>

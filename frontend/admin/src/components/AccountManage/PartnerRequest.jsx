@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import usePartner from "../../hooks/usePartner";
+import usePartners from "../../hooks/usePartner";
 import { TbListDetails } from "react-icons/tb";
 import { GiCancel } from "react-icons/gi";
 import { SiTicktick } from "react-icons/si";
 
 const PartnerRequest = () => {
-  const { partners, loading, error } = usePartner();
+  const { requestPartners, loading, error, approvePartner, denyPartner } =
+    usePartners();
   const [selectedPartner, setSelectedPartner] = useState(null); // State to track the selected partner
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
@@ -17,6 +18,14 @@ const PartnerRequest = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedPartner(null);
+  };
+
+  const handleApprove = async (partnerId) => {
+    await approvePartner(partnerId); // Call the hook's approvePartner function
+  };
+
+  const handleDeny = async (partnerId) => {
+    await denyPartner(partnerId); // Call the hook's denyPartner function
   };
 
   if (loading) {
@@ -36,11 +45,11 @@ const PartnerRequest = () => {
             <th className="border px-4 py-2">Username</th>
             <th className="border px-4 py-2">Email</th>
             <th className="border px-4 py-2">Phone</th>
-            <th className="border px-4 py-2">Details</th>
+            <th className="border px-4 py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {partners.map((partner) => (
+          {requestPartners.map((partner) => (
             <tr key={partner._id} className="hover:bg-gray-50 bg-white">
               <td className="text-sm border px-4 py-2">
                 {partner.name || "N/A"}
@@ -51,17 +60,17 @@ const PartnerRequest = () => {
               <td className="text-sm border px-4 py-2">
                 {partner.phone || "N/A"}
               </td>
-              <td className="border px-4 py-2 ">
+              <td className="border px-4 py-2">
                 <div className="flex justify-center space-x-4">
                   <button
-                    onClick={() => handleApprove(product._id)}
+                    onClick={() => handleApprove(partner._id)}
                     className="px-3 py-1 text-sm text-white bg-green-500 rounded hover:bg-green-600"
                   >
                     <SiTicktick />
                   </button>
                   <button
+                    onClick={() => handleDeny(partner._id)}
                     className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-600"
-                    onClick={() => openModal(partner)}
                   >
                     <GiCancel />
                   </button>
@@ -94,7 +103,7 @@ const PartnerRequest = () => {
                 <strong>Phone:</strong> {selectedPartner.phone}
               </p>
               <p>
-                <strong>Address:</strong> {selectedPartner.address}
+                <strong>Address:</strong> {selectedPartner.address || "N/A"}
               </p>
               <p>
                 <strong>Role:</strong> {selectedPartner.role}

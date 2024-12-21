@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 
 export const useAuth = () => {
   const [error, setError] = useState(null);
@@ -25,5 +25,34 @@ export const useAuth = () => {
     }
   };
 
-  return { login, error };
+  const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
+  const checkToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const decoded = JSON.parse(atob(token.split(".")[1]));
+      const currentTime = Date.now() / 1000;
+      if (decoded.exp < currentTime) {
+        logout();
+      }
+    } catch (error) {
+      console.error("Error decoding token", error);
+      logout();
+    }
+  };
+
+  useEffect(() => {
+    checkToken();
+
+    const interval = setInterval(checkToken, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return { login, logout, error };
 };

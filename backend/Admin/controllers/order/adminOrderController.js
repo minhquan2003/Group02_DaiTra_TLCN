@@ -2,23 +2,31 @@ import {
   getTopSellingProducts,
   getOrderStats,
   getAllOrders,
-  getOrdersByBuyerName,
+  findOrdersByName,
 } from "../../services/order/adminOrderService.js";
 
-export const searchOrders = async (req, res) => {
+export const searchOrdersByName = async (req, res) => {
   try {
-    const { buyerName, page = 1, limit = 10 } = req.query;
+    const { name, page = 1, limit = 10 } = req.query; // Lấy giá trị tham số từ query string, mặc định là trang 1 và limit 10
 
-    // Call service to get orders with or without buyerName filter
-    const orders = await getOrdersByBuyerName(
-      buyerName,
-      parseInt(page),
-      parseInt(limit)
-    );
+    if (!name) {
+      return res.status(400).json({ message: "Name parameter is required" });
+    }
 
-    res.status(200).json({ orders });
+    const orders = await findOrdersByName(name, page, limit);
+
+    if (!orders.length) {
+      return res
+        .status(404)
+        .json({ message: "No orders found with the given name" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: orders,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 

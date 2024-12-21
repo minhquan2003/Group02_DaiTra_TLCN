@@ -25,9 +25,12 @@ const NotificationIcon = ({ userId }) => {
         try {
             const response = await axios.get(`http://localhost:5555/notifications/user/${userId}`);
             const data = response.data;
-            setNotifications(data);
 
-            const unread = data.filter(notification => !notification.readed).length;
+            // Sắp xếp thông báo theo thứ tự gần nhất
+            const sortedNotifications = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setNotifications(sortedNotifications);
+
+            const unread = sortedNotifications.filter(notification => !notification.readed).length;
             setUnreadCount(unread);
         } catch (error) {
             console.error("Error fetching notifications:", error);
