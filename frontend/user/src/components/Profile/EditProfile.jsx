@@ -135,11 +135,11 @@ const EditProfile = () => {
         const phonePattern = /^0\d{9}$/;
             if (!phonePattern.test(phone)) {
                 alert("Số điện thoại phải gồm 10 số và bắt đầu bằng số 0!");
-                setPhone('');
                 phoneInputRef.current.focus();
                 return;
             }
-        await updateProfile(userInfo._id, updatedUserInfo);
+        const user = await updateProfile(userInfo._id, updatedUserInfo);
+        sessionStorage.setItem("userInfo", JSON.stringify(user));
         setIsPartnerRegistration(false);
     };
 

@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { json, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from '../../commons/BackButton';
 import { getProductById } from '../../hooks/Products';
 import { updateStatusOrder } from '../../hooks/Orders';
 import { createNotification } from '../../hooks/Notifications';
 
-const SalesOder = () => {
-    const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
+const SalesOrder = () => {
+    const { orderId } = useParams();
     const userInfoString = sessionStorage.getItem('userInfo');
     const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
-    
+
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState(null);
     const [product, setProduct] = useState(null);
-    const [payment, setPayment] = useState(null)
+    const [payment, setPayment] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [cancelText, setCancelText] = useState('');
@@ -24,24 +24,19 @@ const SalesOder = () => {
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
-                // Lấy thông tin đơn hàng
                 const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
 
                 const paymentRe = await axios.get(`http://localhost:5555/payments/order/${orderId}`);
                 setPayment(paymentRe.data.data);
 
-                // Lấy thông tin chi tiết đơn hàng
                 const detailsResponse = await axios.get(`http://localhost:5555/orderDetails/order/${orderId}`);
                 const detailsData = detailsResponse.data.data;
 
-                // Nếu có dữ liệu, lấy sản phẩm đầu tiên
                 if (detailsData.length > 0) {
-                    
-                    setOrderDetails(detailsData[0]); // Lưu đối tượng đầu tiên
-                    const idPro = detailsData[0].product_id
-                    const product1 = await getProductById(idPro)
-                    setProduct(product1)
+                    setOrderDetails(detailsData[0]);
+                    const productData = await getProductById(detailsData[0].product_id);
+                    setProduct(productData);
                 }
             } catch (error) {
                 console.error('Error fetching order data:', error);
@@ -69,55 +64,57 @@ const SalesOder = () => {
 
     const handleCancel = async (e) => {
         e.preventDefault();
-        if(!cancelText){
-            alert(`Hãy nhập nguyên nhân huỷ đơn hàng!`)
-            return
+        if (!cancelText) {
+            alert(`Hãy nhập nguyên nhân huỷ đơn hàng!`);
+            return;
         }
-        let status_order = "Cancelled";
-        alert(`Đơn hàng đã được chuyển sang ${status_order}.`)
-        const aa = updateStatusOrder(orderId, status_order)
-        if(order.user_id_buyer){
-            const aa = await createNotification({
+        const status_order = "Cancelled";
+        alert(`Đơn hàng đã được chuyển sang ${status_order}.`);
+
+        await updateStatusOrder(orderId, status_order);
+        if (order.user_id_buyer) {
+            await createNotification({
                 user_id_created: userInfo._id,
                 user_id_receive: order.user_id_buyer,
                 message: `Đơn hàng ${product.name} của bạn đã bị huỷ do: ${cancelText}.`
-            })
+            });
         }
-        navigate(`/order/${orderId}`)
+        navigate(`/order/${orderId}`);
     };
 
     const handleChangeStatus = async (e) => {
         e.preventDefault();
         let status_order = "";
-        if(order.status_order == 'Pending'){
-            if(order.user_id_buyer){
-                const aa = await createNotification({
+
+        if (order.status_order === 'Pending') {
+            if (order.user_id_buyer) {
+                await createNotification({
                     user_id_created: userInfo._id,
                     user_id_receive: order.user_id_buyer,
                     message: `Đơn hàng ${product.name} của bạn đã được xác nhận thành công.`
-                })
+                });
             }
             status_order = 'Confirmed';
-        }else if(order.status_order == 'Confirmed'){
+        } else if (order.status_order === 'Confirmed') {
             status_order = 'Packaged';
-        }else if(order.status_order == 'Packaged'){
+        } else if (order.status_order === 'Packaged') {
             status_order = 'Shipping';
-        }
-        else if(order.status_order == 'Request Cancel'){
+        } else if (order.status_order === 'Request Cancel') {
             status_order = 'Cancelled';
-        }else if(order.status_order == 'Shipping'){
-            if(order.user_id_buyer){
-                const aa = await createNotification({
+        } else if (order.status_order === 'Shipping') {
+            if (order.user_id_buyer) {
+                await createNotification({
                     user_id_created: userInfo._id,
                     user_id_receive: order.user_id_buyer,
                     message: `Đơn hàng ${product.name} của bạn đã được giao thành công.`
-                })
+                });
             }
             status_order = 'Success';
         }
-        alert(`Đơn hàng đã được chuyển sang ${status_order}.`)
-        const aa = updateStatusOrder(orderId, status_order)
-        navigate(`/order/${orderId}`)
+
+        alert(`Đơn hàng đã được chuyển sang ${status_order}.`);
+        await updateStatusOrder(orderId, status_order);
+        navigate(`/order/${orderId}`);
     };
 
     if (loading) {
@@ -136,47 +133,42 @@ const SalesOder = () => {
         <div className="p-5 bg-gray-100">
             <div className="flex items-center mb-4">
                 <BackButton />
-                {/* <h1 className="text-2xl font-bold ml-4">Thanh Toán</h1> */}
             </div>
-            
             <div className="w-full flex flex-col items-center mb-10">
-            <h1 className="text-2xl font-bold">Thông tin đơn hàng </h1>
+                <h1 className="text-2xl font-bold">Thông tin đơn hàng</h1>
                 <div className="flex bg-white rounded-lg shadow-md w-4/5">
                     <div className="bg-white h-full w-4/6 flex rounded-lg shadow-md p-6">
                         <div className="bg-white w-2/5 rounded-lg p-6 flex flex-col items-center">
                             <img src={product.image_url} alt={product.name} className="w-full h-auto rounded-md mb-4" />
-                            <p><strong></strong>Số lượng:{" " + orderDetails.quantity}</p>
+                            <p><strong>Số lượng:</strong> {orderDetails.quantity}</p>
                         </div>
                         <div className="ml-4">
                             <h2 className="text-xl font-semibold">Đơn hàng</h2>
-                            <p className="text-xl text-blue-600"><strong></strong> {product.name}</p>
+                            <p className="text-xl text-blue-600"><strong>{product.name}</strong></p>
                             <p><strong>Mã đơn hàng:</strong> {order._id}</p>
                             <p><strong>Người mua:</strong> {order.name}</p>
                             <p><strong>Số điện thoại:</strong> {order.phone}</p>
                             <p><strong>Địa chỉ giao hàng:</strong> {order.address}</p>
                             <p><strong>Tổng số tiền:</strong> {order.total_amount.toLocaleString()} VNĐ</p>
-                            <p>
-                                <strong>Trạng thái đơn hàng: </strong> 
-                                <span className="text-red-500 font-bold">{order.status_order}</span>
-                            </p>
-                            <p><strong>Ghi chú:</strong> {order.note ? order.note : "Không có"}</p>
+                            <p><strong>Trạng thái đơn hàng:</strong> <span className="text-red-500 font-bold">{order.status_order}</span></p>
+                            <p><strong>Ghi chú:</strong> {order.note || "Không có"}</p>
                             <p><strong>Ngày tạo đơn:</strong> {formatDate(order.createdAt)}</p>
-                            {payment[0] ? 
-                            <>
-                            <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
-                            <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
-                            </> :
-                            <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
-                            }
+                            {payment[0] ? (
+                                <>
+                                    <p><strong>Trạng thái thanh toán:</strong> {payment[0].status_payment}</p>
+                                    <p><strong>Ngày thanh toán:</strong> {formatDate(payment[0].createdAt)}</p>
+                                </>
+                            ) : (
+                                <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
+                            )}
                         </div>
                     </div>
                     <div className="w-2/6 flex flex-col justify-center">
                         <div className="bg-white w-full h-full rounded-lg p-6">
-                            
                             {(order.status_order === 'Pending' || order.status_order === 'Shipping' ||
-                            order.status_order === 'Packaged' || order.status_order === 'Confirmed' )? (
+                            order.status_order === 'Packaged' || order.status_order === 'Confirmed') ? (
                                 <div className="bg-white rounded-lg mt-4">
-                                <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2>
+                                    <h2 className="text-xl font-semibold">Cập nhật đơn hàng</h2>
                                     <div>
                                         <button 
                                             onClick={handleChangeStatus} 
@@ -205,18 +197,16 @@ const SalesOder = () => {
                                         </button>
                                     </div>
                                 </div>
-                                
-                            ) 
-                         : order.status_order === 'Success' ? (
-                            null
-                        ) : order.status_order === 'Request Cancel' ? (
-                            <button onClick={handleChangeStatus} className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                                Xác nhận huỷ
-                            </button>
-                        ) : order.status_order === 'Cancelled' ?(
-                            null
-                        ) : null}
-                    </div>
+                            ) : order.status_order === 'Success' ? null :
+                            order.status_order === 'Request Cancel' ? (
+                                <button 
+                                    onClick={handleChangeStatus} 
+                                    className="bg-green-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200"
+                                >
+                                    Xác nhận huỷ
+                                </button>
+                            ) : null}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -224,4 +214,4 @@ const SalesOder = () => {
     );
 };
 
-export default SalesOder;
+export default SalesOrder;

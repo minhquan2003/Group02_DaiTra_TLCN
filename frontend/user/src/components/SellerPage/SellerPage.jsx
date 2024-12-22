@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getProductsByIdSeller } from '../../hooks/Products'; // Giả sử bạn đã có hook này
 import BackButton from '../../commons/BackButton';
 import { useUserById } from '../../hooks/Users';
+import { FaCheckCircle } from 'react-icons/fa';
 
 const ProductCard1 = ({ id, name, description, price, quantity, image_url, partner }) => {
     return (

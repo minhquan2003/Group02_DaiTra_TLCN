@@ -15,7 +15,7 @@ const ProductUpload = () => {
     const [price, setPrice] = useState('');
     const [quantity, setQuantity] = useState('');
     const [brand, setBrand] = useState('');
-    const [condition, setCondition] = useState('new');
+    const [condition, setCondition] = useState('Mới');
     const [origin, setOrigin] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const { categories } = getCategories();

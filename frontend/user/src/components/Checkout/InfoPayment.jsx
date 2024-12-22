@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useUserById } from '../../hooks/Users';
 import { createNotification } from '../../hooks/Notifications';
@@ -12,8 +12,11 @@ const PaymentInfo = () => {
     const sellerInfo = cartItems.map(item => item.user_seller ? useUserById(item.user_seller) : null);
 
     const storedUserInfo = JSON.parse(sessionStorage.getItem("orderIds")) || [];
+    
+    // Trạng thái thanh toán cho mỗi sản phẩm
+    const [paymentStatus, setPaymentStatus] = useState(Array(cartItems.length).fill(false));
 
-    const handlePayConfirm = async (orderId, buyer, seller, total_amount) => {
+    const handlePayConfirm = async (orderId, buyer, seller, total_amount, index) => {
         if (!orderId) {
             console.error("Order ID không hợp lệ");
             return;
@@ -24,19 +27,20 @@ const PaymentInfo = () => {
             user_id_receive: seller,
             message: `Có đơn hàng đã thanh toán số tiền ${total_amount} cho bạn.`
         });
-        let user_buy = '';
-        if(sellerInfo){ 
-            user_buy = buyer
-        }else{user_buy = ''}
 
         await createPayment({
             type: "Pay Online",
             order_id: orderId,
-            user_id_pay: user_buy,
+            user_id_pay: buyer,
             user_id_receive: seller,
             total_price: total_amount,
             status_payment: 'Đã thanh toán'
         });
+
+        // Cập nhật trạng thái thanh toán
+        const updatedPaymentStatus = [...paymentStatus];
+        updatedPaymentStatus[index] = true; // Đánh dấu là đã thanh toán
+        setPaymentStatus(updatedPaymentStatus);
     };
 
     return (
@@ -59,14 +63,18 @@ const PaymentInfo = () => {
                                     <p className="text-lg">{item.product_name + ". Số lượng: " }x{item.product_quantity} </p>
 
                                     <h2 className="text-xl font-semibold mb-2 mt-4">Số Tiền Cần Thanh Toán:</h2>
-                                    <p className="text-lg text-green-600 font-bold"> {(item.product_quantity * item.product_price).toLocaleString()} VNĐ</p>
+                                    <p className="text-lg text-green-600 font-bold">{(item.product_quantity * item.product_price).toLocaleString()} VNĐ</p>
 
-                                    <button 
-                                        onClick={() => handlePayConfirm(storedUserInfo[index], item.user_buyer, item.user_seller, (item.product_quantity * item.product_price))} 
-                                        className={`mt-6 text-red-600 font-bold py-2 px-4 rounded-lg shadow transition duration-200 bg-gray-100 hover:bg-gray-300`}
-                                    >
-                                        Xác nhận đã thanh toán
-                                    </button>
+                                    {!paymentStatus[index] ? ( // Hiển thị nút xác nhận chỉ nếu chưa thanh toán
+                                        <button 
+                                            onClick={() => handlePayConfirm(storedUserInfo[index], item.user_buyer, item.user_seller, (item.product_quantity * item.product_price), index)} 
+                                            className={`mt-6 text-red-600 font-bold py-2 px-4 rounded-lg shadow transition duration-200 bg-gray-100 hover:bg-gray-300`}
+                                        >
+                                            Xác nhận đã thanh toán
+                                        </button>
+                                    ) : (
+                                        <p className="text-green-600 font-bold mt-6">Đã thanh toán</p> // Hiển thị thông báo đã thanh toán
+                                    )}
                                 </div>
                                 <div className="ml-4 flex-none">
                                     <h2 className="text-xl font-semibold mb-2">Mã QR:</h2>
