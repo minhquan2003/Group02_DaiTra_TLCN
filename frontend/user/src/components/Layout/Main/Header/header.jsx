@@ -43,7 +43,7 @@ const Header = () => {
     };
 
     fetchCartItems();
-  }, [userInfo]);
+  },);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -72,6 +72,10 @@ const Header = () => {
     }
   };
 
+  const handleLogoClick = () => {
+    navigate('/'); // Điều hướng về trang home
+  };
+
   return (
     <>
       {/* Header Top */}
@@ -89,12 +93,12 @@ const Header = () => {
       {/* Header Main */}
       <header className="bg-yellow-400 text-black justify-center flex items-center p-4 space-x-10">
         <div className="flex items-center">
-        <div onClick={() => navigate('/')} className="cursor-pointer">
-            <img
-                src={logo}
-                alt="Logo"
-                className="w-16 h-16 rounded-full" // Kích thước 16 và bo tròn
-            />
+        <div onClick={() => handleLogoClick()} className="cursor-pointer">
+          <img
+            src={logo}
+            alt="Logo"
+            className="w-16 h-16 rounded-full" // Kích thước 16 và bo tròn
+          />
         </div>
           {/* <nav className="ml-6">
             <ul className="flex space-x-4">

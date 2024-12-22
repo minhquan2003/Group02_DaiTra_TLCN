@@ -42,15 +42,17 @@ const EditSalePage = () => {
                         />
                     </div>
                     <div className="w-full h-[45%] p-4">
-                        <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
-                        {String(partner) === "true" ? (
-                            <p className="text-sm text-green-600 mt-1 flex items-center">
-                                <FaCheckCircle className="mr-1" />
-                                Đảm bảo
-                            </p>
-                        ) : null}
-                        <p className="text-lg font-bold text-gray-800 mt-2">{price.toLocaleString('vi-VN')} VNĐ</p>
-                        <p className="text-gray-500">Số lượng: {quantity}</p>
+                        <div className="overflow-y-auto h-[75%]">
+                            <h2 className="text-xl font-semibold text-gray-800">{name}</h2>
+                            {String(partner) === "true" ? (
+                                <p className="text-sm text-green-600 mt-1 flex items-center">
+                                    <FaCheckCircle className="mr-1" />
+                                    Đảm bảo
+                                </p>
+                            ) : null}
+                            <p className="text-lg font-bold text-gray-800 mt-2">{price.toLocaleString('vi-VN')} VNĐ</p>
+                            <p className="text-gray-500">Số lượng: {quantity}</p>
+                        </div>
                         <div className="flex justify-between mt-4">
                             <Link to={`/edit/product/${id}`} className="bg-gray-100 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300">
                                 Chỉnh sửa

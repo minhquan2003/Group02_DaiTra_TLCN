@@ -77,8 +77,9 @@ const Checkout = () => {
             const quanlity = -item.product_quantity;
             const id = item.product_id;
             const quanli = await updateProduct({ id, quanlity });
+            alert(JSON.stringify(quanli))
 
-            if(quanli.quantity < 0){
+            if(quanli.quantity < 0 || quanli.status == false || quanli.approve == false){
                 alert("Sản phẩm của bạn đã không còn hàng. Vui lòng tìm sản phẩm khác.")
                 const quanlity = item.product_quantity;
                 const quanli = await updateProduct({ id, quanlity });
