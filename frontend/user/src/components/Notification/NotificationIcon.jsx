@@ -19,7 +19,7 @@ const NotificationIcon = ({ userId }) => {
             setNotifications([]);
             setUnreadCount(0);
         }
-    }, [userId]);
+    },);
 
     const fetchNotifications = async (userId) => {
         try {
