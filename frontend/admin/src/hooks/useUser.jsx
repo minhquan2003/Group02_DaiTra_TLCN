@@ -14,13 +14,12 @@ const useUser = () => {
         const response = await axios.get(
           "http://localhost:5555/admin/all-users"
         );
-        console.log("Fetched totalUsers:", response.data.totalUsers); // Debug output
-        if (response.data.totalUsers !== undefined) {
-          setAccounts(response.data.totalUsers || 0);
-          setUsers(response.data.users || []); // Cập nhật danh sách người dùng
-        }
+        const fetchedUsers = response.data.users || [];
+        setUsers(fetchedUsers); // Đảm bảo trạng thái banned được lấy từ server
+        setAccounts(response.data.totalUsers || 0);
+        setBans(fetchedUsers.filter((user) => user.ban).length); // Đếm số user bị ban
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Failed to fetch users:", error);
       } finally {
         setLoading(false);
       }
@@ -45,23 +44,53 @@ const useUser = () => {
   }, []);
 
   // Toggle ban/unban account
-  const toggleBan = async (id, currentLockedStatus) => {
+  // const toggleBan = async (id, currentLockedStatus) => {
+  //   try {
+  //     const endpoint = currentLockedStatus
+  //       ? `http://localhost:5555/admin/unban-user/${id}`
+  //       : `http://localhost:5555/admin/ban-user/${id}`;
+
+  //     await axios.put(endpoint);
+
+  //     setUsers(
+  //       users.map((user) =>
+  //         user._id === id ? { ...user, banned: !user.banned } : user
+  //       )
+  //     );
+
+  //     setBans(currentLockedStatus ? (prev) => prev - 1 : (prev) => prev + 1);
+  //   } catch (error) {
+  //     console.error("Error toggling ban status:", error);
+  //   }
+  // };
+
+  // Ban user
+  const banUser = async (id) => {
     try {
-      const endpoint = currentLockedStatus
-        ? `http://localhost:5555/admin/unban-user/${id}`
-        : `http://localhost:5555/admin/ban-user/${id}`;
-
-      await axios.put(endpoint);
-
+      await axios.put(`http://localhost:5555/admin/ban-user/${id}`);
       setUsers(
         users.map((user) =>
-          user._id === id ? { ...user, banned: !user.banned } : user
+          user._id === id ? { ...user, banned: true } : user
         )
       );
-
-      setBans(currentLockedStatus ? (prev) => prev - 1 : (prev) => prev + 1);
+      setBans((prev) => prev + 1);
     } catch (error) {
-      console.error("Error toggling ban status:", error);
+      console.error("Error banning user:", error);
+    }
+  };
+
+  // Unban user
+  const unbanUser = async (id) => {
+    try {
+      await axios.put(`http://localhost:5555/admin/unban-user/${id}`);
+      setUsers(
+        users.map((user) =>
+          user._id === id ? { ...user, banned: false } : user
+        )
+      );
+      setBans((prev) => prev - 1);
+    } catch (error) {
+      console.error("Error unbanning user:", error);
     }
   };
 
@@ -92,7 +121,8 @@ const useUser = () => {
     bans,
     users,
     loading,
-    toggleBan,
+    banUser,
+    unbanUser,
     deleteAccount,
     searchUsers,
   };

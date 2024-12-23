@@ -3,7 +3,7 @@ import Users from "../../../models/Users.js";
 
 export const getAllNotifications = async () => {
   try {
-    return await Notifications.find({});
+    return await Notifications.find({ status: true });
   } catch (error) {
     throw new Error(`Error fetching notifications: ${error.message}`);
   }
@@ -71,5 +71,25 @@ export const createNotification = async ({
   } catch (error) {
     console.error(`Error in createNotification: ${error.message}`);
     throw new Error(`Error creating notifications: ${error.message}`);
+  }
+};
+
+export const deleteNotification = async (notificationId) => {
+  try {
+    const notification = await Notifications.findOneAndUpdate(
+      { _id: notificationId, status: true },
+      { status: false },
+      { new: true }
+    );
+
+    if (!notification) {
+      throw new Error(
+        `Notification with ID ${notificationId} not found or already deleted.`
+      );
+    }
+
+    return notification;
+  } catch (error) {
+    throw new Error(`Error deleting notification: ${error.message}`);
   }
 };

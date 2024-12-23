@@ -1,32 +1,28 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 
-const useChart = (timeframe) => {
-  const [data, setData] = useState(null);
+const useChart = (year) => {
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const response = await axios.get(
-          `http://localhost:5555/admin/statistics-by-time?timeframe=${timeframe}`
+        const response = await fetch(
+          `http://localhost:5555/admin/statistics/yearly-users?year=${year}`
         );
-        setData(response.data.data);
-      } catch (err) {
-        setError(err.message);
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (timeframe) {
-      fetchData();
-    }
-  }, [timeframe]);
+    fetchData();
+  }, [year]);
 
-  return { data, loading, error };
+  return { data, loading };
 };
 
 export default useChart;

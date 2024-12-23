@@ -69,9 +69,41 @@ const deleteRegulation = async (id) => {
   }
 };
 
+const searchRegulationsByTitle = async (keyword = "", page = 1, limit = 10) => {
+  try {
+    console.log("Searching regulations with keyword:", keyword); // Debugging line
+    const skip = (page - 1) * limit;
+
+    let query = { status: true };
+    if (keyword && keyword.trim() !== "") {
+      query.title = { $regex: keyword, $options: "i" }; // Case-insensitive search
+    }
+
+    console.log("Query being executed:", query); // Debugging line
+
+    const regulations = await Regulations.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const totalRegulations = await Regulations.countDocuments(query);
+
+    return {
+      regulations,
+      total: totalRegulations,
+      totalPages: Math.ceil(totalRegulations / limit),
+      currentPage: page,
+    };
+  } catch (error) {
+    console.error("Error searching regulations:", error); // Log the error
+    throw new Error("Error searching regulations: " + error.message);
+  }
+};
+
 export {
   getAllRegulations,
   createRegulation,
   updateRegulation,
   deleteRegulation,
+  searchRegulationsByTitle,
 };

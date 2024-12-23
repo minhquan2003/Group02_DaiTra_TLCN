@@ -31,7 +31,11 @@ function useCategory() {
         newCategory
       );
       if (response.data.success) {
-        setCategories([...categories, response.data.data]);
+        // Cập nhật ngay lập tức mà không cần load lại trang
+        setCategories((prevCategories) => [
+          ...prevCategories,
+          response.data.data,
+        ]);
       }
     } catch (error) {
       console.error("Error creating category:", error);
@@ -45,8 +49,10 @@ function useCategory() {
         updatedCategory
       );
       if (response.data.success) {
-        setCategories(
-          categories.map((cat) => (cat._id === id ? response.data.data : cat))
+        setCategories((prevCategories) =>
+          prevCategories.map((cat) =>
+            cat._id === id ? response.data.data : cat
+          )
         );
       }
     } catch (error) {
@@ -57,7 +63,9 @@ function useCategory() {
   const deleteCategory = async (id) => {
     try {
       await axios.delete(`http://localhost:5555/admin/category/${id}`);
-      setCategories(categories.filter((cat) => cat._id !== id));
+      setCategories((prevCategories) =>
+        prevCategories.filter((cat) => cat._id !== id)
+      );
     } catch (error) {
       console.error("Error deleting category:", error);
     }

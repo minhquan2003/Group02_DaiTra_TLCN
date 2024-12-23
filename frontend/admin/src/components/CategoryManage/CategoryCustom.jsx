@@ -69,6 +69,7 @@ function CategoryCustom({ selectedCategory, closeForm }) {
       // Create new category
       createCategory(categoryData);
     }
+    window.location.reload();
     closeForm();
   };
 

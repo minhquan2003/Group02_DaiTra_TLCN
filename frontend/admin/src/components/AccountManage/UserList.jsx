@@ -5,12 +5,11 @@ import { RiDeleteBin2Line } from "react-icons/ri";
 import { BiLock, BiLockOpen } from "react-icons/bi"; // Import lock icons
 
 const UserList = () => {
-  const { accounts, bans, users, loading, toggleBan, deleteAccount } =
-    useUser();
+  const { users, loading, banUser, unbanUser, deleteAccount } = useUser();
   const [userList, setUserList] = useState(users || []);
   const [bannedUsers, setBannedUsers] = useState(
-    users.filter((user) => user.banned)
-  ); // Track banned users
+    users.filter((user) => user.ban) // Track banned users
+  );
   const [searchTerm, setSearchTerm] = useState(""); // State for search
   const [confirmationAction, setConfirmationAction] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -18,8 +17,8 @@ const UserList = () => {
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    setUserList(users);
-    setBannedUsers(users.filter((user) => user.banned)); // Update banned users on users change
+    setUserList(users); // Cập nhật danh sách người dùng
+    setBannedUsers(users.filter((user) => user.ban)); // Lọc danh sách user bị ban
   }, [users]);
 
   if (loading) {
@@ -37,22 +36,22 @@ const UserList = () => {
 
   const handleAction = async (action, user) => {
     try {
-      if (action === "toggleBan") {
-        await toggleBan(user._id, user.banned);
-        // Update banned users list
-        if (user.banned) {
-          setBannedUsers((prevBannedUsers) =>
-            prevBannedUsers.filter((u) => u._id !== user._id)
-          );
-        } else {
-          setBannedUsers((prevBannedUsers) => [...prevBannedUsers, user]);
-        }
+      if (action === "banUser") {
+        await banUser(user._id);
+        setBannedUsers((prevBannedUsers) => [...prevBannedUsers, user]);
         setUserList((prevUsers) =>
-          prevUsers.map((u) =>
-            u._id === user._id ? { ...u, banned: !user.banned } : u
-          )
+          prevUsers.map((u) => (u._id === user._id ? { ...u, ban: true } : u))
         );
-        setMessage(`User ${user.banned ? "unbanned" : "banned"} successfully.`);
+        setMessage(`User ${user.name} banned successfully.`);
+      } else if (action === "unbanUser") {
+        await unbanUser(user._id);
+        setBannedUsers((prevBannedUsers) =>
+          prevBannedUsers.filter((u) => u._id !== user._id)
+        );
+        setUserList((prevUsers) =>
+          prevUsers.map((u) => (u._id === user._id ? { ...u, ban: false } : u))
+        );
+        setMessage(`User ${user.name} unbanned successfully.`);
       } else if (action === "deleteAccount") {
         await deleteAccount(user._id);
         setUserList((prevUsers) => prevUsers.filter((u) => u._id !== user._id));
@@ -61,6 +60,7 @@ const UserList = () => {
         );
         setMessage("User deleted successfully.");
       }
+      window.location.reload();
     } catch (error) {
       console.error("Action failed:", error);
       setMessage("Failed to perform action.");
@@ -76,7 +76,7 @@ const UserList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
+    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
         User Manage
       </h2>
@@ -115,7 +115,7 @@ const UserList = () => {
           {userList.map((user) => (
             <tr
               key={user._id}
-              className={`hover:bg-gray-50 ${user.banned ? "opacity-50" : ""}`}
+              className={`hover:bg-gray-50 ${user.ban ? "opacity-50" : ""}`}
             >
               <td className="text-sm border px-4 py-2">{user.name}</td>
               <td className="text-sm border px-4 py-2">{user.email}</td>
@@ -141,16 +141,12 @@ const UserList = () => {
               <td className="border px-4 py-2 text-center">
                 <button
                   className="text-yellow-500 mx-2"
-                  title={user.banned ? "Unban Account" : "Ban Account"}
-                  onClick={() => confirmAction("toggleBan", user)}
+                  title={user.ban ? "Unban Account" : "Ban Account"}
+                  onClick={() =>
+                    confirmAction(user.ban ? "unbanUser" : "banUser", user)
+                  }
                 >
-                  {user.banner ? (
-                    <BiLockOpen /> // Show unlock icon if banner is true
-                  ) : user.banned ? (
-                    <BiLock /> // Show lock icon if banned
-                  ) : (
-                    <BiLock /> // Show lock icon if not banned and no banner
-                  )}
+                  {user.ban ? <BiLockOpen /> : <BiLock />}
                 </button>
               </td>
             </tr>
@@ -167,7 +163,7 @@ const UserList = () => {
               Are you sure you want to{" "}
               {confirmationAction === "deleteAccount"
                 ? "delete"
-                : selectedUser.banned
+                : selectedUser.ban
                 ? "unban"
                 : "ban"}{" "}
               the user <strong>{selectedUser.name}</strong>?

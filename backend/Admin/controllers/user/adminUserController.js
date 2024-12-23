@@ -9,6 +9,7 @@ import {
   banUser,
   unbanUser,
   searchUsers,
+  switchRole,
 } from "../../services/user/adminUserService.js";
 
 //--------Lấy tất cả người dùng trừ admin
@@ -129,6 +130,34 @@ const getUsersWithPartnerRole = async (req, res) => {
   }
 };
 
+//-----------Lấy tất cả người dùng yêu cầu làm partner
+const getUsersWithRequestPartner = async (req, res) => {
+  try {
+    const { page = 1 } = req.query; // Lấy tham số page từ query, mặc định là 1
+    const limit = 4; // Số lượng người dùng mỗi trang (split = 8)
+    const skip = (page - 1) * limit;
+
+    // Đếm tổng số người dùng có role là "partner"
+    const totalPartners = await getCountByRole("regisPartner");
+
+    // Lấy danh sách người dùng có role là "partner"
+    let users = await getUsersByRole("regisPartner");
+
+    // Áp dụng phân trang (sử dụng slice)
+    users = users.slice(skip, skip + limit);
+
+    // Trả về dữ liệu bao gồm tổng số và danh sách người dùng
+    res.status(200).json({
+      totalPartners,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalPartners / limit),
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 //-------- Tìm kiếm người dùng theo từ khóa
 const searchUsersByKeyword = async (req, res) => {
   try {
@@ -148,6 +177,51 @@ const searchUsersByKeyword = async (req, res) => {
   }
 };
 
+// Chuyển từ regisPartner sang partner
+const switchToPartner = async (req, res) => {
+  try {
+    const { userId } = req.params; // Lấy userId từ params
+    const updatedUser = await switchRole(userId, "regisPartner", "partner");
+
+    res.status(200).json({
+      message: "User role changed to 'partner' successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Chuyển từ partner sang user
+const switchPartnerToUser = async (req, res) => {
+  try {
+    const { userId } = req.params; // Lấy userId từ params
+    const updatedUser = await switchRole(userId, "partner", "user");
+
+    res.status(200).json({
+      message: "User role changed to 'user' successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Chuyển từ regisPartner sang user
+const switchToUser = async (req, res) => {
+  try {
+    const { userId } = req.params; // Lấy userId từ params
+    const updatedUser = await switchRole(userId, "regisPartner", "user");
+
+    res.status(200).json({
+      message: "User has been successfully switched to user role.",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   getAllUsers,
   getUsersWithPartnerRole,
@@ -157,4 +231,8 @@ export {
   banUserAccount,
   unbanUserAccount,
   searchUsersByKeyword,
+  getUsersWithRequestPartner,
+  switchToPartner,
+  switchPartnerToUser,
+  switchToUser,
 };

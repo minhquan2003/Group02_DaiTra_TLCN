@@ -26,9 +26,7 @@ const AuthLogin = () => {
         >
           <h2 className="text-3xl font-semibold mb-4">Đăng Nhập</h2>
           <p className="primary mb-6">Nhập thông tin</p>
-
           {error && <div className="text-red-500 mb-6">{error}</div>}
-
           <label className="block mb-4">
             <span className="sr-only">Email</span>
             <input
@@ -40,7 +38,6 @@ const AuthLogin = () => {
               required
             />
           </label>
-
           <label className="block mb-4">
             <span className="sr-only">Mật Khẩu</span>
             <input
@@ -52,8 +49,7 @@ const AuthLogin = () => {
               required
             />
           </label>
-
-          <div className="flex justify-between items-center mb-4">
+          {/* <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <input type="checkbox" id="rememberMe" className="mr-2" />
               <label htmlFor="rememberMe" className="text-sm text-gray-700">
@@ -66,15 +62,13 @@ const AuthLogin = () => {
                 Quên mật khẩu?
               </a>
             </div>
-          </div>
-
+          </div> */}
           <button
             type="submit"
             className="w-full bg-red-500 text-white p-3 rounded mt-4 font-semibold"
           >
             Đăng Nhập
           </button>
-
           <div className="flex justify-around mt-4">
             <a
               href="/signup"
@@ -82,7 +76,8 @@ const AuthLogin = () => {
             >
               Đăng ký tài khoản
             </a>
-          </div>
+          </div>{" "}
+          */}
         </form>
       </div>
     </div>

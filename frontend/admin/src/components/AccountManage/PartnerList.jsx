@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import usePartner from "../../hooks/usePartner";
+import usePartners from "../../hooks/usePartner";
+import { TbListDetails } from "react-icons/tb";
+import { GiCancel } from "react-icons/gi";
 
 const PartnerList = () => {
-  const { partners, loading, error } = usePartner();
+  const { partners, loading, error, deletePartner } = usePartners(); // Assuming deletePartner is part of your custom hook
   const [selectedPartner, setSelectedPartner] = useState(null); // State to track the selected partner
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
@@ -16,6 +18,10 @@ const PartnerList = () => {
     setSelectedPartner(null);
   };
 
+  const handleDelete = async (partnerId) => {
+    await deletePartner(partnerId); // Call the hook's denyPartner function
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -26,10 +32,6 @@ const PartnerList = () => {
 
   return (
     <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
-      <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
-        Partner Manage
-      </h2>
-
       {/* Display Partner List */}
       <table className="table-auto w-full border-collapse border border-white mt-4">
         <thead>
@@ -52,13 +54,21 @@ const PartnerList = () => {
               <td className="text-sm border px-4 py-2">
                 {partner.phone || "N/A"}
               </td>
-              <td className="border px-4 py-2 text-center">
-                <button
-                  className="text-blue-500 mx-2"
-                  onClick={() => openModal(partner)}
-                >
-                  View Details
-                </button>
+              <td className="border px-4 py-2">
+                <div className="flex justify-center space-x-2">
+                  <button
+                    className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-600"
+                    onClick={() => handleDelete(partner._id)}
+                  >
+                    <GiCancel />
+                  </button>
+                  <button
+                    className="px-3 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600"
+                    onClick={() => openModal(partner)}
+                  >
+                    <TbListDetails />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
@@ -93,7 +103,7 @@ const PartnerList = () => {
             </div>
             <div className="mt-4 text-right">
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-blue-500 text-white px-4 py-2 rounded ml-2"
                 onClick={closeModal}
               >
                 Close

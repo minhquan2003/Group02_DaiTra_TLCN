@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import ProductRequest from "../components/ProductManage/ProductRequest.jsx";
 import ProductList from "../components/ProductManage/ProductList.jsx";
+import PurchaseOverview from "../components/ui/PurchaseOverview.jsx";
 
 const ProductManage = () => {
   const [view, setView] = useState("request"); // Default view is 'request' for pending products
 
   return (
-    <div className="container mx-auto p-4 bg-gray-100 rounded-md mt-4">
+    <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md ">
+      <PurchaseOverview />
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
         Product Management
       </h2>

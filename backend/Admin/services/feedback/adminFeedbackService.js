@@ -28,16 +28,39 @@ import Users from "../../../models/Users.js"; // Make sure to import the Users m
 const getAllFeedbacks = async (page, limit) => {
   try {
     const skip = (page - 1) * limit;
-    // Fetch feedbacks with pagination
-    const feedbacks = await Feedbacks.find().skip().limit(limit).lean();
 
-    // Fetch Category and User names
-    for (const feedback of feedbacks) {
-      const user = await Users.findById(feedback.user_id);
-      feedback.username = user?.username || "Unknown User";
-      feedback.avatar_url = user?.avatar_url || "default.png";
-    }
+    // Use aggregation to fetch feedbacks along with user details
+    const feedbacks = await Feedbacks.aggregate([
+      {
+        $lookup: {
+          from: "users", // Collection name for Users
+          localField: "user_id", // Field in Feedbacks
+          foreignField: "_id", // Field in Users
+          as: "userDetails", // Output array field
+        },
+      },
+      {
+        $unwind: {
+          path: "$userDetails",
+          preserveNullAndEmptyArrays: true, // Allow feedbacks without matching users
+        },
+      },
+      {
+        $addFields: {
+          username: { $ifNull: ["$userDetails.username", "Unknown User"] },
+          avatar_url: { $ifNull: ["$userDetails.avatar_url", "default.png"] },
+        },
+      },
+      {
+        $project: {
+          userDetails: 0, // Exclude the userDetails field from the result
+        },
+      },
+      { $skip: skip }, // Pagination: Skip the first (page-1)*limit records
+      { $limit: limit }, // Limit the number of records to 'limit'
+    ]);
 
+    // Count the total number of feedbacks
     const totalFeedbacks = await Feedbacks.countDocuments();
 
     return {

@@ -125,3 +125,71 @@ export const getTopSellingProducts = async (timeFrame) => {
     throw new Error(`Error fetching top selling products: ${error.message}`);
   }
 };
+
+export const getAllOrders = async (page, limit) => {
+  try {
+    const skip = (page - 1) * limit;
+
+    // Lấy danh sách đơn hàng với phân trang
+    const orders = await Orders.find().skip(skip).limit(limit).lean();
+
+    if (!orders.length) throw new Error("No orders found");
+
+    // Lấy tất cả các orderDetail và sản phẩm liên quan
+    const orderIds = orders.map((order) => order._id.toString());
+    const orderDetails = await OrderDetails.find({
+      order_id: { $in: orderIds },
+    }).lean();
+
+    const productIds = orderDetails.map((od) => od.product_id);
+    const products = await Products.find({
+      _id: { $in: productIds },
+    }).lean();
+
+    // Map dữ liệu chi tiết vào từng đơn hàng
+    const detailedOrders = orders.map((order) => {
+      const items = orderDetails
+        .filter((od) => od.order_id === order._id.toString())
+        .map((od) => {
+          const product = products.find(
+            (p) => p._id.toString() === od.product_id
+          );
+          return {
+            productId: od.product_id,
+            productName: product?.name || "Unknown product",
+            price: od.price,
+            quantity: od.quantity,
+            total: od.price * od.quantity,
+          };
+        });
+
+      return {
+        ...order,
+        items,
+        totalAmount: items.reduce((sum, item) => sum + item.total, 0),
+      };
+    });
+
+    return detailedOrders;
+  } catch (error) {
+    throw new Error(`Failed to get orders: ${error.message}`);
+  }
+};
+
+export const findOrdersByName = async (name, page = 1, limit = 10) => {
+  try {
+    const skip = (page - 1) * limit; // Tính toán vị trí bắt đầu của phân trang
+
+    // Tìm kiếm đơn hàng dựa trên name và áp dụng phân trang
+    const orders = await Orders.find({
+      name: { $regex: name, $options: "i" }, // Tìm kiếm khớp tên, không phân biệt chữ hoa chữ thường
+    })
+      .skip(skip) // Áp dụng phân trang
+      .limit(limit) // Giới hạn số lượng kết quả
+      .lean();
+
+    return orders;
+  } catch (error) {
+    throw new Error(`Error finding orders by name: ${error.message}`);
+  }
+};
