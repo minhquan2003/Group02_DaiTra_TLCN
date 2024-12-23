@@ -15,7 +15,7 @@ const CategoryItem = ({ category }) => {
         className="object-cover mb-2" // Thêm khoảng cách dưới hình
         style={{ width: '60px', height: '60px', borderRadius: '10px' }} // Giữ kích thước hình ảnh và thêm border-radius
       />
-      <text className="text-sm text-gray-800 text-center">{category.category_name}</text>
+      <div className="text-sm text-gray-800 text-center">{category.category_name}</div>
     </Link>
   );
 };

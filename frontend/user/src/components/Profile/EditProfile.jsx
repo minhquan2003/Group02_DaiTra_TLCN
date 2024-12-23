@@ -154,8 +154,9 @@ const EditProfile = () => {
             </div>
             <h2 className="text-2xl font-bold mb-4 text-center">Chỉnh Sửa Thông Tin Cá Nhân</h2>
             <div className="flex mb-6">
-                <div className="w-1/3 justify-center items-center">
-                    <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden">
+                <div className="w-1/3">
+                <div className="w-full bg-white flex flex-col items-center justify-center rounded-lg">
+                    <div className="w-32 h-32 rounded-full bg-gray-200 overflow-hidden mt-4">
                         {userInfo.avatar_url ? (
                             <img src={userInfo.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -166,24 +167,24 @@ const EditProfile = () => {
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
-                        className="mt-2 block w-full border rounded-md p-2"
+                        className="mt-2 block w-full rounded-md p-2"
                     />
-                    <button onClick={handleAvatarSave} className="mt-2 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
+                    <button onClick={handleAvatarSave} className="mt-2 bg-white text-blue-600 border border-blue-600 p-2 rounded-md hover:underline">
                         Thay đổi hình đại diện
                     </button>
-                    <div className="ml-4 flex-none">
-                        <h2 className="text-xl font-semibold mb-2">Mã QR:</h2>
+                    <div className="flex-none text-center">
+                        <h2 className="text-xl font-semibold mt-4">Mã QR:</h2>
                         {qrUrl ? (
-                        <img 
-                            src={qrUrl} 
-                            alt="Mã QR" 
-                            className="w-60 h-auto border rounded" 
-                        />
+                            <img 
+                                src={qrUrl} 
+                                alt="Mã QR" 
+                                className="w-60 h-auto border rounded mb-4" 
+                            />
                         ) : (
-                            <div className="text-xl font-bold mb-4 text-center">Chưa có</div>
+                            <div className="text-xl font-bold mb-4">Chưa có</div>
                         )}
-                        
                     </div>
+                </div>
                 </div>
                 <div className="w-2/3 ml-4">
                     <form onSubmit={handleSave}>
@@ -260,8 +261,11 @@ const EditProfile = () => {
                         <div className="flex justify-end space-x-2">
                             {!isEditing && (
                                 <>
-                                    <button type="button" onClick={handleEdit} className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Chỉnh sửa</button>
-                                    <button type="button" onClick={handleRegisterAsPartner} className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Đăng ký đối tác</button>
+                                    <button type="button" onClick={handleEdit} className="bg-white text-blue-600 p-2 border border-blue-600 rounded-md hover:bg-gray-200 underline">Chỉnh sửa</button>
+                                    {userInfo.role === 'user' ? <button type="button" onClick={handleRegisterAsPartner} className="bg-white text-blue-600 p-2 border border-blue-600 rounded-md hover:bg-gray-200 underline">Đăng ký đối tác</button>
+                                    : userInfo.role === 'regisPartner' ? <button type="button" onClick={handleRegisterAsPartner} className="bg-white text-blue-600 p-2 border border-blue-600 rounded-md hover:bg-gray-200 underline">Đang chờ xác nhận</button>
+                                    : userInfo.role === 'partner' ? <button type="button" onClick={handleRegisterAsPartner} className="bg-white text-blue-600 p-2 border border-blue-600 rounded-md hover:bg-gray-200 underline">Xem lại quy định đối tác</button>
+                                    : null }
                                 </>
                             )}
                             {isEditing && (
@@ -289,7 +293,9 @@ const EditProfile = () => {
                             <button type="button" onClick={handleConfirmPartnerRegistration} className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Xác nhận đăng ký</button>
                             <button type="button" onClick={handleCancelPartnerRegistration} className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600">Huỷ đăng ký</button>
                         </div>
-                    : <button type="button" className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Yêu cầu đăng ký của bạn đang chờ xác nhận</button>}
+                    : userInfo.role === 'regisPartner' ? <button type="button" className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Yêu cầu đăng ký của bạn đang chờ xác nhận</button>
+                    : userInfo.role === 'partner' ? <button type="button" className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600">Bạn đã là đối tác</button>
+                    : null }
                 </div>
             )}
         </div>

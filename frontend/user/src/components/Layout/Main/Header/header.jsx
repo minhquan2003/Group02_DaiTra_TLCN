@@ -31,19 +31,21 @@ const Header = () => {
   const [unreadCount, setUnreadCount] = useState(0); // State để lưu số lượng thông báo chưa đọc
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      if (userInfo) {
-        try {
-          const response = await getCartItemsByUserId(userInfo._id);
-          setCartItemCount(response.length);
-        } catch (error) {
-          console.error("Error fetching cart items:", error);
-        }
-      }
-    };
-
-    fetchCartItems();
+    if (userInfo) {
+      fetchCartItems(userInfo._id);
+    }
   },);
+
+  const fetchCartItems = async (idUser) => {
+    
+      try {
+        const response = await getCartItemsByUserId(idUser);
+        setCartItemCount(response.length);
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    
+  };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
