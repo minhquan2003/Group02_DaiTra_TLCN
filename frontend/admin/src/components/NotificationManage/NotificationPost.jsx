@@ -26,6 +26,7 @@ const NotificationPost = () => {
       const response = await postNotification(payload);
       setSuccessMessage("Notification posted successfully!");
       console.log("Posted Notification:", response);
+      window.location.reload();
     } catch (err) {
       console.error("Failed to post notification:", err.message);
     }

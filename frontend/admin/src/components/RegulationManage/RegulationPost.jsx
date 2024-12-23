@@ -28,6 +28,7 @@ const RegulationPost = ({ onRegulationPosted }) => {
       if (onRegulationPosted) {
         onRegulationPosted(); // Gọi hàm callback để cập nhật danh sách regulations
       }
+      window.location.reload();
     } catch (err) {
       console.error(err);
     }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FaTachometerAlt,
@@ -14,17 +14,25 @@ import {
 import { useAuth } from "../hooks/useAuth";
 
 const LeftSidebar = () => {
-  const [activeLink, setActiveLink] = useState("/"); // default active link
+  const [activeLink, setActiveLink] = useState(""); // default active link
   const { logout } = useAuth();
 
   // Function to handle active link
   const handleLinkClick = (link) => {
     setActiveLink(link);
+    localStorage.setItem("activeLink", link); // Save active link to localStorage
   };
+
+  // Load active link from URL or localStorage when the component mounts
+  useEffect(() => {
+    const savedLink = localStorage.getItem("activeLink");
+    const currentPath = window.location.pathname; // Get current path
+    setActiveLink(savedLink || currentPath);
+  }, []);
 
   return (
     <div className="w-64 bg-white text-blue-500 h-full flex flex-col">
-      <div className="flex items-center justify-center p-4 ">
+      <div className="flex items-center justify-center p-4">
         <img src="../../public/images/logo.png" alt="Logo" className="h-22" />
       </div>
 
@@ -152,7 +160,7 @@ const LeftSidebar = () => {
                   "Are you sure you want to log out?"
                 );
                 if (confirmLogout) {
-                  logout(); // Proceed with the logout function
+                  logout();
                 }
               }}
               className="flex items-center text-sm p-2 rounded text-gray-500 hover:bg-red-500 hover:text-white"
