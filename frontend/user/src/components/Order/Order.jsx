@@ -165,10 +165,13 @@ const Order = () => {
                     {filteredAndSortedSellOrders.length === 0 ? (
                         <p>Không có đơn bán nào cho trạng thái này.</p>
                     ) : (
-                        <ul className="bg-white">
-                            {filteredAndSortedSellOrders.map(order => (
+                        <ul className="bg-white h-[70vh] overflow-y-auto">
+                            {filteredAndSortedSellOrders.map((order, index) => (
                                 <Link to={`/salesOder/${order._id}`} key={order._id}>
                                     <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
+                                        <div className="text-gray-700">
+                                             <span className="font-normal"> <strong>{index + 1}</strong> - </span>
+                                        </div>
                                         <div className="text-gray-700">
                                             <strong>Họ tên:</strong> <span className="font-normal">{order.name} - </span>
                                         </div>
@@ -220,10 +223,13 @@ const Order = () => {
                     {filteredAndSortedBuyOrders.length === 0 ? (
                         <p>Không có đơn mua nào.</p>
                     ) : (
-                        <ul className="bg-white">
-                            {filteredAndSortedBuyOrders.map(order => (
+                        <ul className="bg-white h-[70vh] overflow-y-auto">
+                            {filteredAndSortedBuyOrders.map((order, index) => (
                                 <Link to={`/purchaseOrder/${order._id}`} key={order._id}>
                                     <li className="flex border-b p-4 hover:bg-gray-100 transition duration-200">
+                                        <div className="text-gray-700">
+                                            <span className="font-normal"> <strong>{index + 1}</strong> - </span>
+                                        </div>
                                         <div className="text-gray-700">
                                             <strong>Tổng giá:</strong> <span className="font-normal">{order.total_amount.toLocaleString()} VNĐ - </span>
                                         </div>

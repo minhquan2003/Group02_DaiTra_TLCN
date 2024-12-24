@@ -15,11 +15,19 @@ const NotificationIcon = ({ userId }) => {
     useEffect(() => {
         if (userId) {
             fetchNotifications(userId);
+
+            // Đặt interval để load lại thông báo mỗi giây
+            const intervalId = setInterval(() => {
+                fetchNotifications(userId);
+            }, 1000);
+
+            // Dọn dẹp interval khi component unmount
+            return () => clearInterval(intervalId);
         } else {
             setNotifications([]);
             setUnreadCount(0);
         }
-    },);
+    }, []);
 
     const fetchNotifications = async (userId) => {
         try {

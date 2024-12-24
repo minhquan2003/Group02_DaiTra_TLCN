@@ -48,6 +48,8 @@ const PaymentInfo = () => {
             <h1 className="text-2xl font-bold mb-4">Thông Tin Thanh Toán</h1>
             {cartItems.map((item, index) => {
                 const seller = sellerInfo[index]; // Lấy seller tương ứng với sản phẩm
+                const hasQrCode = seller && seller.qrPayment; // Kiểm tra mã QR
+
                 return (
                     <div key={item._id} className="border rounded shadow-md p-5 w-full max-w-2xl mb-4 flex">
                         {seller && (
@@ -65,24 +67,34 @@ const PaymentInfo = () => {
                                     <h2 className="text-xl font-semibold mb-2 mt-4">Số Tiền Cần Thanh Toán:</h2>
                                     <p className="text-lg text-green-600 font-bold">{(item.product_quantity * item.product_price).toLocaleString()} VNĐ</p>
 
-                                    {!paymentStatus[index] ? ( // Hiển thị nút xác nhận chỉ nếu chưa thanh toán
-                                        <button 
-                                            onClick={() => handlePayConfirm(storedUserInfo[index], item.user_buyer, item.user_seller, (item.product_quantity * item.product_price), index)} 
-                                            className={`mt-6 text-red-600 font-bold py-2 px-4 rounded-lg shadow transition duration-200 bg-gray-100 hover:bg-gray-300`}
-                                        >
-                                            Xác nhận đã thanh toán
-                                        </button>
+                                    {hasQrCode ? (
+                                        <>
+                                            {!paymentStatus[index] ? ( 
+                                                <button 
+                                                    onClick={() => handlePayConfirm(storedUserInfo[index], item.user_buyer, item.user_seller, (item.product_quantity * item.product_price), index)} 
+                                                    className={`mt-6 text-red-600 font-bold py-2 px-4 rounded-lg shadow transition duration-200 bg-gray-100 hover:bg-gray-300`}
+                                                >
+                                                    Xác nhận đã thanh toán
+                                                </button>
+                                            ) : (
+                                                <p className="text-green-600 font-bold mt-6">Đã thanh toán</p>
+                                            )}
+                                        </>
                                     ) : (
-                                        <p className="text-green-600 font-bold mt-6">Đã thanh toán</p> // Hiển thị thông báo đã thanh toán
+                                        <p className="text-red-600 font-bold mt-6">Bạn cần thanh toán khi nhận hàng cho đơn hàng này.</p>
                                     )}
                                 </div>
                                 <div className="ml-4 flex-none">
-                                    <h2 className="text-xl font-semibold mb-2">Mã QR:</h2>
-                                    <img 
-                                        src={seller.qrPayment} 
-                                        alt="Mã QR" 
-                                        className="w-60 h-auto border rounded" 
-                                    />
+                                    {hasQrCode ? (
+                                        <>
+                                            <h2 className="text-xl font-semibold mb-2">Mã QR:</h2>
+                                            <img 
+                                                src={seller.qrPayment} 
+                                                alt="Mã QR" 
+                                                className="w-60 h-auto border rounded" 
+                                            />
+                                        </>
+                                    ) : null}
                                 </div>
                             </>
                         )}

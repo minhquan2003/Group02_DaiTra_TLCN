@@ -58,6 +58,12 @@ const Checkout = () => {
             alert("Vui lòng nhập đầy đủ thông tin: Họ tên, Số điện thoại và Địa chỉ.");
             return; // Dừng thực hiện nếu có trường không hợp lệ
         }
+
+        const phonePattern = /^0\d{9}$/;
+            if (!phonePattern.test(phoneNumber)) {
+                alert("Số điện thoại phải gồm 10 số và bắt đầu bằng số 0!");
+                return;
+            }
     
         if (cartItems.length === 0) {
             alert("Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.");
@@ -77,7 +83,6 @@ const Checkout = () => {
             const quanlity = -item.product_quantity;
             const id = item.product_id;
             const quanli = await updateProduct({ id, quanlity });
-            alert(JSON.stringify(quanli))
 
             if(quanli.quantity < 0 || quanli.status == false || quanli.approve == false){
                 alert("Sản phẩm của bạn đã không còn hàng. Vui lòng tìm sản phẩm khác.")
@@ -115,7 +120,6 @@ const Checkout = () => {
                 })
             }
 
-
             const idCart = item._id;
             if (!location.state?.product) {
                 await removeFromCart(idCart);
@@ -133,15 +137,17 @@ const Checkout = () => {
 
         sessionStorage.setItem("orderIds", JSON.stringify(orderIds));
         
-        if (paymentMethod === 'onlinepay') {
-            try {
-                navigate(`/payment/${order.data._id}`, { state: { cartItems } }); // Đặt cartItems vào một đối tượng
-            } catch (error) {
-                console.error('Error creating payment:', error);
-                alert('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.' + error);
+        try {
+            if (paymentMethod === 'onlinepay') {
+                navigate(`/payment/${order.data._id}`, { state: { cartItems } });
+            } else {
+                // Nếu chọn trả tiền khi nhận hàng, có thể chuyển hướng về trang chính hoặc thông báo
+                alert(`Đơn hàng đã được tạo thành công! Bạn sẽ thanh toán khi nhận hàng.`);
+                navigate('/');
             }
-        }else{
-            navigate('/')
+        } catch (error) {
+            console.error('Error creating payment:', error);
+            alert('Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.' + error);
         }
         alert(`Đơn hàng đã được tạo thành công!`);
         

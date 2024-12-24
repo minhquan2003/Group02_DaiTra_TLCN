@@ -5,6 +5,7 @@ import { addToCart } from '../../hooks/Carts';
 import BackButton from '../../commons/BackButton';
 import { useReviews } from '../../hooks/Review'; // Import custom hook cho reviews
 import { FaCheckCircle } from 'react-icons/fa';
+import { getCartItemsByUserId } from '../../hooks/Carts';
 import { useUserById } from '../../hooks/Users';
 
 const ProductDisplay = () => {
@@ -25,21 +26,32 @@ const ProductDisplay = () => {
 
     const totalPrice = product ? quantity * product.price : 0;
     
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (userInfo) {
-            addToCart({
-                user_buyer: userInfo._id,
-                user_seller: product.user_id,
-                product_id: product._id,
-                product_name: product.name,
-                product_quantity: quantity,
-                product_price: product.price,
-                product_imageUrl: product.image_url,
-            });
+            const productInCart = await getCartItemsByUserId(userInfo._id);
+            
+            // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+            const isProductInCart = productInCart.some(item => item.product_id === product._id);
+            
+            if (isProductInCart) {
+                alert("Sản phẩm đã có trong giỏ hàng!");
+            } else {
+                addToCart({
+                    user_buyer: userInfo._id,
+                    user_seller: product.user_id,
+                    product_id: product._id,
+                    product_name: product.name,
+                    product_quantity: quantity,
+                    product_price: product.price,
+                    product_imageUrl: product.image_url,
+                });
+                alert("Sản phẩm đã được thêm vào giỏ hàng!");
+                navigate(0)
+            }
         } else {
             alert("Bạn chưa đăng nhập!");
         }
-    }
+    };
 
     if (error) {
         return <div className="text-red-500">{error}</div>; // Xử lý lỗi

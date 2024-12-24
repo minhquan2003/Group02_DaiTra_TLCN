@@ -100,8 +100,9 @@ const EditProfile = () => {
         if (avatarFile) {
             try {
                 const uploadedAvatarUrl = await uploadImage(avatarFile);
-                await updateProfile(userInfo._id, { avatar_url: uploadedAvatarUrl });
+                const user = await updateProfile(userInfo._id, { avatar_url: uploadedAvatarUrl });
                 alert('Hình đại diện đã được cập nhật!');
+                sessionStorage.setItem("userInfo", JSON.stringify(user));
                 setAvatarFile(null); // Đặt lại trạng thái sau khi lưu
             } catch (error) {
                 console.error('Error updating avatar:', error);

@@ -37,7 +37,7 @@ const getProductsByIdSeller = (idSeller) => {
                 setProducts(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
-                setError("Failed to load products. Please try again later.");
+                setError("Không có sản phẩm nào.");
             } finally {
                 setLoading(false);
             }
@@ -61,7 +61,7 @@ const getProductsNotApproveByIdSeller = (idSeller) => {
                 setProducts(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
-                setError("Failed to load products. Please try again later.");
+                setError("Không có sản phẩm nào.");
             } finally {
                 setLoading(false);
             }
@@ -86,7 +86,7 @@ const useProduct = (id) => {
                 setProduct(response.data);
             } catch (err) {
                 console.error("Error fetching product:", err);
-                setError("Failed to load product. Please try again later.");
+                setError("FKhông có sản phẩm nào.");
             } finally {
                 setLoading(false); // Kết thúc loading
             }
@@ -143,7 +143,7 @@ const getProductByCategory = (id) => {
                 setProducts(response.data);
             } catch (err) {
                 console.error("Error fetching products:", err);
-                setError("Failed to load products. Please try again later.");
+                setError("Không có sản phẩm nào.");
             } finally {
                 setLoading(false);
             }
@@ -162,7 +162,7 @@ const getProductById = async (id) => {
         return product; // Trả về sản phẩm
     } catch (err) {
         console.error("Error fetching product:", err);
-        throw new Error("Failed to load product. Please try again later.");
+        throw new Error("Không có sản phẩm nào.");
     }
 };
 
@@ -173,7 +173,7 @@ const deleteProductById = async (id) => {
         return product; // Trả về sản phẩm
     } catch (err) {
         console.error("Error delete product:", err);
-        throw new Error("Failed to load product. Please try again later.");
+        throw new Error("Không có sản phẩm nào.");
     }
 };
 
@@ -190,7 +190,7 @@ const getProductByName = (product) => {
                 setProducts(response.data.data); // Đảm bảo rằng response.data.data là chính xác
             } catch (err) {
                 console.error("Error fetching products:", err);
-                setError("Failed to load products. Please try again later.");
+                setError("Không có sản phẩm nào.");
             } finally {
                 setLoading(false);
             }

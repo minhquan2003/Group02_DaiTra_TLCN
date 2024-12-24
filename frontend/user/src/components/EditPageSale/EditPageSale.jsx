@@ -21,8 +21,7 @@ const EditSalePage = () => {
         if (confirmed) {
             try {
                 await deleteProductById(idPro);
-                // Load lại trang sau khi xóa thành công
-                navigate(0); // Điều hướng lại trang hiện tại
+                navigate(0);
             } catch (error) {
                 console.error("Error deleting product:", error);
             }
@@ -111,7 +110,7 @@ const EditSalePage = () => {
                                 <span className="ml-4 text-gray-500">Loading products...</span>
                             </div>
                         ) : error ? (
-                            <div className="text-red-500 font-bold">Error: {error}</div>
+                            <div className="text-red-500 font-bold">{error}</div>
                         ) : (
                             <div className="flex flex-wrap mt-2 mb-2">
                                 {Array.isArray(products) && products.map((product) => (
@@ -136,7 +135,7 @@ const EditSalePage = () => {
                                 <span className="ml-4 text-gray-500">Loading products...</span>
                             </div>
                         ) : errornotapprove ? (
-                            <div className="text-red-500 font-bold">Error: {errornotapprove}</div>
+                            <div className="text-red-500 font-bold">{errornotapprove}</div>
                         ) : (
                             <div className="flex flex-wrap mt-2 mb-2">
                                 {Array.isArray(productsnotapprove) && productsnotapprove.map((product) => (

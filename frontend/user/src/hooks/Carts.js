@@ -14,7 +14,6 @@ const getCartItemsByUserId = async (user_id) => {
 const addToCart = async (product) => {
     try {
         const response = await axios.post(`http://localhost:5555/carts`, product);
-        alert("Add to cart success!")
     } catch (error) {
         console.error('Error fetching cart items:', error);
         throw error;
