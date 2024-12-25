@@ -1,4 +1,9 @@
 import Users from "../../../models/Users.js";
+import Products from "../../../models/Products.js";
+import Orders from "../../../models/Orders.js";
+import Reviews from "../../../models/Reviews.js";
+import Feedbacks from "../../../models/Feedbacks.js";
+import Notifications from "../../../models/Notifications.js";
 
 //--------Đếm số lượng người dùng tất cả trừ admin
 const getCountExcludingRole = async (excludedRole) => {
@@ -14,14 +19,12 @@ const getCountExcludingRole = async (excludedRole) => {
 };
 
 //--------Lấy tất cả người dùng trừ admin
-const getAllUsersExcludingRole = async (excludedRole, skip, limit) => {
+const getAllUsersExcludingRole = async (excludedRole) => {
   try {
     const users = await Users.find({
       role: { $ne: excludedRole },
       status: true,
-    })
-      .skip(skip)
-      .limit(limit);
+    });
     return users;
   } catch (error) {
     throw new Error("Error fetching users: " + error.message);
@@ -68,14 +71,12 @@ const getCountBannedUsers = async () => {
 };
 
 //--------Lấy tất cả người dùng bị ban
-const getBannedUsers = async (skip, limit) => {
+const getBannedUsers = async () => {
   try {
     const users = await Users.find({
       ban: true,
       status: true,
-    })
-      .skip(skip)
-      .limit(limit);
+    });
     return users;
   } catch (error) {
     throw new Error("Error fetching banned users: " + error.message);
@@ -132,11 +133,30 @@ const toggleUserRole = async (userId) => {
 //--------Xóa tạm người dùng
 const deleteUser = async (userId) => {
   try {
+    // Update the user's status to false
     const result = await Users.findByIdAndUpdate(
       userId,
       { status: false },
-      { new: true } // Trả về document đã được cập nhật
+      { new: true } // Return the updated document
     );
+
+    // Update related models' statuses
+    await Products.updateMany({ user_id: userId }, { status: false });
+
+    await Orders.updateMany(
+      { $or: [{ user_id_buyer: userId }, { user_id_seller: userId }] },
+      { status: false }
+    );
+
+    await Notifications.updateMany(
+      { user_id_receive: userId },
+      { status: false }
+    );
+
+    await Feedbacks.updateMany({ user_id: userId }, { status: false });
+
+    await Reviews.updateMany({ user_id: userId }, { status: false });
+
     return result;
   } catch (error) {
     throw new Error("Error deactivating user: " + error.message);

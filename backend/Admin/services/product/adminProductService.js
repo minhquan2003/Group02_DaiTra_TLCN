@@ -64,16 +64,13 @@ const deleteProduct = async (productId) => {
   }
 };
 
-// Lấy tất cả sản phẩm với phân trang
-const getProducts = async (page = 1, limit = 10) => {
+const getProducts = async () => {
   try {
-    const skip = (page - 1) * limit;
-
     // Define the query for active and approved products
     const query = { status: true, approve: true };
 
-    // Fetch products with pagination
-    const products = await Products.find(query).skip(skip).limit(limit).lean();
+    // Fetch all products without pagination
+    const products = await Products.find(query).lean();
 
     // Populate additional details (Category and User)
     for (const product of products) {
@@ -90,34 +87,35 @@ const getProducts = async (page = 1, limit = 10) => {
 
     return {
       products,
-      total: totalProducts,
-      totalPages: Math.ceil(totalProducts / limit),
-      currentPage: page,
+      totalProducts, // Add the total count
     };
   } catch (error) {
     throw new Error("Error fetching products: " + error.message);
   }
 };
 
-// Lấy tất cả sản phẩm với aprrove = false (đang chờ duyệt)
-const getRequestProducts = async (page = 1, limit = 10) => {
+// Lấy tất cả sản phẩm với approve = false (đang chờ duyệt)
+const getRequestProducts = async () => {
   try {
-    const skip = (page - 1) * limit;
     const query = { status: true, approve: false };
-    const products = await Products.find(query).skip(skip).limit(limit).lean();
+
+    // Fetch all pending products without pagination
+    const products = await Products.find(query).lean();
+
+    // Populate additional details (Category and User)
     for (const product of products) {
       const category = await Categories.findById(product.category_id);
       const user = await Users.findById(product.user_id);
       product.category_name = category?.category_name || "Unknown";
       product.username = user?.name || "Unknown User";
     }
+
+    // Count the total number of matching pending products
     const totalProducts = await Products.countDocuments(query);
 
     return {
       products,
-      total: totalProducts,
-      totalPages: Math.ceil(totalProducts / limit),
-      currentPage: page,
+      totalProducts, // Add the total count
     };
   } catch (error) {
     throw new Error(

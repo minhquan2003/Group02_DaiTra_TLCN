@@ -18,7 +18,15 @@ export const getOrderStats = async () => {
         $group: {
           _id: null,
           totalOrders: { $sum: 1 },
-          totalMoney: { $sum: "$total_amount" },
+          totalMoney: {
+            $sum: {
+              $cond: [
+                { $eq: ["$status_order", "Success"] }, // Condition to check if status_order is "Success"
+                "$total_amount", // Sum total_amount if condition is met
+                0, // Otherwise, add 0
+              ],
+            },
+          },
           totalCancelled: {
             $sum: { $cond: [{ $eq: ["$status_order", "Cancelled"] }, 1, 0] },
           },
@@ -26,7 +34,7 @@ export const getOrderStats = async () => {
             $sum: {
               $cond: [
                 {
-                  $in: ["$status_order", ["Confirmed", "Shipped", "Delivered"]],
+                  $eq: ["$status_order", "Success"],
                 },
                 1,
                 0,

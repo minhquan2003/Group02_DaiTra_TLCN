@@ -11,6 +11,7 @@ import PartnerManage from "./pages/PartnerManage";
 import OrderManage from "./pages/OrderManage";
 import Login from "./pages/Login";
 import PrivateRoute from "./privateroute/PrivateRoute";
+import ReviewManage from "./pages/ReviewManage";
 
 const App = () => (
   <Router>
@@ -102,6 +103,16 @@ const App = () => (
           <PrivateRoute>
             <AdminLayout>
               <RegulationManage />
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/review"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <ReviewManage />
             </AdminLayout>
           </PrivateRoute>
         }

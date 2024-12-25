@@ -1,19 +1,14 @@
 import Categories from "../../../models/Categories.js";
+import Products from "../../../models/Products.js";
 
 // Lấy tất cả categories có phân trang và tổng số
-export const getAllCategories = async (page, limit) => {
+export const getAllCategories = async () => {
   try {
-    const categories = await Categories.find()
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .sort({ createdAt: -1 });
-
+    const categories = await Categories.find().sort({ createdAt: -1 });
     const totalCategories = await Categories.countDocuments();
     return {
       categories,
       totalCategories,
-      totalPages: Math.ceil(totalCategories / limit),
-      currentPage: page,
     };
   } catch (error) {
     throw new Error("Error fetching categories: " + error.message);
@@ -42,6 +37,16 @@ export const updateCategory = async (id, data) => {
 // Xóa category theo ID
 export const deleteCategory = async (id) => {
   try {
+    // Kiểm tra xem có sản phẩm nào đang sử dụng category này không
+    const productsUsingCategory = await Products.find({ category_id: id });
+
+    if (productsUsingCategory.length > 0) {
+      throw new Error(
+        "Cannot delete category because it is used by some products."
+      );
+    }
+
+    // Nếu không có sản phẩm nào, tiến hành xóa category
     return await Categories.findByIdAndDelete(id);
   } catch (error) {
     throw new Error("Error deleting category: " + error.message);

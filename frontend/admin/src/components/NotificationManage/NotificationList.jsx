@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useNotification from "../../hooks/useNotification";
-import { FaEdit, FaTrashAlt } from "react-icons/fa"; // Import icons for edit and delete
+import { FaTrashAlt } from "react-icons/fa"; // Import icon for delete
 
 const NotificationList = () => {
   const {
@@ -13,7 +13,6 @@ const NotificationList = () => {
 
   const [editMode, setEditMode] = useState(null); // ID of the notification being edited
   const [editTitle, setEditTitle] = useState(""); // Content for editing
-
   const [currentPage, setCurrentPage] = useState(1);
   const notificationsPerPage = 10;
 
@@ -28,7 +27,14 @@ const NotificationList = () => {
     indexOfLastNotification
   );
 
-  // Handle edit and delete actions
+  useEffect(() => {
+    // Quay về trang 1 nếu xóa hết thông báo trên trang hiện tại
+    if (currentNotifications?.length === 0 && currentPage > 1) {
+      setCurrentPage(1);
+    }
+  }, [notifications, currentNotifications, currentPage]);
+
+  // Handle edit action
   const handleEdit = (id) => {
     postNotification(id, { title: editTitle });
     setEditMode(null);
@@ -49,7 +55,12 @@ const NotificationList = () => {
   };
 
   // Pagination control functions
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber) => {
+    // Đảm bảo không vượt quá số trang
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   if (loading) {
     return (
@@ -83,7 +94,9 @@ const NotificationList = () => {
         <tbody>
           {currentNotifications?.map((notification, index) => (
             <tr key={notification._id} className="hover:bg-gray-50">
-              <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
+              <td className="border border-gray-300 px-4 py-2">
+                {indexOfFirstNotification + index + 1}
+              </td>
               <td className="border border-gray-300 px-4 py-2">
                 {editMode === notification._id ? (
                   <input
@@ -131,25 +144,27 @@ const NotificationList = () => {
       </table>
 
       {/* Pagination Controls */}
-      <div className="flex justify-center gap-2 mt-4">
-        <button
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-        >
-          Previous
-        </button>
-        <span className="flex items-center justify-center px-4 py-2">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-        >
-          Next
-        </button>
-      </div>
+      {notifications?.data?.length > notificationsPerPage && (
+        <div className="flex justify-center gap-2 mt-4">
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+          >
+            Previous
+          </button>
+          <span className="flex items-center justify-center px-4 py-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Confirmation Modal */}
       {isModalOpen && (

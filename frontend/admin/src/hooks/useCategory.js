@@ -62,12 +62,22 @@ function useCategory() {
 
   const deleteCategory = async (id) => {
     try {
-      await axios.delete(`http://localhost:5555/admin/category/${id}`);
-      setCategories((prevCategories) =>
-        prevCategories.filter((cat) => cat._id !== id)
+      // Gửi request đến backend để xóa category
+      const response = await axios.delete(
+        `http://localhost:5555/admin/category/${id}`
       );
+
+      // Kiểm tra nếu xóa thành công, cập nhật lại danh sách categories
+      if (response.data.success) {
+        setCategories((prevCategories) =>
+          prevCategories.filter((cat) => cat._id !== id)
+        );
+      } else {
+        alert(response.data.message); // Hiển thị thông báo lỗi từ backend
+      }
     } catch (error) {
       console.error("Error deleting category:", error);
+      alert("An error occurred while deleting the category.");
     }
   };
 

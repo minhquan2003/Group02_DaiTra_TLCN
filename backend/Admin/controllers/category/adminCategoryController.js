@@ -7,15 +7,11 @@ import {
 
 // Lấy tất cả categories có phân trang và tổng số
 export const getCategories = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
   try {
-    const categoryData = await getAllCategories(page, limit);
+    const categoryData = await getAllCategories();
     res.status(200).json({
       success: true,
       totalCategories: categoryData.totalCategories,
-      totalPages: categoryData.totalPages,
-      currentPage: categoryData.currentPage,
       data: categoryData.categories,
     });
   } catch (error) {

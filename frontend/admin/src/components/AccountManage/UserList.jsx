@@ -5,21 +5,27 @@ import { RiDeleteBin2Line } from "react-icons/ri";
 import { BiLock, BiLockOpen } from "react-icons/bi"; // Import lock icons
 
 const UserList = () => {
-  const { users, loading, banUser, unbanUser, deleteAccount } = useUser();
+  const { users, loading, banUser, unbanUser, deleteAccount, accounts } =
+    useUser();
   const [userList, setUserList] = useState(users || []);
   const [bannedUsers, setBannedUsers] = useState(
-    users.filter((user) => user.ban) // Track banned users
-  );
+    users.filter((user) => user.ban)
+  ); // Track banned users
   const [searchTerm, setSearchTerm] = useState(""); // State for search
   const [confirmationAction, setConfirmationAction] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [viewingUser, setViewingUser] = useState(null);
   const [message, setMessage] = useState(null);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 10; // Number of users per page
+  const totalPages = Math.ceil(accounts / limit); // Calculate total pages
+
   useEffect(() => {
-    setUserList(users); // Cập nhật danh sách người dùng
+    setUserList(users.slice((currentPage - 1) * limit, currentPage * limit)); // Paginate users
     setBannedUsers(users.filter((user) => user.ban)); // Lọc danh sách user bị ban
-  }, [users]);
+  }, [users, currentPage]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -73,6 +79,13 @@ const UserList = () => {
   const confirmAction = (action, user) => {
     setConfirmationAction(action);
     setSelectedUser(user);
+  };
+
+  // Pagination handlers
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
@@ -154,6 +167,25 @@ const UserList = () => {
         </tbody>
       </table>
 
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4">
+        <button
+          className="px-4 py-2 bg-gray-200 rounded-l"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
+        <button
+          className="px-4 py-2 bg-gray-200 rounded-r"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+
       {/* Confirmation Modal */}
       {confirmationAction && selectedUser && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
@@ -220,20 +252,16 @@ const UserList = () => {
                   <td className="border px-4 py-2 font-bold">Address</td>
                   <td className="border px-4 py-2">{viewingUser.address}</td>
                 </tr>
-                <tr>
-                  <td className="border px-4 py-2 font-bold">Created At</td>
-                  <td className="border px-4 py-2">
-                    {new Date(viewingUser.createdAt).toLocaleString()}
-                  </td>
-                </tr>
               </tbody>
             </table>
-            <button
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={() => setViewingUser(null)}
-            >
-              Close
-            </button>
+            <div className="mt-4 flex justify-end">
+              <button
+                className="bg-gray-200 px-4 py-2 rounded"
+                onClick={() => setViewingUser(null)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
