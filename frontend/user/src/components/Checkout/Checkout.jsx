@@ -22,7 +22,6 @@ const Checkout = () => {
     } else {
         cartItems = location.state?.cartItems || [];
     }
-    
 
     // Tính tổng tiền
     const totalAmount = cartItems.reduce((acc, item) => 
@@ -94,8 +93,8 @@ const Checkout = () => {
             
             // Tạo đơn hàng
             order = await createOrder({
-                user_id_buyer: cartItems[0].user_buyer,
-                user_id_seller: cartItems[0].user_seller,
+                user_id_buyer: item.user_buyer,
+                user_id_seller: item.user_seller,
                 name: fullName,
                 phone: phoneNumber,
                 address: address,
@@ -103,7 +102,9 @@ const Checkout = () => {
                 note: note,
             });
 
-            orderIds.push(order.data._id);
+            orderIds.push({id: order.data._id, 
+                name_buyer: order.data.name, 
+                phone: order.data.phone});
 
             await createOrderDetail({
                 order_id: order.data._id,
@@ -116,10 +117,16 @@ const Checkout = () => {
                 const aa = await createNotification({
                     user_id_created: userInfo._id,
                     user_id_receive: userInfo._id,
-                    message: `Bạn đã đặt thành công đơn hàng ${order.data.total_amount} VNĐ.`
+                    message: `Bạn đã đặt thành công đơn hàng ${item.product_name}: ${order.data.total_amount} VNĐ.`
                 })
             }
 
+            const aa = await createNotification({
+                user_id_created: userInfo._id,
+                user_id_receive: item.user_seller,
+                message: `Có đơn hàng ${item.product_name} của ${order.data.name} số điện thoại ${order.data.phone} đang chờ bạn xác nhận.`
+            })
+           
             const idCart = item._id;
             if (!location.state?.product) {
                 await removeFromCart(idCart);

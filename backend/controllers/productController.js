@@ -3,6 +3,7 @@ import {
     createProduct,
     getProducts,
     getOneProductById,
+    getProductsByUserIdSoldOut,
     getProductsByCategory,
     getProductsByUserId,
     getProductsByUserIdNotApprove,
@@ -68,6 +69,20 @@ const getProductsByUserIdController = async (req, res) => {
     const { userId } = req.params; // Lấy userId từ params
     try {
         const products = await getProductsByUserId(userId);
+        if (!products || products.length === 0) {
+            return res.status(404).send({ message: 'No products found for this user' });
+        }
+        return res.status(200).send(products);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+const getProductsByUserIdSoldOutController = async (req, res) => {
+    const { userId } = req.params; // Lấy userId từ params
+    try {
+        const products = await getProductsByUserIdSoldOut(userId);
         if (!products || products.length === 0) {
             return res.status(404).send({ message: 'No products found for this user' });
         }
@@ -164,6 +179,7 @@ export { addProduct,
     getProductById, 
     getProductsByIdCategory,
     getProductsByUserIdController,
+    getProductsByUserIdSoldOutController,
     getProductsByUserIdNotApproveController,
     searchProductsByNameController,
     searchProductsController,

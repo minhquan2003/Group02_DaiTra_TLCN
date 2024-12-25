@@ -4,6 +4,8 @@ import { FiBell } from 'react-icons/fi';
 import NotificationPopup from './NotificationPopup.jsx'; // Đường dẫn đến NotificationPopup
 
 const NotificationIcon = ({ userId }) => {
+    const userInfoString = sessionStorage.getItem('userInfo');
+    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
     const [isOpen, setIsOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -51,14 +53,14 @@ const NotificationIcon = ({ userId }) => {
         <div className="relative">
             <span className="cursor-pointer" onClick={togglePopup}>
                 <FiBell className="h-5 w-5" />
-                {unreadCount > 0 && (
+                {userInfo && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1">
                         {unreadCount}
                     </span>
                 )}
             </span>
 
-            {isOpen && (
+            {isOpen && userInfo && (
                 <NotificationPopup 
                     notifications={notifications} 
                     onClose={togglePopup} 

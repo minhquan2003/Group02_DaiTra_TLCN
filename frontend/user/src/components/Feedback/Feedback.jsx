@@ -43,7 +43,7 @@ const Feedback = () => {
                             setTopic(e.target.value);
                             setCustomTopic(''); // Reset custom topic when a predefined topic is selected
                         }} 
-                        className="mt-1 block w-full border-gray-300 rounded p-2"
+                        className="mt-1 block w-full border-2 border-gray-300 rounded p-2"
                         required
                     >
                         <option value="">Chọn chủ đề</option>
@@ -62,7 +62,7 @@ const Feedback = () => {
                             type="text"
                             value={customTopic}
                             onChange={(e) => setCustomTopic(e.target.value)}
-                            className="mt-1 block w-full border-gray-300 rounded p-2"
+                            className="mt-1 block w-full border-2 border-gray-300 rounded p-2"
                             required
                         />
                     </label>
@@ -73,7 +73,7 @@ const Feedback = () => {
                     <textarea 
                         value={content} 
                         onChange={(e) => setContent(e.target.value)} 
-                        className="mt-1 block w-full border-gray-300 rounded p-2"
+                        className="mt-1 block w-full border-2 border-gray-300 rounded p-2"
                         rows="8"
                         required
                     />

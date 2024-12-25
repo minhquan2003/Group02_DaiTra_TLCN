@@ -5,18 +5,23 @@ import BackButton from '../../commons/BackButton';
 import { getProductById } from '../../hooks/Products';
 import { addReview } from '../../hooks/Review';
 import { updateStatusOrder } from '../../hooks/Orders';
+import { createNotification } from '../../hooks/Notifications';
 
 const PurchaseOrder = () => {
     const { orderId } = useParams(); // Lấy mã đơn hàng từ URL
+    const userInfoString = sessionStorage.getItem('userInfo');
+    const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
     
     const [order, setOrder] = useState(null);
     const [orderDetails, setOrderDetails] = useState(null);
     const [product, setProduct] = useState(null);
+    const [seller, setSeller] = useState(null);
     const [payment, setPayment] = useState(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const [cancelText, setCancelText] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -37,11 +42,29 @@ const PurchaseOrder = () => {
         navigate(`/order/${orderId}`)
     };
 
-    const handleCancel = () => {
+    const handleCancel = async (e) => {
+        e.preventDefault();
+        if (!cancelText || !cancelText.trim()) {
+            alert(`Hãy nhập nguyên nhân muốn huỷ đơn hàng!`);
+            return;
+        }
         const status_order = 'Request Cancel';
-        updateStatusOrder(orderId, status_order)
-        alert("Bạn đã xác nhận huỷ đơn hàng")
-        navigate(`/order/${orderId}`)
+        alert(`Đơn hàng đang được chờ xác nhận huỷ.`);
+        
+        try {
+            await updateStatusOrder(orderId, status_order);
+            
+            await createNotification({
+                user_id_created: order.user_id_buyer,
+                user_id_receive: seller._id,
+                message: `Đơn hàng ${product.name} của ${userInfo.name} đã muốn huỷ do: ${cancelText}.`
+            });
+            
+            navigate(`/order/${order._id}`);
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi huỷ đơn hàng:", error);
+            alert("Có lỗi xảy ra. Vui lòng thử lại.");
+        }
     };
 
     useEffect(() => {
@@ -50,6 +73,9 @@ const PurchaseOrder = () => {
                 // Lấy thông tin đơn hàng
                 const orderResponse = await axios.get(`http://localhost:5555/orders/${orderId}`);
                 setOrder(orderResponse.data.data);
+
+                const sellerResponse = await axios.get(`http://localhost:5555/users/${orderResponse.data.data.user_id_seller}`);
+                setSeller(sellerResponse.data);
 
                 const paymentRe = await axios.get(`http://localhost:5555/payments/order/${orderId}`);
                 setPayment(paymentRe.data.data);
@@ -118,7 +144,7 @@ const PurchaseOrder = () => {
                             <p><strong></strong>Số lượng:{" " + orderDetails.quantity}</p>
                         </div>
                         <div className="ml-4">
-                            <h2 className="text-xl font-semibold">Đơn hàng</h2>
+                            <h2 className="text-xl font-semibold">Đơn mua</h2>
                             <p className="text-xl text-green-600"><strong></strong> {product.name}</p>
                             <p><strong>Mã đơn hàng:</strong> {order._id}</p>
                             <p><strong>Địa chỉ giao hàng:</strong> {order.address}</p>
@@ -133,15 +159,41 @@ const PurchaseOrder = () => {
                             </> :
                             <p><strong>Trạng thái thanh toán:</strong> Thanh toán khi nhận hàng</p>
                             }
+                            <h3 className="text-xl font-semibold mt-4">Thông tin người bán</h3>
+                            <p><strong>Tên người bán:</strong> {seller.name}</p>
+                            <p><strong>Số điện thoại:</strong> {seller.phone}</p>
+                            <p><strong>Địa chỉ:</strong> {seller.address}</p>
+                            <button 
+                                className="bg-gray-100 mt-2 border border-blue-500 text-blue-600 underline rounded p-2 hover:bg-gray-300 transition duration-300"
+                                onClick={() => navigate(`/seller/${product.user_id}`)}
+                            >
+                                Xem trang người bán
+                            </button>
                         </div>
                     </div>
                     <div className="w-2/6 flex flex-col justify-center">
                         <div className="bg-white w-full h-full rounded-lg p-6">
                         {order && (order.status_order == 'Pending' || order.status_order == 'Confirmed') ?
                             (<div>
-                                <button onClick={() => handleCancel()} className="bg-red-400 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-green-500 transition duration-200">
-                                    Huỷ đơn hàng
-                                </button>
+                                <div className="mb-2 w-full mt-5">
+                                        <textarea 
+                                            type="text" 
+                                            placeholder="Nguyên nhân muốn huỷ đơn hàng" 
+                                            value={cancelText} 
+                                            onChange={(e) => setCancelText(e.target.value)} 
+                                            className="border border-gray-300 p-2 w-full rounded"
+                                            rows="3"
+                                            required
+                                        />
+                                    </div>                      
+                                    <div>
+                                        <button 
+                                            onClick={handleCancel} 
+                                            className="bg-gray-100 text-red-600 font-bold py-2 px-4 rounded-lg shadow hover:bg-gray-300 transition duration-200"
+                                        >
+                                            Huỷ đơn hàng
+                                        </button>
+                                    </div>
                             </div>)
                         : order.status_order == 'Success' ?
                             (<div>

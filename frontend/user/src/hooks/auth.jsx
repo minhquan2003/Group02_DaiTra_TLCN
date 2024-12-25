@@ -12,6 +12,10 @@ export const useAuth = () => {
             const response = await axios.post("/auth/login", { email, password });
             console.log("Login response:", response.data);
             const userResponse = await axios.post("/users/email", { email });
+            if(userResponse.data.ban == true){
+                alert('Tài khoản của bạn đã bị cấm!\nXin hãy liên hệ đến hệ thống bằng cách gửi Đóng góp ý kiến về tài khoản của bạn.')
+                return
+            }
             setIsAuthenticated(true);
             sessionStorage.setItem("userInfo", JSON.stringify(userResponse.data));
             window.location.href = "/";
@@ -30,7 +34,7 @@ export const useAuth = () => {
             return true;
         } catch (err) {
            alert("Error sending OTP:", err);
-            setError("Failed to send OTP. Please try again.");
+            setError("Lỗi OTP. Xin hãy thử lại.");
             return false;
         }
     };
@@ -42,7 +46,7 @@ export const useAuth = () => {
             return response.data.valid;
         } catch (err) {
             console.error("OTP verification error:", err);
-            setError("Invalid OTP. Please try again.");
+            setError("Mã OTP không đúng. Hãy thử lại.");
             return false;
         }
     };

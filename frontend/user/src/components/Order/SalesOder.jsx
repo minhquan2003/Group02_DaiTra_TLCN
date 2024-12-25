@@ -100,6 +100,13 @@ const SalesOrder = () => {
         } else if (order.status_order === 'Packaged') {
             status_order = 'Shipping';
         } else if (order.status_order === 'Request Cancel') {
+            if (order.user_id_buyer) {
+                await createNotification({
+                    user_id_created: userInfo._id,
+                    user_id_receive: order.user_id_buyer,
+                    message: `Đơn hàng ${product.name} của bạn đã được xác nhận huỷ thành công.`
+                });
+            }
             status_order = 'Cancelled';
         } else if (order.status_order === 'Shipping') {
             if (order.user_id_buyer) {
@@ -143,7 +150,7 @@ const SalesOrder = () => {
                             <p><strong>Số lượng:</strong> {orderDetails.quantity}</p>
                         </div>
                         <div className="ml-4">
-                            <h2 className="text-xl font-semibold">Đơn hàng</h2>
+                            <h2 className="text-xl font-semibold">Đơn bán</h2>
                             <p className="text-xl text-blue-600"><strong>{product.name}</strong></p>
                             <p><strong>Mã đơn hàng:</strong> {order._id}</p>
                             <p><strong>Người mua:</strong> {order.name}</p>

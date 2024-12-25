@@ -9,14 +9,12 @@ const PaymentInfo = () => {
     const navigate = useNavigate();
 
     const cartItems = location.state?.cartItems || [];
-    const sellerInfo = cartItems.map(item => item.user_seller ? useUserById(item.user_seller) : null);
+    const orderIds = JSON.parse(sessionStorage.getItem("orderIds")) || [];
 
-    const storedUserInfo = JSON.parse(sessionStorage.getItem("orderIds")) || [];
-    
     // Trạng thái thanh toán cho mỗi sản phẩm
     const [paymentStatus, setPaymentStatus] = useState(Array(cartItems.length).fill(false));
 
-    const handlePayConfirm = async (orderId, buyer, seller, total_amount, index) => {
+    const handlePayConfirm = async (orderId, name, phone, buyer, seller, total_amount, index) => {
         if (!orderId) {
             console.error("Order ID không hợp lệ");
             return;
@@ -25,7 +23,7 @@ const PaymentInfo = () => {
         await createNotification({
             user_id_created: buyer,
             user_id_receive: seller,
-            message: `Có đơn hàng đã thanh toán số tiền ${total_amount} cho bạn.`
+            message: `Có đơn hàng của ${name} với số điện thoại là ${phone} đã thanh toán số tiền ${total_amount} cho bạn.`
         });
 
         await createPayment({
@@ -47,7 +45,7 @@ const PaymentInfo = () => {
         <div className="p-5 flex flex-col items-center">
             <h1 className="text-2xl font-bold mb-4">Thông Tin Thanh Toán</h1>
             {cartItems.map((item, index) => {
-                const seller = sellerInfo[index]; // Lấy seller tương ứng với sản phẩm
+                const seller = useUserById(item.user_seller); // Lấy seller tương ứng với sản phẩm
                 const hasQrCode = seller && seller.qrPayment; // Kiểm tra mã QR
 
                 return (
@@ -71,7 +69,7 @@ const PaymentInfo = () => {
                                         <>
                                             {!paymentStatus[index] ? ( 
                                                 <button 
-                                                    onClick={() => handlePayConfirm(storedUserInfo[index], item.user_buyer, item.user_seller, (item.product_quantity * item.product_price), index)} 
+                                                    onClick={() => handlePayConfirm(orderIds[index]?.id, orderIds[index]?.name_buyer, orderIds[index]?.phone, item.user_buyer, item.user_seller, (item.product_quantity * item.product_price), index)} 
                                                     className={`mt-6 text-red-600 font-bold py-2 px-4 rounded-lg shadow transition duration-200 bg-gray-100 hover:bg-gray-300`}
                                                 >
                                                     Xác nhận đã thanh toán
@@ -85,7 +83,7 @@ const PaymentInfo = () => {
                                     )}
                                 </div>
                                 <div className="ml-4 flex-none">
-                                    {hasQrCode ? (
+                                    {hasQrCode && (
                                         <>
                                             <h2 className="text-xl font-semibold mb-2">Mã QR:</h2>
                                             <img 
@@ -94,7 +92,7 @@ const PaymentInfo = () => {
                                                 className="w-60 h-auto border rounded" 
                                             />
                                         </>
-                                    ) : null}
+                                    )}
                                 </div>
                             </>
                         )}

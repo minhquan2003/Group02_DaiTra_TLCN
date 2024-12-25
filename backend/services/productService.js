@@ -10,12 +10,12 @@ const getProducts = async () => {
   };
   
 const getOneProductById = async (idProduct) => {
-  return await Products.findOne({ _id: idProduct, status: true });
+  return await Products.findOne({ _id: idProduct});
   };
 
 const getProductsByCategory = async (categoryId) => {
   try {
-    const products = await Products.find({ category_id: categoryId, status: true, approve: true, });
+    const products = await Products.find({ category_id: categoryId, status: true, approve: true, quantity: { $gt: 0 } });
     return products;
   } catch (error) {
     throw new Error(`Unable to fetch products: ${error.message}`);
@@ -24,7 +24,16 @@ const getProductsByCategory = async (categoryId) => {
 
 const getProductsByUserId = async (userId) => {
   try {
-      const products = await Products.find({ user_id: userId, status: true , approve: true});
+      const products = await Products.find({ user_id: userId, status: true , approve: true, quantity: { $gt: 0 }});
+      return products;
+  } catch (error) {
+      throw new Error(`Unable to fetch products: ${error.message}`);
+  }
+};
+
+const getProductsByUserIdSoldOut = async (userId) => {
+  try {
+      const products = await Products.find({ user_id: userId, status: true , approve: true, quantity: { $eq: 0 }});
       return products;
   } catch (error) {
       throw new Error(`Unable to fetch products: ${error.message}`);
@@ -33,7 +42,7 @@ const getProductsByUserId = async (userId) => {
 
 const getProductsByUserIdNotApprove = async (userId) => {
   try {
-      const products = await Products.find({ user_id: userId, status: true , approve: false});
+      const products = await Products.find({ user_id: userId, status: true , approve: false, quantity: { $gt: 0 }});
       return products;
   } catch (error) {
       throw new Error(`Unable to fetch products: ${error.message}`);
@@ -47,7 +56,8 @@ const searchProductsByName = async (productName) => {
       return await Products.find({
           name: { $regex: productName, $options: 'i' }, // 'i' để không phân biệt chữ hoa chữ thường
           status: true,
-          approve: true // Chỉ tìm kiếm sản phẩm còn hoạt động
+          approve: true, // Chỉ tìm kiếm sản phẩm còn hoạt động
+          quantity: { $gt: 0 }
       });
   } catch (error) {
       throw new Error(`Unable to search products: ${error.message}`);
@@ -56,7 +66,7 @@ const searchProductsByName = async (productName) => {
 
 const searchProducts = async (brand, categoryId) => {
   try {
-      const query = { status: true, approve: true }; // Chỉ tìm sản phẩm còn hoạt động
+      const query = { status: true, approve: true, quantity: { $gt: 0 } }; // Chỉ tìm sản phẩm còn hoạt động
 
       // Thêm điều kiện tìm kiếm theo brand nếu có
       if (brand) {
@@ -103,6 +113,7 @@ export {createProduct,
   getOneProductById, 
   getProductsByCategory,
   getProductsByUserId,
+  getProductsByUserIdSoldOut,
   searchProductsByName,
   searchProducts, 
   updateOneProduct, 

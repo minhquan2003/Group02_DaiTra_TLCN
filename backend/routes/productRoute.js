@@ -4,6 +4,7 @@ import {addProduct,
     getProductById,
     getProductsByIdCategory,
     getProductsByUserIdController,
+    getProductsByUserIdSoldOutController,
     getProductsByUserIdNotApproveController,
     searchProductsByNameController,
     searchProductsController ,
@@ -21,6 +22,7 @@ productRoute.get('/:id', getProductById);
 productRoute.get('/category/:categoryId', getProductsByIdCategory);
 productRoute.get('/user/:userId', getProductsByUserIdController);
 productRoute.get('/notapprove/user/:userId', getProductsByUserIdNotApproveController);
+productRoute.get('/soldout/user/:userId', getProductsByUserIdSoldOutController);
 productRoute.put('/quanlity', updateQuanlity);
 productRoute.put('/:id', updateProduct);
 productRoute.delete('/:id', deleteProduct);

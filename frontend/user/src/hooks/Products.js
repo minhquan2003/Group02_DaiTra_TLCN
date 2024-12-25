@@ -73,6 +73,30 @@ const getProductsNotApproveByIdSeller = (idSeller) => {
     return { productsnotapprove, loadingnotapprove, errornotapprove };
 };
 
+const getProductsSoldOutByIdSeller = (idSeller) => {
+    const [productsSoldOut, setProducts] = useState([]);
+    const [loadingSoldOut, setLoading] = useState(true);
+    const [errorSoldOut, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5555/products/soldout/user/${idSeller}`);
+                setProducts(response.data);
+            } catch (err) {
+                console.error("Error fetching products:", err);
+                setError("Không có sản phẩm nào.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    return { productsSoldOut, loadingSoldOut, errorSoldOut };
+};
+
 const useProduct = (id) => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -253,4 +277,5 @@ export {useSearchProducts,
     getProductByName, 
     getProductsByIdSeller,
     getProductsNotApproveByIdSeller,
+    getProductsSoldOutByIdSeller,
     updateOneProduct};
