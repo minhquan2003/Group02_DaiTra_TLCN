@@ -8,15 +8,12 @@ import {
 
 // Lấy tất cả quy định với phân trang
 const getRegulations = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
   try {
-    const result = await getAllRegulations(parseInt(page), parseInt(limit));
+    const result = await getAllRegulations();
 
     res.status(200).json({
       success: true,
       total: result.total,
-      totalPages: result.totalPages,
-      currentPage: result.currentPage,
       data: result.regulations,
     });
   } catch (error) {
@@ -89,20 +86,14 @@ const removeRegulation = async (req, res) => {
 
 // Tìm kiếm quy định theo title
 const searchRegulations = async (req, res) => {
-  const { keyword, page = 1, limit = 10 } = req.query;
+  const { keyword } = req.query;
 
   try {
-    const result = await searchRegulationsByTitle(
-      keyword,
-      parseInt(page),
-      parseInt(limit)
-    );
+    const result = await searchRegulationsByTitle(keyword);
 
     res.status(200).json({
       success: true,
       total: result.total,
-      totalPages: result.totalPages,
-      currentPage: result.currentPage,
       data: result.regulations,
     });
   } catch (error) {

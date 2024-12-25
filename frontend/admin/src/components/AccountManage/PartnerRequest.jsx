@@ -10,6 +10,15 @@ const PartnerRequest = () => {
   const [selectedPartner, setSelectedPartner] = useState(null); // State to track the selected partner
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
+  const [currentPage, setCurrentPage] = useState(1); // Track current page
+  const itemsPerPage = 10; // Define items per page
+
+  const totalPages = Math.ceil(requestPartners.length / itemsPerPage); // Calculate total pages
+  const displayedPartners = requestPartners.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  ); // Slice the partners array for the current page
+
   const openModal = (partner) => {
     setSelectedPartner(partner);
     setIsModalOpen(true);
@@ -49,7 +58,7 @@ const PartnerRequest = () => {
           </tr>
         </thead>
         <tbody>
-          {requestPartners.map((partner) => (
+          {displayedPartners.map((partner) => (
             <tr key={partner._id} className="hover:bg-gray-50 bg-white">
               <td className="text-sm border px-4 py-2">
                 {partner.name || "N/A"}
@@ -86,6 +95,37 @@ const PartnerRequest = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center space-x-4 mt-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className={`px-4 py-2 rounded ${
+              currentPage === 1
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className={`px-4 py-2 rounded ${
+              currentPage === totalPages
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Modal for displaying partner details */}
       {isModalOpen && selectedPartner && (

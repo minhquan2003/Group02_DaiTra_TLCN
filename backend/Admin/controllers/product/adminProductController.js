@@ -59,18 +59,13 @@ const removeProduct = async (req, res) => {
   }
 };
 
-// lấy tất cả sản phẩm
 const getAllProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-
-    const result = await getProducts(parseInt(page), parseInt(limit));
+    const result = await getProducts(); // No pagination parameters are passed
 
     res.status(200).json({
       success: true,
-      total: result.total,
-      currentPage: result.currentPage,
-      totalPages: result.totalPages,
+      totalProducts: result.totalProducts, // Include totalProducts
       data: result.products,
     });
   } catch (error) {
@@ -83,15 +78,11 @@ const getAllProducts = async (req, res) => {
 
 const getPendingProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-
-    const result = await getRequestProducts(parseInt(page), parseInt(limit));
+    const result = await getRequestProducts(); // No pagination parameters are passed
 
     res.status(200).json({
       success: true,
-      total: result.total,
-      currentPage: result.currentPage,
-      totalPages: result.totalPages,
+      totalProducts: result.totalProducts, // Include totalProducts
       data: result.products,
     });
   } catch (error) {

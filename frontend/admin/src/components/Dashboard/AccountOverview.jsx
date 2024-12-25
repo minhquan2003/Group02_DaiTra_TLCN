@@ -11,7 +11,7 @@ import { VscFeedback } from "react-icons/vsc";
 
 const AccountOverview = () => {
   const { accounts, bans } = useUser();
-  const { partners } = usePartner();
+  const { partners, requestPartners } = usePartner();
   const { feedbackTotal } = useFeedback(); // Sử dụng feedbackTotal thay vì feedbacks
 
   return (
@@ -55,7 +55,7 @@ const AccountOverview = () => {
           </div>
           <div className="flex text-center items-center space-x-6">
             <div className="text-lg font-medium text-white">
-              {/* {feedbackTotal} */}2
+              {requestPartners.length}
             </div>
             <div className="text-sm text-white">Request Partners</div>
           </div>

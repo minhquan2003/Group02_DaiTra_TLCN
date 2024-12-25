@@ -15,21 +15,15 @@ import {
 //--------Lấy tất cả người dùng trừ admin
 const getAllUsers = async (req, res) => {
   try {
-    const { page = 1 } = req.query; // Lấy trang từ query, mặc định là trang 1
-    const limit = 8; // Số lượng user mỗi trang (split = 8)
-    const skip = (page - 1) * limit;
+    // Lấy danh sách người dùng không có role là "admin" mà không phân trang
+    const users = await getAllUsersExcludingRole("admin");
 
     // Đếm tổng số người dùng không có role là "admin"
-    const totalUsers = await getCountExcludingRole("admin");
-
-    // Lấy danh sách người dùng không có role là "admin" với phân trang
-    const users = await getAllUsersExcludingRole("admin", skip, limit);
+    const totalUsers = users.length;
 
     // Trả về dữ liệu gồm tổng số và danh sách người dùng
     res.status(200).json({
       totalUsers,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(totalUsers / limit),
       users,
     });
   } catch (error) {
@@ -40,17 +34,11 @@ const getAllUsers = async (req, res) => {
 //--------Lấy tất cả người dùng bị ban
 const getAllBannedUsers = async (req, res) => {
   try {
-    const { page = 1 } = req.query;
-    const limit = 8;
-    const skip = (page - 1) * limit;
-
     const totalBannedUsers = await getCountBannedUsers();
-    const users = await getBannedUsers(skip, limit);
+    const users = await getBannedUsers();
 
     res.status(200).json({
       totalBannedUsers,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(totalBannedUsers / limit),
       users,
     });
   } catch (error) {
@@ -105,25 +93,16 @@ const deleteUserAccount = async (req, res) => {
 //-----------Lấy tất cả người dùng đang có role là partner
 const getUsersWithPartnerRole = async (req, res) => {
   try {
-    const { page = 1 } = req.query; // Lấy tham số page từ query, mặc định là 1
-    const limit = 4; // Số lượng người dùng mỗi trang (split = 8)
-    const skip = (page - 1) * limit;
-
     // Đếm tổng số người dùng có role là "partner"
     const totalPartners = await getCountByRole("partner");
 
     // Lấy danh sách người dùng có role là "partner"
-    let users = await getUsersByRole("partner");
-
-    // Áp dụng phân trang (sử dụng slice)
-    users = users.slice(skip, skip + limit);
+    const users = await getUsersByRole("partner");
 
     // Trả về dữ liệu bao gồm tổng số và danh sách người dùng
     res.status(200).json({
       totalPartners,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(totalPartners / limit),
-      users,
+      users, // No pagination, return all users
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -133,25 +112,16 @@ const getUsersWithPartnerRole = async (req, res) => {
 //-----------Lấy tất cả người dùng yêu cầu làm partner
 const getUsersWithRequestPartner = async (req, res) => {
   try {
-    const { page = 1 } = req.query; // Lấy tham số page từ query, mặc định là 1
-    const limit = 4; // Số lượng người dùng mỗi trang (split = 8)
-    const skip = (page - 1) * limit;
-
     // Đếm tổng số người dùng có role là "partner"
     const totalPartners = await getCountByRole("regisPartner");
 
     // Lấy danh sách người dùng có role là "partner"
-    let users = await getUsersByRole("regisPartner");
-
-    // Áp dụng phân trang (sử dụng slice)
-    users = users.slice(skip, skip + limit);
+    const users = await getUsersByRole("regisPartner");
 
     // Trả về dữ liệu bao gồm tổng số và danh sách người dùng
     res.status(200).json({
       totalPartners,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(totalPartners / limit),
-      users,
+      users, // No pagination, return all users
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

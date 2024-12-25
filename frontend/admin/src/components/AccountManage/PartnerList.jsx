@@ -4,9 +4,13 @@ import { TbListDetails } from "react-icons/tb";
 import { GiCancel } from "react-icons/gi";
 
 const PartnerList = () => {
-  const { partners, loading, error, deletePartner } = usePartners(); // Assuming deletePartner is part of your custom hook
-  const [selectedPartner, setSelectedPartner] = useState(null); // State to track the selected partner
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const { partners, loading, error, deletePartner } = usePartners();
+  const [selectedPartner, setSelectedPartner] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const partnersPerPage = 10;
 
   const openModal = (partner) => {
     setSelectedPartner(partner);
@@ -19,7 +23,24 @@ const PartnerList = () => {
   };
 
   const handleDelete = async (partnerId) => {
-    await deletePartner(partnerId); // Call the hook's denyPartner function
+    await deletePartner(partnerId);
+    window.location.reload();
+  };
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(partners.length / partnersPerPage);
+
+  // Slice the partners array to display only the current page's data
+  const indexOfLastPartner = currentPage * partnersPerPage;
+  const indexOfFirstPartner = indexOfLastPartner - partnersPerPage;
+  const currentPartners = partners.slice(
+    indexOfFirstPartner,
+    indexOfLastPartner
+  );
+
+  // Change page
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   if (loading) {
@@ -43,7 +64,7 @@ const PartnerList = () => {
           </tr>
         </thead>
         <tbody>
-          {partners.map((partner) => (
+          {currentPartners.map((partner) => (
             <tr key={partner._id} className="hover:bg-gray-50 bg-white">
               <td className="text-sm border px-4 py-2">
                 {partner.name || "N/A"}
@@ -74,6 +95,39 @@ const PartnerList = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center space-x-4 mt-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded-md"
+          >
+            Previous
+          </button>
+          {[...Array(totalPages).keys()].map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page + 1)}
+              className={`px-4 py-2 rounded-md ${
+                currentPage === page + 1
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200"
+              }`}
+            >
+              {page + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded-md"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {/* Modal for displaying partner details */}
       {isModalOpen && selectedPartner && (

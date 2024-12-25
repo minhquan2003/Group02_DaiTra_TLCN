@@ -9,6 +9,10 @@ const FeedbackList = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [showMenu, setShowMenu] = useState(false);
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; // Items per page
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -22,7 +26,7 @@ const FeedbackList = () => {
   };
 
   const truncateMessage = (message) => {
-    const maxLength = 15;
+    const maxLength = 100;
     return message.length > maxLength
       ? `${message.slice(0, maxLength)}...`
       : message;
@@ -48,6 +52,20 @@ const FeedbackList = () => {
     }
     return 0;
   });
+
+  // Paginate the sorted feedback list
+  const paginatedFeedbackList = sortedFeedbackList.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const totalPages = Math.ceil(feedbackTotal / pageSize);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   return (
     <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
@@ -106,12 +124,12 @@ const FeedbackList = () => {
           </tr>
         </thead>
         <tbody>
-          {sortedFeedbackList.map((feedback) => {
-            const isLongMessage = feedback.message.length > 15;
+          {paginatedFeedbackList.map((feedback) => {
+            const isLongMessage = feedback.message.length > 100;
             return (
               <tr key={feedback._id} className="hover:bg-gray-50 bg-white">
                 <td className="text-sm border px-4 py-2">
-                  {feedback.username || "Anonymous"}
+                  {feedback.name || "Anonymous"}
                 </td>
                 <td className="text-sm border px-4 py-2">
                   <div
@@ -145,6 +163,31 @@ const FeedbackList = () => {
           })}
         </tbody>
       </table>
+
+      {/* Pagination controls */}
+      {feedbackTotal > pageSize && (
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded-md"
+          >
+            Previous
+          </button>
+          <div className="flex items-center">
+            <span className="mr-2">
+              Page {currentPage} of {totalPages}
+            </span>
+          </div>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded-md"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

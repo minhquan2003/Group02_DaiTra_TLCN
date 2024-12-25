@@ -62,6 +62,11 @@ import {
 } from "../controllers/order/adminOrderController.js";
 import { authenticateJWT } from "../middlewares/middleware.js";
 
+import {
+  fetchAllReviews,
+  removeReview,
+} from "../controllers/reviews/adminReviewController.js";
+
 const adminRouter = express.Router();
 
 adminRouter.post("/login", loginAdmin);
@@ -109,5 +114,8 @@ adminRouter.get("/top-selling-products", fetchTopSellingProducts);
 adminRouter.get("/order-stats", fetchOrderStats);
 adminRouter.get("/orders", fetchAllOrders);
 adminRouter.get("/search-orders", searchOrdersByName);
+
+adminRouter.get("/reviews", fetchAllReviews);
+adminRouter.delete("/reviews/:id", removeReview);
 
 export default adminRouter;

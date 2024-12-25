@@ -10,6 +10,7 @@ const RegulationList = ({ refreshRegulations }) => {
     customRegulation,
     searchRegulations,
   } = useRegulation();
+
   const [selectedRegulation, setSelectedRegulation] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -18,7 +19,11 @@ const RegulationList = ({ refreshRegulations }) => {
     title: "",
     description: "",
   });
-  const [searchKeyword, setSearchKeyword] = useState(""); // State for search input
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of regulations per page
+
+  const totalPages = Math.ceil(regulations.length / itemsPerPage);
 
   useEffect(() => {
     if (refreshRegulations) {
@@ -28,7 +33,7 @@ const RegulationList = ({ refreshRegulations }) => {
 
   const handleSearchChange = (e) => {
     setSearchKeyword(e.target.value);
-    searchRegulations(e.target.value); // Trigger search on input change
+    searchRegulations(e.target.value);
   };
 
   const openDeleteModal = (id) => {
@@ -61,6 +66,15 @@ const RegulationList = ({ refreshRegulations }) => {
     setShowConfirmModal(true);
   };
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const displayedRegulations = regulations.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="w-5/6 ml-[16.6666%] p-4 bg-gray-100 rounded-md">
       <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center">
@@ -68,8 +82,8 @@ const RegulationList = ({ refreshRegulations }) => {
       </h2>
       <input
         type="text"
-        value={searchKeyword} // Bind the value to searchKeyword state
-        onChange={handleSearchChange} // Trigger search on input change
+        value={searchKeyword}
+        onChange={handleSearchChange}
         placeholder="Search by title"
         className="mb-4 w-full p-2 border rounded"
       />
@@ -80,66 +94,84 @@ const RegulationList = ({ refreshRegulations }) => {
       ) : regulations.length === 0 ? (
         <div>No active regulations found.</div>
       ) : (
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border px-4 py-2 text-left">Title</th>
-              <th className="border px-4 py-2 text-left">Description</th>
-              <th className="border px-4 py-2 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {regulations.map((regulation) => (
-              <tr key={regulation._id} className="hover:bg-gray-50">
-                <td className="border px-4 py-2">{regulation.title}</td>
-                <td className="border px-4 py-2">{regulation.description}</td>
-                <td className="border px-4 py-2 text-center">
-                  {/* Edit Button */}
-                  <button
-                    onClick={() => handleCustom(regulation._id, regulation)}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M10 6h10M10 12h10M10 18h10"
-                      />
-                    </svg>
-                  </button>
-
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => openDeleteModal(regulation._id)}
-                    className="text-red-600 hover:text-red-800 ml-2"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </td>
+        <>
+          <table className="w-full table-auto border-collapse">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border px-4 py-2 text-left">Title</th>
+                <th className="border px-4 py-2 text-left">Description</th>
+                <th className="border px-4 py-2 text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {displayedRegulations.map((regulation) => (
+                <tr key={regulation._id} className="hover:bg-gray-50">
+                  <td className="border px-4 py-2">{regulation.title}</td>
+                  <td className="border px-4 py-2">{regulation.description}</td>
+                  <td className="border px-4 py-2 text-center">
+                    <button
+                      onClick={() => handleCustom(regulation._id, regulation)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M10 6h10M10 12h10M10 18h10"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => openDeleteModal(regulation._id)}
+                      className="text-red-600 hover:text-red-800 ml-2"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-4">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => handlePageChange(index + 1)}
+                  className={`px-3 py-1 mx-1 border rounded ${
+                    currentPage === index + 1
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-blue-600"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Edit Modal */}
